@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 from simplestats import __version__
 
 setup(
@@ -23,12 +23,16 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
     install_requires=[
-        'djangorestframework-word-filter',
         'djangorestframework',
+        'djangorestframework-word-filter',
+        'requests',
     ],
     entry_points={
         'django.apps': [
             'stats = simplestats',
         ],
+        'simplestats.hourly': [
+            'wanikani = simplestats.plugins.wanikani:WaniKani',
+        ]
     },
 )

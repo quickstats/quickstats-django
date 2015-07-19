@@ -1,3 +1,7 @@
 from django.db import models
 
-# Create your models here.
+
+class Stat(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    key = models.TextField()
+    value = models.FloatField()
