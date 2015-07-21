@@ -20,6 +20,9 @@ class WaniKani(object):
     def collect(self):
         URL = 'https://www.wanikani.com/api/user/{}/study-queue'.format(self.api_key)
         result = requests.get(URL)
-        data = result.json()['requested_information']
-        yield datetime.datetime.utcnow(), 'wanikani.reviews', data['reviews_available']
-        yield datetime.datetime.utcnow(), 'wanikani.lessons', data['lessons_available']
+        json = result.json()
+        user = json['user_information']
+        info = json['requested_information']
+        yield datetime.datetime.utcnow(), 'wanikani.reviews', info['reviews_available']
+        yield datetime.datetime.utcnow(), 'wanikani.lessons', info['lessons_available']
+        yield datetime.datetime.utcnow(), 'wanikani.level', user['level']
