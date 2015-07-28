@@ -1,14 +1,12 @@
-import csv
-import itertools
-from collections import defaultdict
+import json
 
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.views.generic.base import View
+from rest_framework import mixins, viewsets
+
+from simplestats.models import Location
 from simplestats.serializers import LocationSerializer
-from rest_framework import permissions, viewsets
-from simplestats.models import Location, Stat
-import json
+
 
 class LocationPattern(View):
     def get(self, request):
@@ -22,12 +20,13 @@ class LocationPattern(View):
         return response
 
 
-class LocationViewSet(viewsets.ModelViewSet):
+class LocationViewSet(
+        mixins.CreateModelMixin,
+        # mixins.ListModelMixin,
+        # mixins.RetrieveModelMixin,
+        viewsets.GenericViewSet):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-
-    Additionally we also provide an extra `highlight` action.
+    POST Only View to accept location updates from IFTTT
     """
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
