@@ -4,26 +4,18 @@
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
     // https://developers.google.com/chart/interactive/docs/gallery/annotationchart
-    google.load("visualization", "1.1", {packages:["timeline"]});
-
-    // Set a callback to run when the Google Visualization API is loaded.
-    google.setOnLoadCallback(function drawGID() {
-        var queryString = encodeURIComponent('SELECT A, C, B, D');
-        var query = new google.visualization.Query(
-            '/api/location/datatable/?tq=' + queryString);
-        query.send(function handleQueryResponse(response) {
-            if (response.isError()) {
-                alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-                return;
-            }
-
-            var data = response.getDataTable();
-            var chart = new google.visualization.Timeline(document.getElementById('chart_div'));
-            var options = {
-                timeline: { colorByRowLabel: true }
-            };
-            chart.draw(data, options);
-        });
+    google.load("visualization", "1");
+    google.setOnLoadCallback(function() {
+        var wrap = new google.visualization.ChartWrapper({
+           'chartType':'Timeline',
+           'dataSourceUrl':'/api/location/datatable/',
+           'containerId':'chart_div',
+           //'query':'SELECT A,D WHERE D > 100 ORDER BY D',
+           'options': {
+               timeline: { colorByRowLabel: true }
+           }
+           });
+         wrap.draw();
     });
 </script>
 </head>
