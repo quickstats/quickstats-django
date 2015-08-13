@@ -1,6 +1,7 @@
 import datetime
 import json
 
+import pytz
 from django.http import HttpResponse
 from django.views.generic.base import View
 from rest_framework import mixins, viewsets
@@ -38,6 +39,8 @@ class LocationViewSet(
         def dateformat(date):
             return "Date(%d,%d,%d,%d,%d,%d)" % (
                 date.year, date.month - 1, date.day, date.hour, date.minute, date.second)
+
+        delta = datetime.timedelta(days=7)
         dataset = {'cols': [
             {'id': 'Location', 'label': 'Location', 'type': 'string'},
             {'id': 'Duration', 'label': 'Duration', 'type': 'string'},
@@ -49,7 +52,7 @@ class LocationViewSet(
         # http://stackoverflow.com/a/11181882/622650
 
         locations = {}
-        for location in Location.objects.filter(created__gte=datetime.datetime.now() - datetime.timedelta(days=7)):
+        for location in Location.objects.filter(created__gte=datetime.datetime.now() - delta):
             if location.state == 'entered':
                 locations[location.label] = location.created
             elif location.state == 'exited':
@@ -62,6 +65,18 @@ class LocationViewSet(
                         {"v": dateformat(location.created)},
                         {"v": str(location.created - entered)},
                     ]})
+
+        # Check for any remaining locations that have not been 'popped'
+        # and assume we're currently located there
+        now = datetime.datetime.now(pytz.utc)
+        for label, entered in locations.items():
+            dataset['rows'].append({'c': [
+                {"v": label},
+                {"v": str(now - entered)},
+                {"v": dateformat(entered)},
+                {"v": dateformat(now)},
+                {"v": str(now - entered)},
+            ]})
 
         response = HttpResponse(content_type='application/json')
         response.write('google.visualization.Query.setResponse(' + json.dumps({

@@ -25,6 +25,7 @@ setup(
     install_requires=[
         'djangorestframework',
         'djangorestframework-word-filter',
+        'pytz',
         'requests',
     ],
     entry_points={
