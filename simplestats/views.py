@@ -4,11 +4,52 @@ import json
 import pytz
 from django.http import HttpResponse
 from django.views.generic.base import View
+from icalendar import Calendar, Event
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import list_route
 
 from simplestats.models import Location
 from simplestats.serializers import LocationSerializer
+
+
+class LocationCalendarView(View):
+    def get(self, request):
+        now = datetime.datetime.now(pytz.utc)
+        delta = datetime.timedelta(days=7)
+
+        cal = Calendar()
+        cal.add('prodid', '-//My calendar product//mxm.dk//')
+        cal.add('version', '2.0')
+
+        locations = {}
+        for location in Location.objects.filter(created__gte=datetime.datetime.now() - delta):
+            if location.state == 'entered':
+                locations[location.label] = location.created
+            elif location.state == 'exited':
+                if location.label in locations:
+                    entered = locations.pop(location.label)
+
+                    event = Event()
+                    event.add('summary', location.label)
+                    event.add('dtstart', entered)
+                    event.add('dtend', location.created)
+                    event['uid'] = location.id
+                    cal.add_component(event)
+
+        # Check for any remaining locations that have not been 'popped'
+        # and assume we're currently located there
+
+        for label, entered in locations.items():
+            event = Event()
+            event.add('summary', label)
+            event.add('dtstart', entered)
+            event.add('dtend', now.replace(minute=0, second=0, microsecond=0))
+            cal.add_component(event)
+
+        return HttpResponse(
+            content=cal.to_ical(),
+            content_type='text/plain; charset=utf-8'
+        )
 
 
 class LocationPattern(View):
