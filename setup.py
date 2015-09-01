@@ -31,7 +31,6 @@ setup(
     ],
     entry_points={
         'django.apps': ['stats = simplestats'],
-        'django.urls': ['stats = simplestats.urls'],
         'simplestats.hourly': ['wanikani = simplestats.plugins.wanikani:WaniKani'],
     },
 )
