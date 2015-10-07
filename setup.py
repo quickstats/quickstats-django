@@ -30,7 +30,7 @@ setup(
         'requests',
     ],
     entry_points={
-        'django.apps': ['stats = simplestats'],
+        'powerplug.apps': ['stats = simplestats'],
         'simplestats.hourly': ['wanikani = simplestats.plugins.wanikani:WaniKani'],
     },
 )
