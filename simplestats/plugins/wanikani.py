@@ -22,11 +22,9 @@ class WaniKani(object):
             response = requests.post(
                 'https://api.numerousapp.com/v2/metrics/%s/events' % metric_id,
                 auth=(os.getenv('NUMEROUS_KEY'), ''),
-                json={
-                    'value': value,
-                    }
-                )
-            print(response)
+                json={'value': value}
+            )
+            logger.info('%s', response)
 
     def collect(self):
         now = datetime.datetime.utcnow()
@@ -35,10 +33,13 @@ class WaniKani(object):
         json = result.json()
         user = json['user_information']
         info = json['requested_information']
+
         self.numerousapp('1518834333051481998', user['level'])
         self.numerousapp('7591292017638108494', info['lessons_available'])
         self.numerousapp('5850886773862194952', info['reviews_available'])
-        self.numerousapp('8834312823618892099', info['next_review_date'])
+        if info['reviews_available'] == 0:
+            self.numerousapp('8834312823618892099', info['next_review_date'])
+
         yield now, 'wanikani.reviews', info['reviews_available']
         yield now, 'wanikani.lessons', info['lessons_available']
         yield now, 'wanikani.level', user['level']
