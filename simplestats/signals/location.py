@@ -14,7 +14,11 @@ if 'NUMEROUS_KEY' in os.environ:
     logger.info('Registering numerous signals')
 
     @receiver(post_save, sender=Location)
-    def my_callback(sender, instance, **kwargs):
+    def my_callback(sender, instance, created, **kwargs):
+        # Only trigger updates for brand new objects
+        if not created:
+            return
+
         if instance.state in ['entered', 'exited']:
             chart = 2178725227255461101
         else:
