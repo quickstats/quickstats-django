@@ -1,14 +1,27 @@
-from django.core.management.base import BaseCommand
-import requests
 import os
+import pprint
+
+import requests
+from django.core.management.base import BaseCommand
+
 
 class Command(BaseCommand):
+    help ='''Print out debugging information about current Numerous acccount'''
+
+    def add_arguments(self, parser):
+        parser.add_argument('--visibility', choices=['public', 'private'])
+
     def handle(self, *args, **options):
         response = requests.get('https://api.numerousapp.com/v1/users/me/metrics', auth=(os.getenv('NUMEROUS_KEY'), ''))
         response.raise_for_status()
         for metric in response.json():
-            print('Label:', metric['label'], metric['id'], metric['latestEventUpdated'])
-            print('Description:', metric['description'])
-            print('Link:', metric['links']['self'])
-            print('Embed:', metric['links']['embed'])
-            print()
+            if options['visibility'] and options['visibility'] != metric['visibility']:
+                continue
+            self.stdout.write('Label: {0} {1} {2}'.format(metric['label'], metric['id'], metric['latestEventUpdated']))
+            self.stdout.write('Privacy: {0}'.format('Private' if metric['private'] else 'Public'))
+            self.stdout.write('Description: {0}'.format(metric['description']))
+            self.stdout.write('Link: {0}'.format(metric['links']['self']))
+            self.stdout.write('Embed: {0}'.format(metric['links']['embed']))
+            if options['verbosity'] > 1:
+                self.stdout.write(pprint.pformat(metric))
+            self.stdout.write('*' * 80)
