@@ -29,16 +29,25 @@ if 'NUMEROUS_KEY' in os.environ:
 
         if instance.state == 'entered':
             Numerous.update_chart(chart, {
-                'label': '{}に入る'.format(instance.label),
                 'kind': 'timer',
+                'label': '{}に入る'.format(instance.label),
+                'moreURL': instance.location,
+                'photoTreatment': {'gradientType': 'vertical', 'gradientColor1': '00bbaa', 'gradientColor2': '00dd00'},
+                'visibility': 'private',
             })
         elif instance.state == 'exited':
             Numerous.update_chart(chart, {
-                'label': '{}を出る '.format(instance.label),
                 'kind': 'timer',
+                'label': '{}を出る '.format(instance.label),
+                'moreURL': instance.location,
+                'photoTreatment': {'gradientType': 'vertical', 'gradientColor1': 'ff5588', 'gradientColor2': 'ff4466'},
+                'visibility': 'private',
             })
         else:
             Numerous.update_chart(chart, {
-                'label': '他の{}'.format(instance.label),
                 'kind': 'timer',
+                'label': '他の{}'.format(instance.label),
+                'moreURL': instance.location,
+                'photoTreatment': {'gradientType': 'horizontal', 'gradientColor1': 'oa1cff', 'gradientColor2': '8076ff'},
+                'visibility': 'private',
             })
