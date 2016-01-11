@@ -23,6 +23,7 @@ if 'NUMEROUS_KEY' in os.environ:
 
         Numerous.update_value(chart, int(instance.created.timestamp()))
         Numerous.update_chart(chart, {
+            'description': '最近のこと',
             'kind': 'timer',
             'label': instance.title,
             'visibility': 'private',
