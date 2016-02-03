@@ -1,3 +1,9 @@
+'''
+Get weather data for Fukuoka from forecast.io
+
+https://developer.forecast.io/docs/v2
+'''
+
 import datetime
 import logging
 import os
