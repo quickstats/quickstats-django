@@ -32,7 +32,10 @@ setup(
     entry_points={
         'powerplug.apps': ['stats = simplestats'],
         'simplestats.quarterhour': ['wanikani = simplestats.plugins.wanikani:WaniKani'],
-        'simplestats.hourly': ['forecast = simplestats.plugins.forecast:ForecastIO'],
+        'simplestats.hourly': [
+            'forecast = simplestats.plugins.forecast:ForecastIO',
+            'currency = simplestats.plugins.currency:Currency'
+        ],
         'simplestats.signals': [
             'location = simplestats.signals.location',
             'pomodoro = simplestats.signals.pomodoro',
