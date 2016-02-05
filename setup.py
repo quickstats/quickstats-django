@@ -31,6 +31,8 @@ setup(
     ],
     entry_points={
         'powerplug.apps': ['stats = simplestats'],
+        'powerplug.subnav': ['stats = simplestats.urls:subnav'],
+        'powerplug.urls': ['stats = simplestats.urls'],
         'simplestats.quarterhour': ['wanikani = simplestats.plugins.wanikani:WaniKani'],
         'simplestats.hourly': [
             'forecast = simplestats.plugins.forecast:ForecastIO',

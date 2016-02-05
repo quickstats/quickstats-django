@@ -1,0 +1,22 @@
+{% extends "simplestats/base.html" %}
+{% block javascript %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    // https://developers.google.com/chart/interactive/docs/gallery/annotationchart
+    google.load("visualization", "1");
+    google.setOnLoadCallback(function() {
+        var wrap = new google.visualization.ChartWrapper({
+            'chartType': 'LineChart',
+            'dataTable': {{ dataTable|safe }},
+            'containerId': 'chart_div',
+            'options': {
+                isStacked: true,
+            }
+        });
+        wrap.draw();
+    });
+</script>
+{% endblock %}
+{% block content %}
+    <div id="chart_div" style="width:800px; height:400px">Loading...</div>
+{% endblock %}
