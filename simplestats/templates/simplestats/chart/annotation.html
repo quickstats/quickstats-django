@@ -6,9 +6,12 @@
     google.load("visualization", "1");
     google.setOnLoadCallback(function() {
         var wrap = new google.visualization.ChartWrapper({
-            'chartType': 'LineChart',
+            'chartType': 'Line',
             'dataTable': {{ dataTable|safe }},
             'containerId': 'chart_div',
+            'options': {
+                isStacked: true,
+            }
         });
         wrap.draw();
     });
