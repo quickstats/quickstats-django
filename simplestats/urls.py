@@ -13,11 +13,10 @@ urlpatterns = [
 
 
 def subnav(namespace, request):
-    if request.user.is_authenticated():
-        return {
-            _('Charts'): [
-                (_('USD/JPY'), reverse(namespace + ':usd_jpy')),
-                (_('Temperature'), reverse(namespace + ':weather_fukuoka_temperature')),
-                (_('Wani Kani'), reverse(namespace + ':wanikani')),
-            ]
-        }
+    return {
+        _('Charts'): [
+            (_('USD/JPY'), reverse(namespace + ':usd_jpy')),
+            (_('Temperature'), reverse(namespace + ':weather_fukuoka_temperature')),
+            (_('Wani Kani'), reverse(namespace + ':wanikani')),
+        ]
+    }
