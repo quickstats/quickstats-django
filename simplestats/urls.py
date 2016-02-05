@@ -7,6 +7,7 @@ import simplestats.views
 
 urlpatterns = [
     url(r'^usd/jpy/$', simplestats.views.USDJPY.as_view(), name='usd_jpy'),
+    url(r'^weather/fukuoka/temperature/$', simplestats.views.Temperature.as_view(), name='weather_fukuoka_temperature'),
 ]
 
 
@@ -14,6 +15,7 @@ def subnav(namespace, request):
     if request.user.is_authenticated():
         return {
             _('Charts'): [
-                (_('USD/JPY'), reverse(namespace + ':usd_jpy'))
+                (_('USD/JPY'), reverse(namespace + ':usd_jpy')),
+                (_('Temperature'), reverse(namespace + ':weather_fukuoka_temperature')),
             ]
         }
