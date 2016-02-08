@@ -11,7 +11,7 @@ class Stat(models.Model):
 class Countdown(models.Model):
     created = models.DateTimeField()
     label = models.CharField(max_length=36)
-    calendar = models.URLField(null=True)
+    calendar = models.URLField(blank=True)
 
     def remaining(self):
         return self.created - timezone.localtime(timezone.now())
