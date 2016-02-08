@@ -33,10 +33,14 @@ setup(
         'powerplug.apps': ['stats = simplestats'],
         'powerplug.subnav': ['stats = simplestats.urls:subnav'],
         'powerplug.urls': ['stats = simplestats.urls'],
-        'simplestats.quarterhour': ['wanikani = simplestats.plugins.wanikani:WaniKani'],
+        'simplestats.quarterhour': [
+            'countdown = simplestats.plugins.countdown:Countdown',
+            'wanikani = simplestats.plugins.wanikani:WaniKani'
+            ],
         'simplestats.hourly': [
+            'countdown = simplestats.plugins.countdown:Countdown',
+            'currency = simplestats.plugins.currency:Currency',
             'forecast = simplestats.plugins.forecast:ForecastIO',
-            'currency = simplestats.plugins.currency:Currency'
         ],
         'simplestats.signals': [
             'location = simplestats.signals.location',
