@@ -2,9 +2,12 @@ import datetime
 import logging
 import os
 
-import requests
+import simplestats.requests as requests
 
+from simplestats.models import Countdown
 from simplestats.numerous import Numerous
+
+from django.utils import timezone
 
 CONFIG_PATH = os.path.join(os.path.expanduser('~'), '.wanikani')
 logger = logging.getLogger(__name__)
@@ -32,6 +35,10 @@ class WaniKani(object):
         Numerous.update_value(5850886773862194952, info['reviews_available'])
         if info['reviews_available'] == 0:
             Numerous.update_value(8834312823618892099, info['next_review_date'])
+
+            countdown = Countdown.objects.filter(label='Next Review').first()
+            countdown.created = timezone.make_aware(datetime.datetime.fromtimestamp(info['next_review_date']))
+            countdown.save()
 
         yield now, 'wanikani.reviews', info['reviews_available']
         yield now, 'wanikani.lessons', info['lessons_available']
