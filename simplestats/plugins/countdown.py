@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class Countdown(object):
     def collect(self):
         now = timezone.localtime(timezone.now())
-        for countdown in simplestats.models.Countdown.objects.filter(calendar__isnull=False):
+        for countdown in simplestats.models.Countdown.objects.exclude(calendar__exact=''):
             next_event = None
 
             response = requests.get(countdown.calendar)
