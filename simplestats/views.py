@@ -6,6 +6,7 @@ import operator
 import simplestats.models
 
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View
 
@@ -45,4 +46,20 @@ class WaniKani(View):
 
         return render(request, 'simplestats/chart/annotation.html', {
             'dataTable': json.dumps([[str(_('Datetime')), 'Reviews', 'Lessons']] + list(get_stats()))
+        })
+
+
+class Dashboard(View):
+    '''
+    Simple dashboard to show important views
+    '''
+    def get(self, request):
+        def charts(request):
+            for countdown in simplestats.models.Countdown.objects.all():
+                yield render_to_string('simplestats/widget/countdown.html', {
+                    'countdown': countdown,
+                })
+
+        return render(request, 'simplestats/dashboard.html', {
+            'charts': charts(request)
         })

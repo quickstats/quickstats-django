@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Stat(models.Model):
@@ -11,3 +12,6 @@ class Countdown(models.Model):
     created = models.DateTimeField()
     label = models.CharField(max_length=36)
     calendar = models.URLField(null=True)
+
+    def remaining(self):
+        return self.created - timezone.localtime(timezone.now())

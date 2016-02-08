@@ -1,0 +1,9 @@
+{% extends "simplestats/base.html" %}
+
+{% block content %}
+<div class="row">
+{% for chart in charts %}
+{{ chart }}
+{% endfor %}
+</div>
+{% endblock %}

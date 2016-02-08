@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^usd/jpy/$', simplestats.views.USDJPY.as_view(), name='usd_jpy'),
     url(r'^wanikani/$', simplestats.views.WaniKani.as_view(), name='wanikani'),
     url(r'^weather/fukuoka/temperature/$', simplestats.views.Temperature.as_view(), name='weather_fukuoka_temperature'),
+    url(r'^dashboard$', simplestats.views.Dashboard.as_view(), name='dashboard'),
 ]
 
 
