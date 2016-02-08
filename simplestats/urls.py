@@ -16,6 +16,7 @@ urlpatterns = [
 def subnav(namespace, request):
     return {
         _('Charts'): [
+            (_('Dashboard'), reverse(namespace + ':dashboard')),
             (_('USD/JPY'), reverse(namespace + ':usd_jpy')),
             (_('Temperature'), reverse(namespace + ':weather_fukuoka_temperature')),
             (_('Wani Kani'), reverse(namespace + ':wanikani')),
