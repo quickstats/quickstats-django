@@ -14,7 +14,7 @@ class Command(BaseCommand):
             for time in TIME_PERIODS:
                 self.stdout.write(time)
                 for entry in working_set.iter_entry_points('simplestats.{0}'.format(time)):
-                    self.stdout.write(str(entry))
+                    self.stdout.write('\t' + str(entry))
             return
 
         for entry in working_set.iter_entry_points('simplestats.{0}'.format(options['group'])):
