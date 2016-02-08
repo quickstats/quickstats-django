@@ -6,6 +6,8 @@ class Stat(models.Model):
     key = models.TextField()
     value = models.FloatField()
 
+
 class Countdown(models.Model):
     created = models.DateTimeField()
-    key = models.CharField(max_length=36)
+    label = models.CharField(max_length=36)
+    calendar = models.URLField(null=True)

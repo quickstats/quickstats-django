@@ -3,11 +3,12 @@ import simplestats.signals
 
 from django.contrib import admin
 
-
+@admin.register(simplestats.models.Stat)
 class StatAdmin(admin.ModelAdmin):
     list_display = ('created', 'key', 'value')
     list_filter = ('key',)
     date_hierarchy = 'created'
 
-admin.site.register(simplestats.models.Stat, StatAdmin)
-admin.site.register(simplestats.models.Countdown)
+@admin.register(simplestats.models.Countdown)
+class CountdownAdmin(admin.ModelAdmin):
+    list_display = ('label', 'created', 'calendar')
