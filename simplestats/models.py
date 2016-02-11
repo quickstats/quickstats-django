@@ -15,3 +15,9 @@ class Countdown(models.Model):
 
     def remaining(self):
         return self.created - timezone.localtime(timezone.now())
+
+
+class Chart(models.Model):
+    created = models.DateTimeField()
+    label = models.CharField(max_length=36)
+    keys = models.CharField(max_length=36)

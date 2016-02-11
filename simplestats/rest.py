@@ -4,8 +4,8 @@ from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
                                            TokenAuthentication)
 
-from simplestats.models import Countdown
-from simplestats.serializers import CountdownSerializer
+from simplestats.models import Chart, Countdown
+from simplestats.serializers import ChartSerializer, CountdownSerializer
 
 
 class CountdownViewSet(viewsets.ModelViewSet):
@@ -22,3 +22,9 @@ class CountdownViewSet(viewsets.ModelViewSet):
     #     Return Favorites owned by current user only
     #     """
     #     return Countdown.objects.filter(owner=self.request.user)
+
+
+class ChartViewSet(viewsets.ModelViewSet):
+    queryset = Chart.objects.all()
+    serializer_class = ChartSerializer
+    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)

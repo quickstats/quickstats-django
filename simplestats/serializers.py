@@ -9,3 +9,11 @@ class CountdownSerializer(serializers.ModelSerializer):
     class Meta:
         model = Countdown
         fields = ('created', 'label')  # , 'calendar', 'owner')
+
+
+class ChartSerializer(serializers.ModelSerializer):
+    #owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Chart
+        fields = ('created', 'label')  # , 'calendar', 'owner')
