@@ -14,17 +14,20 @@ class CountdownViewSet(viewsets.ModelViewSet):
     #permission_classes = (IsOwner,)
     authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
 
-    # def perform_create(self, serializer):
-    #     serializer.save(owner=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
-    # def get_queryset(self):
-    #     """
-    #     Return Favorites owned by current user only
-    #     """
-    #     return Countdown.objects.filter(owner=self.request.user)
+    def get_queryset(self):
+        return Countdown.objects.filter(owner=self.request.user)
 
 
 class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.all()
     serializer_class = ChartSerializer
     authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def get_queryset(self):
+        return Chart.objects.filter(owner=self.request.user)

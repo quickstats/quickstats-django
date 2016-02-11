@@ -13,9 +13,9 @@ class StatAdmin(admin.ModelAdmin):
 
 @admin.register(simplestats.models.Countdown)
 class CountdownAdmin(admin.ModelAdmin):
-    list_display = ('label', 'created', 'calendar')
+    list_display = ('label', 'created', 'owner', 'calendar')
 
 
 @admin.register(simplestats.models.Chart)
 class ChartAdmin(admin.ModelAdmin):
-    list_display = ('label', 'created', 'keys')
+    list_display = ('label', 'created', 'owner', 'keys')
