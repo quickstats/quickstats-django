@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from simplestats.models import Countdown
+from simplestats.models import Chart, Countdown
 
 
 class CountdownSerializer(serializers.ModelSerializer):
