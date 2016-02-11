@@ -33,6 +33,9 @@ setup(
         'powerplug.apps': ['stats = simplestats'],
         'powerplug.subnav': ['stats = simplestats.urls:subnav'],
         'powerplug.urls': ['stats = simplestats.urls'],
+        'powerplug.rest': [
+            'countdown = simplestats.rest:CountdownViewSet',
+        ],
         'simplestats.quarterhour': [
             'countdown = simplestats.plugins.countdown:Countdown',
             'wanikani = simplestats.plugins.wanikani:WaniKani'
