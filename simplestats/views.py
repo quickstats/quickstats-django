@@ -59,6 +59,10 @@ class Dashboard(View):
                 yield render_to_string('simplestats/widget/countdown.html', {
                     'countdown': countdown,
                 })
+            for chart in simplestats.models.Chart.objects.all():
+                yield render_to_string('simplestats/widget/chart.html', {
+                    'chart': chart,
+                })
 
         return render(request, 'simplestats/dashboard.html', {
             'charts': charts(request)
