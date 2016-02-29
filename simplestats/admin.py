@@ -13,7 +13,8 @@ class StatAdmin(admin.ModelAdmin):
 
 @admin.register(simplestats.models.Countdown)
 class CountdownAdmin(admin.ModelAdmin):
-    list_display = ('label', 'created', 'owner', 'calendar')
+    list_display = ('label', 'created', 'owner', 'public', 'calendar')
+    list_filter = ('owner', 'public',)
 
 
 @admin.register(simplestats.models.Chart)

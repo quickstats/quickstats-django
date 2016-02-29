@@ -20,6 +20,7 @@ class Countdown(models.Model):
     calendar = models.URLField(blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='coutdown', verbose_name=_('owner'))
     meta = JSONField()
+    public = models.BooleanField(default=False)
 
     def remaining(self):
         return self.created - timezone.localtime(timezone.now())
