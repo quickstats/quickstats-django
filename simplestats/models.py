@@ -1,7 +1,9 @@
-from django.utils.translation import ugettext_lazy as _
+import uuid
+
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 
 class Stat(models.Model):
@@ -11,6 +13,7 @@ class Stat(models.Model):
 
 
 class Countdown(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField()
     label = models.CharField(max_length=36)
     calendar = models.URLField(blank=True)
