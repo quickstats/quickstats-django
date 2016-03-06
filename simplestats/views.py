@@ -63,10 +63,12 @@ class WaniKaniBoard(WaniKani):
             'datapoints': []
         }
         graph = {
-            'title': 'WaniKani',
-            'type': 'line',
-            'refreshEveryNSeconds': 120,
-            'datasequences': [reviews, lessons]
+            'graph': {
+                'title': 'WaniKani',
+                'type': 'line',
+                'refreshEveryNSeconds': 120,
+                'datasequences': [reviews, lessons]
+                }
         }
         for t, r, l in self.get_stats():
             reviews['datapoints'].append({'title': t, 'value': r})
