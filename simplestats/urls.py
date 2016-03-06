@@ -8,9 +8,13 @@ import simplestats.views
 urlpatterns = [
     url(r'^usd/jpy/$', simplestats.views.USDJPY.as_view(), name='usd_jpy'),
     url(r'^wanikani/$', simplestats.views.WaniKani.as_view(), name='wanikani'),
-    url(r'^wanikani.board$', simplestats.views.WaniKaniBoard.as_view(), name='wanikani-board'),
+
     url(r'^weather/fukuoka/temperature/$', simplestats.views.Temperature.as_view(), name='weather_fukuoka_temperature'),
     url(r'^dashboard$', simplestats.views.Dashboard.as_view(), name='dashboard'),
+
+    url(r'^board/usd/jpy/$', simplestats.views.USDJPYBoard.as_view(), name='board_usd_jpy'),
+    url(r'^board/wanikani/$', simplestats.views.WaniKaniBoard.as_view(), name='board_wanikani'),
+    url(r'^board/weather/fukuoka/temperature/$', simplestats.views.TemperatureBoard.as_view(), name='board_weather_fukuoka_temperature'),
 ]
 
 

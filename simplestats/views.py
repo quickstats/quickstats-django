@@ -22,16 +22,41 @@ class SimpleView(View):
             'dataTable': json.dumps([[str(label) for label in self.labels]] + dataTable)
         })
 
+class SimpleBoard(View):
+    def get(self, request):
+        datapoints = []
+        for stat in simplestats.models.Stat.objects.order_by('created').filter(key=self.filter_key).filter(created__gte=datetime.datetime.now() - self.time_delta):
+            datapoints.append({'title': stat.created.strftime("%Y-%m-%d %H:%M"), 'value': stat.value})
+        return JsonResponse({
+            'graph': {
+                'title': 'WaniKani',
+                'type': 'line',
+                'datasequences': [{
+                    'title': self.label,
+                    'datapoints': datapoints
+                }]
+            }
+        })
 
 class USDJPY(SimpleView):
     filter_key = 'currency.USD.JPY'
     labels = [_('Datetime'), 'JPY']
     time_delta = datetime.timedelta(days=30)
 
+class USDJPYBoard(SimpleBoard):
+    filter_key = 'currency.USD.JPY'
+    label = 'USD/JPY'
+    time_delta = datetime.timedelta(days=30)
+
 
 class Temperature(SimpleView):
     filter_key = 'weather.fukuoka.temperature'
     labels = [_('Datetime'), _('Temperature')]
+    time_delta = datetime.timedelta(days=30)
+
+class TemperatureBoard(SimpleBoard):
+    filter_key = 'weather.fukuoka.temperature'
+    label =  'Temperature'
     time_delta = datetime.timedelta(days=30)
 
 
