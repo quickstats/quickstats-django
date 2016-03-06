@@ -5,6 +5,7 @@ import operator
 
 import simplestats.models
 
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -35,19 +36,42 @@ class Temperature(SimpleView):
 
 
 class WaniKani(View):
-    def get(self, request):
-        def get_stats():
-            stats = collections.defaultdict(lambda: collections.defaultdict(int))
-            startdate = datetime.datetime.now() - datetime.timedelta(days=7)
-            for stat in simplestats.models.Stat.objects.order_by('created').filter(key__in=['wanikani.reviews', 'wanikani.lessons']).filter(created__gte=startdate):
-                stats[stat.created][stat.key] = stat.value
-            for date, stat in sorted(stats.items()):
-                yield [date.strftime("%Y-%m-%d %H:%M"), stat['wanikani.reviews'], stat['wanikani.lessons']]
+    def get_stats(self):
+        stats = collections.defaultdict(lambda: collections.defaultdict(int))
+        startdate = datetime.datetime.now() - datetime.timedelta(days=7)
+        for stat in simplestats.models.Stat.objects.order_by('created').filter(key__in=['wanikani.reviews', 'wanikani.lessons']).filter(created__gte=startdate):
+            stats[stat.created][stat.key] = stat.value
+        for date, stat in sorted(stats.items()):
+            yield [date.strftime("%Y-%m-%d %H:%M"), stat['wanikani.reviews'], stat['wanikani.lessons']]
 
+    def get(self, request):
         return render(request, 'simplestats/chart/annotation.html', {
-            'dataTable': json.dumps([[str(_('Datetime')), 'Reviews', 'Lessons']] + list(get_stats()))
+            'dataTable': json.dumps([[str(_('Datetime')), 'Reviews', 'Lessons']] + list(self.get_stats()))
         })
 
+
+class WaniKaniBoard(WaniKani):
+    def get(self, request):
+        reviews = {
+            'title': 'WaniKani Reviews',
+            'color': 'red',
+            'datapoints': []
+        }
+        lessons = {
+            'title': 'Lessons',
+            'color': 'purple',
+            'datapoints': []
+        }
+        graph = {
+            'title': 'WaniKani',
+            'type': 'line',
+            'refreshEveryNSeconds': 120,
+            'datasequences': [reviews, lessons]
+        }
+        for t, r, l in self.get_stats():
+            reviews['datapoints'].append({'title': t, 'value': r})
+            lessons['datapoints'].append({'title': t, 'value': l})
+        return JsonResponse(graph)
 
 class Dashboard(View):
     '''
