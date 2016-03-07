@@ -29,7 +29,7 @@ class SimpleBoard(View):
             datapoints.append({'title': stat.created.strftime("%Y-%m-%d %H:%M"), 'value': stat.value})
         return JsonResponse({
             'graph': {
-                'title': 'WaniKani',
+                'title': self.label,
                 'type': 'line',
                 'datasequences': [{
                     'title': self.label,
@@ -78,7 +78,7 @@ class WaniKani(View):
 class WaniKaniBoard(WaniKani):
     def get(self, request):
         reviews = {
-            'title': 'WaniKani Reviews',
+            'title': 'Reviews',
             'color': 'red',
             'datapoints': []
         }
