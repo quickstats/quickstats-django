@@ -92,8 +92,10 @@ class WaniKaniBoard(WaniKani):
                 'title': 'WaniKani',
                 'type': 'line',
                 'refreshEveryNSeconds': 120,
-                'datasequences': [reviews, lessons]
-                }
+                # 'datasequences': [reviews, lessons]
+                # Temporarily remove lessons for now
+                'datasequences': [reviews]
+            }
         }
         for t, r, l in self.get_stats():
             reviews['datapoints'].append({'title': t, 'value': r})
