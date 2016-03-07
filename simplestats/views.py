@@ -46,7 +46,7 @@ class USDJPY(SimpleView):
 class USDJPYBoard(SimpleBoard):
     filter_key = 'currency.USD.JPY'
     label = 'USD/JPY'
-    time_delta = datetime.timedelta(days=30)
+    time_delta = datetime.timedelta(days=7)
 
 
 class Temperature(SimpleView):
@@ -57,7 +57,7 @@ class Temperature(SimpleView):
 class TemperatureBoard(SimpleBoard):
     filter_key = 'weather.fukuoka.temperature'
     label =  'Temperature'
-    time_delta = datetime.timedelta(days=30)
+    time_delta = datetime.timedelta(days=7)
 
 
 class WaniKani(View):
