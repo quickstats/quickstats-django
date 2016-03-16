@@ -23,9 +23,10 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
     install_requires=[
-        'djangorestframework',
         'djangorestframework-word-filter',
+        'djangorestframework',
         'icalendar',
+        'Pillow',
         'pytz',
         'requests',
     ],

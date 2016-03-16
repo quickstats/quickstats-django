@@ -8,8 +8,8 @@ class CountdownSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Countdown
-        fields = ('id', 'created', 'label', 'owner')  # , 'calendar')
-        read_only_fields = ('id',)
+        fields = ('id', 'created', 'label', 'owner', 'icon')  # , 'calendar')
+        read_only_fields = ('id', 'icon',)
 
 
 class ChartSerializer(serializers.ModelSerializer):

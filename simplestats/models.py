@@ -21,6 +21,7 @@ class Countdown(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='coutdown', verbose_name=_('owner'))
     meta = JSONField()
     public = models.BooleanField(default=False)
+    icon = models.ImageField(upload_to='simplestats/countdown', blank=True)
 
     def remaining(self):
         return self.created - timezone.localtime(timezone.now())
