@@ -2,6 +2,7 @@ import simplestats.models
 import simplestats.signals
 
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
 
 @admin.register(simplestats.models.Stat)
@@ -13,7 +14,17 @@ class StatAdmin(admin.ModelAdmin):
 
 @admin.register(simplestats.models.Countdown)
 class CountdownAdmin(admin.ModelAdmin):
-    list_display = ('label', 'created', 'owner', 'public', 'calendar')
+    def _icon(self, obj):
+        return True if obj.icon else False
+    _icon.short_description = _('icon')
+    _icon.boolean = True
+
+    def _calendar(self, obj):
+        return True if obj.calendar else False
+    _calendar.short_description = _('calendar')
+    _calendar.boolean = True
+
+    list_display = ('label', 'created', 'owner', 'public', '_calendar', '_icon')
     list_filter = ('owner', 'public',)
 
 
