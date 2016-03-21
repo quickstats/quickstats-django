@@ -40,3 +40,11 @@ class Chart(models.Model):
     meta = JSONField()
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to='simplestats/countdown', blank=True)
+
+    def get_meta(self, key, default=None):
+        try:
+            return self.meta[key]
+        except KeyError:
+            return default
+        except TypeError:
+            return default

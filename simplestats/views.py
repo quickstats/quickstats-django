@@ -32,13 +32,14 @@ class SimpleBoard(View):
 
 
 class RenderChart(View):
-    time_delta = datetime.timedelta(days=7)
-
     def get(self, request, uuid):
         chart = simplestats.models.Chart.objects.get(id=uuid)
         labels = [_('Datetime'), chart.label]
         dataTable = []
-        for stat in simplestats.models.Stat.objects.order_by('created').filter(key=chart.keys).filter(created__gte=datetime.datetime.now() - self.time_delta):
+
+        time_delta = datetime.timedelta(days=chart.get_meta('time_delta', 7))
+
+        for stat in simplestats.models.Stat.objects.order_by('created').filter(key=chart.keys).filter(created__gte=datetime.datetime.now() - time_delta):
             dataTable.append([stat.created.strftime("%Y-%m-%d %H:%M"), stat.value])
         return render(request, 'simplestats/chart/simple.html', {
             'dataTable': json.dumps([[str(_label) for _label in labels]] + dataTable)
