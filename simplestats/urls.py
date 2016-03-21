@@ -16,7 +16,7 @@ urlpatterns = [
 
 def subnav(namespace, request):
     def charts(namespace, request):
-        for chart in simplestats.models.Chart.objects.filter(owner=request.user):
+        for chart in simplestats.models.Chart.objects.filter(owner=request.user.id):
             yield chart.label, reverse(namespace + ':chart', kwargs={'uuid': str(chart.id)})
     return {
         _('Charts'): list(charts(namespace, request))
