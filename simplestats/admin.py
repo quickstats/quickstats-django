@@ -30,4 +30,9 @@ class CountdownAdmin(admin.ModelAdmin):
 
 @admin.register(simplestats.models.Chart)
 class ChartAdmin(admin.ModelAdmin):
-    list_display = ('label', 'created', 'owner', 'keys')
+    def _icon(self, obj):
+        return True if obj.icon else False
+    _icon.short_description = _('icon')
+    _icon.boolean = True
+
+    list_display = ('label', 'created', 'owner', 'keys', 'public', '_icon')

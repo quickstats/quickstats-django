@@ -32,7 +32,11 @@ class Countdown(models.Model):
 
 
 class Chart(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField()
     label = models.CharField(max_length=36)
     keys = models.CharField(max_length=36)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'))
+    meta = JSONField()
+    public = models.BooleanField(default=False)
+    icon = models.ImageField(upload_to='simplestats/countdown', blank=True)
