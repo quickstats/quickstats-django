@@ -13,24 +13,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View
 
-
-class SimpleBoard(View):
-    def get(self, request):
-        datapoints = []
-        for stat in simplestats.models.Stat.objects.order_by('created').filter(key=self.filter_key).filter(created__gte=datetime.datetime.now() - self.time_delta):
-            datapoints.append({'title': stat.created.strftime("%Y-%m-%d %H:%M"), 'value': stat.value})
-        return JsonResponse({
-            'graph': {
-                'title': self.label,
-                'type': 'line',
-                'datasequences': [{
-                    'title': self.label,
-                    'datapoints': datapoints
-                }]
-            }
-        })
-
-
 class RenderChart(View):
     def get(self, request, uuid):
         chart = simplestats.models.Chart.objects.get(id=uuid)
@@ -42,21 +24,32 @@ class RenderChart(View):
         for stat in simplestats.models.Stat.objects.order_by('created').filter(key=chart.keys).filter(created__gte=datetime.datetime.now() - time_delta):
             dataTable.append([stat.created.strftime("%Y-%m-%d %H:%M"), stat.value])
         return render(request, 'simplestats/chart/simple.html', {
-            'dataTable': json.dumps([[str(_label) for _label in labels]] + dataTable)
+            'chart': chart,
+            'dataTable': json.dumps([[str(_label) for _label in labels]] + dataTable),
+            'panic_board': request.build_absolute_uri(reverse('stats:board', kwargs={'uuid': uuid})),
         })
 
+class RenderBoard(View):
+    def get(self, request, uuid):
+        chart = simplestats.models.Chart.objects.get(id=uuid)
+        labels = [_('Datetime'), chart.label]
+        dataTable = []
 
-class USDJPYBoard(SimpleBoard):
-    filter_key = 'currency.USD.JPY'
-    label = 'USD/JPY'
-    time_delta = datetime.timedelta(days=7)
+        time_delta = datetime.timedelta(days=chart.get_meta('time_delta', 7))
 
-
-class TemperatureBoard(SimpleBoard):
-    filter_key = 'weather.fukuoka.temperature'
-    label =  'Temperature'
-    time_delta = datetime.timedelta(days=7)
-
+        datapoints = []
+        for stat in simplestats.models.Stat.objects.order_by('created').filter(key=chart.keys).filter(created__gte=datetime.datetime.now() - time_delta):
+            datapoints.append({'title': stat.created.strftime("%Y-%m-%d %H:%M"), 'value': stat.value})
+        return JsonResponse({
+            'graph': {
+                'title': chart.label,
+                'type': 'line',
+                'datasequences': [{
+                    'title': chart.label,
+                    'datapoints': datapoints
+                }]
+            }
+        })
 
 class WaniKani(View):
     def get_stats(self):

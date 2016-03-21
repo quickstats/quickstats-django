@@ -7,12 +7,10 @@ from django.utils.translation import ugettext_lazy as _
 
 urlpatterns = [
     url(r'^chart/(?P<uuid>.*)$', simplestats.views.RenderChart.as_view(), name='chart'),
+    url(r'^board/(?P<uuid>.*)$', simplestats.views.RenderBoard.as_view(), name='board'),
+
     url(r'^dashboard$', simplestats.views.Dashboard.as_view(), name='dashboard'),
     url(r'^feed$', simplestats.views.LatestEntriesFeed(), name='feed'),
-
-    url(r'^board/usd/jpy/$', simplestats.views.USDJPYBoard.as_view(), name='board_usd_jpy'),
-    url(r'^board/wanikani/$', simplestats.views.WaniKaniBoard.as_view(), name='board_wanikani'),
-    url(r'^board/weather/fukuoka/temperature/$', simplestats.views.TemperatureBoard.as_view(), name='board_weather_fukuoka_temperature'),
 ]
 
 

@@ -16,4 +16,5 @@
 {% endblock %}
 {% block content %}
     <div id="chart_div" style="width:800px; height:400px">Loading...</div>
+    <a href="panicboard://?url={{ panic_board|urlencode:"" }}&panel=graph&sourceDisplayName={{ chart.label }}">Panic Board</a>
 {% endblock %}
