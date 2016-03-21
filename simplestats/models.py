@@ -13,6 +13,7 @@ class Stat(models.Model):
     value = models.FloatField()
 
 
+
 class Countdown(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField()
@@ -25,6 +26,9 @@ class Countdown(models.Model):
 
     def remaining(self):
         return self.created - timezone.localtime(timezone.now())
+
+    def get_absolute_url(self):
+        return ''
 
 
 class Chart(models.Model):
