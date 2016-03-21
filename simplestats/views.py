@@ -14,16 +14,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View
 
 
-class SimpleView(View):
-    def get(self, request):
-        dataTable = []
-        for stat in simplestats.models.Stat.objects.order_by('created').filter(key=self.filter_key).filter(created__gte=datetime.datetime.now() - self.time_delta):
-            dataTable.append([stat.created.strftime("%Y-%m-%d %H:%M"), stat.value])
-
-        return render(request, 'simplestats/chart/simple.html', {
-            'dataTable': json.dumps([[str(label) for label in self.labels]] + dataTable)
-        })
-
 class SimpleBoard(View):
     def get(self, request):
         datapoints = []
@@ -40,21 +30,26 @@ class SimpleBoard(View):
             }
         })
 
-class USDJPY(SimpleView):
-    filter_key = 'currency.USD.JPY'
-    labels = [_('Datetime'), 'JPY']
-    time_delta = datetime.timedelta(days=30)
+
+class RenderChart(View):
+    time_delta = datetime.timedelta(days=7)
+
+    def get(self, request, uuid):
+        chart = simplestats.models.Chart.objects.get(id=uuid)
+        labels = [_('Datetime'), chart.label]
+        dataTable = []
+        for stat in simplestats.models.Stat.objects.order_by('created').filter(key=chart.keys).filter(created__gte=datetime.datetime.now() - self.time_delta):
+            dataTable.append([stat.created.strftime("%Y-%m-%d %H:%M"), stat.value])
+        return render(request, 'simplestats/chart/simple.html', {
+            'dataTable': json.dumps([[str(_label) for _label in labels]] + dataTable)
+        })
+
 
 class USDJPYBoard(SimpleBoard):
     filter_key = 'currency.USD.JPY'
     label = 'USD/JPY'
     time_delta = datetime.timedelta(days=7)
 
-
-class Temperature(SimpleView):
-    filter_key = 'weather.fukuoka.temperature'
-    labels = [_('Datetime'), _('Temperature')]
-    time_delta = datetime.timedelta(days=30)
 
 class TemperatureBoard(SimpleBoard):
     filter_key = 'weather.fukuoka.temperature'

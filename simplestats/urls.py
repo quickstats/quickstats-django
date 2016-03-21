@@ -6,10 +6,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 urlpatterns = [
-    url(r'^usd/jpy/$', simplestats.views.USDJPY.as_view(), name='usd_jpy'),
-    url(r'^wanikani/$', simplestats.views.WaniKani.as_view(), name='wanikani'),
-
-    url(r'^weather/fukuoka/temperature/$', simplestats.views.Temperature.as_view(), name='weather_fukuoka_temperature'),
+    url(r'^chart/(?P<uuid>.*)$', simplestats.views.RenderChart.as_view(), name='chart'),
     url(r'^dashboard$', simplestats.views.Dashboard.as_view(), name='dashboard'),
     url(r'^feed$', simplestats.views.LatestEntriesFeed(), name='feed'),
 
@@ -20,11 +17,9 @@ urlpatterns = [
 
 
 def subnav(namespace, request):
+    def charts(namespace, request):
+        for chart in simplestats.models.Chart.objects.filter(owner=request.user):
+            yield chart.label, reverse(namespace + ':chart', kwargs={'uuid': str(chart.id)})
     return {
-        _('Charts'): [
-            (_('Dashboard'), reverse(namespace + ':dashboard')),
-            (_('USD/JPY'), reverse(namespace + ':usd_jpy')),
-            (_('Temperature'), reverse(namespace + ':weather_fukuoka_temperature')),
-            (_('Wani Kani'), reverse(namespace + ':wanikani')),
-        ]
+        _('Charts'): list(charts(namespace, request))
     }
