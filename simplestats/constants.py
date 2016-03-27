@@ -1,1 +1,8 @@
-TIME_PERIODS = ['quarterhour', 'hourly', 'daily', 'monthly', 'yearly']
+TIME_PERIODS = [
+    'minutely',
+    'quarterhour',
+    'hourly',
+    'daily',
+    'monthly',
+    'yearly',
+]
