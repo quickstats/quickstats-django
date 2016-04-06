@@ -18,24 +18,29 @@ class Countdown(object):
 
             response = requests.get(countdown.calendar)
             calendar = icalendar.Calendar.from_ical(response.text)
+            if 'X-WR-CALNAME' in calendar:
+                logger.info('Reading calendar: %s', calendar['X-WR-CALNAME'])
             for component in calendar.subcomponents:
                 # Filter out non events
                 if 'DTSTART' not in component:
-                    continue
-                if 'DTEND' not in component:
+                    logger.debug('No DTSTART: %s', component.get('SUMMARY', component))
                     continue
 
                 # Filter out all day events
                 if not isinstance(component['DTSTART'].dt, datetime.datetime):
+                    logger.debug('Filter out all day event: %s', component['SUMMARY'])
                     continue
                 if component['DTSTART'].dt < now:
+                    logger.debug('Filter out past event: %s', component['SUMMARY'])
                     continue
 
                 if next_event is None:
+                    logger.debug('Setting next to: %s', component['SUMMARY'])
                     next_event = component
                     continue
 
                 if component['DTSTART'].dt < next_event['DTSTART'].dt:
+                    logger.debug('Setting next to: %s', component['SUMMARY'])
                     next_event = component
 
             if next_event:
