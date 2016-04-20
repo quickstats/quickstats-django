@@ -16,13 +16,14 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
-        'Topic :: Internet :: WWW/HTTP',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+        'Topic :: Internet :: WWW/HTTP',
     ],
     install_requires=[
+        'django-filter',
         'djangorestframework-word-filter',
         'djangorestframework',
         'icalendar',
@@ -37,11 +38,12 @@ setup(
         'powerplug.rest': [
             'chart = simplestats.rest:ChartViewSet',
             'countdown = simplestats.rest:CountdownViewSet',
+            'stat = simplestats.rest:StatViewSet',
         ],
         'simplestats.quarterhour': [
             'countdown = simplestats.plugins.countdown:Countdown',
             'wanikani = simplestats.plugins.wanikani:WaniKani'
-            ],
+        ],
         'simplestats.hourly': [
             'countdown = simplestats.plugins.countdown:Countdown',
             'currency = simplestats.plugins.currency:Currency',

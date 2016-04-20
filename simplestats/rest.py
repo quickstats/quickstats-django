@@ -2,10 +2,12 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
                                            TokenAuthentication)
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import DjangoFilterBackend, OrderingFilter
+from rest_framework.permissions import IsAdminUser
 
-from simplestats.models import Chart, Countdown
-from simplestats.serializers import ChartSerializer, CountdownSerializer
+from simplestats.models import Chart, Countdown, Stat
+from simplestats.serializers import (ChartSerializer, CountdownSerializer,
+                                     StatSerializer)
 
 
 class CountdownViewSet(viewsets.ModelViewSet):
@@ -32,3 +34,12 @@ class ChartViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Chart.objects.filter(owner=self.request.user)
+
+
+class StatViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('key',)
+    permission_classes = (IsAdminUser,)
+    queryset = Stat.objects.all()
+    serializer_class = StatSerializer
