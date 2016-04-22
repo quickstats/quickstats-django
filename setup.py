@@ -37,14 +37,13 @@ setup(
         'powerplug.urls': ['stats = simplestats.urls'],
         'powerplug.rest': [
             'chart = simplestats.rest:ChartViewSet',
+            'countdown = simplestats.rest:CountdownViewSet',
             'stat = simplestats.rest:StatViewSet',
         ],
         'simplestats.quarterhour': [
-            'countdown = simplestats.plugins.countdown:Countdown',
             'wanikani = simplestats.plugins.wanikani:WaniKani'
         ],
         'simplestats.hourly': [
-            'countdown = simplestats.plugins.countdown:Countdown',
             'currency = simplestats.plugins.currency:Currency',
         ],
         'simplestats.signals': [
