@@ -37,7 +37,6 @@ setup(
         'powerplug.urls': ['stats = simplestats.urls'],
         'powerplug.rest': [
             'chart = simplestats.rest:ChartViewSet',
-            'countdown = simplestats.rest:CountdownViewSet',
             'stat = simplestats.rest:StatViewSet',
         ],
         'simplestats.quarterhour': [
