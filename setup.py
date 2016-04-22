@@ -46,7 +46,6 @@ setup(
         'simplestats.hourly': [
             'countdown = simplestats.plugins.countdown:Countdown',
             'currency = simplestats.plugins.currency:Currency',
-            'forecast = simplestats.plugins.forecast:ForecastIO',
         ],
         'simplestats.signals': [
             'location = simplestats.signals.location',
