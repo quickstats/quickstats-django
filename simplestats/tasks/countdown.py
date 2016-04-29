@@ -1,6 +1,5 @@
 import datetime
 import logging
-from datetime import timedelta
 
 import icalendar
 from celery.task.base import periodic_task
@@ -13,11 +12,12 @@ from django.utils import timezone
 logger = logging.getLogger(__name__)
 
 
-@periodic_task(run_every=timedelta(minutes=30))
+@periodic_task(run_every=datetime.timedelta(minutes=30))
 def update_calendars():
     now = timezone.localtime(timezone.now())
     for countdown in simplestats.models.Countdown.objects.exclude(calendar__exact=''):
         next_event = None
+        include_all_day = isinstance(countdown.meta, dict) and 'all_day' in countdown.meta
 
         response = requests.get(countdown.calendar)
         calendar = icalendar.Calendar.from_ical(response.text)
@@ -31,8 +31,13 @@ def update_calendars():
 
             # Filter out all day events
             if not isinstance(component['DTSTART'].dt, datetime.datetime):
-                logger.debug('Filter out all day event: %s', component['SUMMARY'])
-                continue
+                if include_all_day:
+                    logger.debug('Converting to midnight date: %s', component['SUMMARY'])
+                    component['DTSTART'] = icalendar.vDatetime(timezone.make_aware(datetime.datetime.combine(component['DTSTART'].dt, datetime.time.min)))
+                else:
+                    logger.debug('Filter out all day event: %s', component['SUMMARY'])
+                    continue
+
             if component['DTSTART'].dt < now:
                 logger.debug('Filter out past event: %s', component['SUMMARY'])
                 continue
