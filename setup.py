@@ -40,9 +40,6 @@ setup(
             'countdown = simplestats.rest:CountdownViewSet',
             'stat = simplestats.rest:StatViewSet',
         ],
-        'simplestats.quarterhour': [
-            'wanikani = simplestats.plugins.wanikani:WaniKani'
-        ],
         'simplestats.hourly': [
             'currency = simplestats.plugins.currency:Currency',
         ],
