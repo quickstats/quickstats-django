@@ -8,10 +8,10 @@ import datetime
 import logging
 import os
 
-import requests
-from celery.task.base import periodic_task
 from celery.schedules import crontab
+from celery.task.base import periodic_task
 
+import simplestats.requests as requests
 from simplestats.models import Stat
 
 logger = logging.getLogger(__name__)
