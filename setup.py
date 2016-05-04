@@ -43,9 +43,5 @@ setup(
         'simplestats.hourly': [
             'currency = simplestats.plugins.currency:Currency',
         ],
-        'simplestats.signals': [
-            'location = simplestats.signals.location',
-            'pomodoro = simplestats.signals.pomodoro',
-        ],
     },
 )
