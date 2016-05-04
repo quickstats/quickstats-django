@@ -40,8 +40,5 @@ setup(
             'countdown = simplestats.rest:CountdownViewSet',
             'stat = simplestats.rest:StatViewSet',
         ],
-        'simplestats.hourly': [
-            'currency = simplestats.plugins.currency:Currency',
-        ],
     },
 )
