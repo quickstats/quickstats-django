@@ -7,7 +7,6 @@ from celery.task.base import periodic_task
 
 import simplestats.requests as requests
 from simplestats.models import Countdown, Stat
-from simplestats.numerous import Numerous
 
 from django.utils import timezone
 
@@ -31,12 +30,7 @@ def collect():
         user = json['user_information']
         info = json['requested_information']
 
-        Numerous.update_value(1518834333051481998, user['level'])
-        Numerous.update_value(7591292017638108494, info['lessons_available'])
-        Numerous.update_value(5850886773862194952, info['reviews_available'])
         if info['reviews_available'] == 0:
-            Numerous.update_value(8834312823618892099, info['next_review_date'])
-
             countdown = Countdown.objects.filter(label='Next Review').first()
             countdown.created = timezone.make_aware(datetime.datetime.fromtimestamp(info['next_review_date']))
             countdown.save()
