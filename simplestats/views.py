@@ -126,4 +126,4 @@ class LatestEntriesFeed(Feed):
         return item.label
 
     def item_description(self, item):
-        return str(item.created)
+        return '{}\n{}'.format(item.created, item.description)

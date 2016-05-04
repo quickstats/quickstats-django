@@ -23,6 +23,7 @@ def update_calendars():
         calendar = icalendar.Calendar.from_ical(response.text)
         if 'X-WR-CALNAME' in calendar:
             logger.info('Reading calendar: %s', calendar['X-WR-CALNAME'])
+            countdown.description = 'Next event in %s' % calendar['X-WR-CALNAME']
         for component in calendar.subcomponents:
             # Filter out non events
             if 'DTSTART' not in component:

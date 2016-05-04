@@ -16,6 +16,7 @@ class Stat(models.Model):
 
 class Countdown(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    description = models.CharField(max_length=128, blank=True)
     created = models.DateTimeField()
     label = models.CharField(max_length=36)
     calendar = models.URLField(blank=True)

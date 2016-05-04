@@ -23,7 +23,7 @@ class CountdownAdmin(admin.ModelAdmin):
     _calendar.short_description = _('calendar')
     _calendar.boolean = True
 
-    list_display = ('label', 'created', 'owner', 'public', '_calendar', '_icon')
+    list_display = ('label', 'description', 'created', 'owner', 'public', '_calendar', '_icon')
     list_filter = ('owner', 'public',)
 
 
