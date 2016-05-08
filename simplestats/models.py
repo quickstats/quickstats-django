@@ -2,15 +2,31 @@ import uuid
 
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
-from django.db import models
+from django.db import models, IntegrityError
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 
 class Stat(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now)
     key = models.TextField()
     value = models.FloatField()
+
+    class Meta:
+        unique_together = (("created", "key"),)
+
+    def insert(created, key, value):
+        try:
+            return Stat.objects.create(
+                created=created,
+                key=key,
+                value=value
+            )
+        except IntegrityError:
+            stat = Stat.objects.get(created=created, key=key)
+            stat.value = value
+            stat.save()
+            return stat
 
 
 
