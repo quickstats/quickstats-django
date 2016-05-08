@@ -15,6 +15,24 @@
 </script>
 {% endblock %}
 {% block content %}
-    <div id="chart_div" style="width:800px; height:400px">Loading...</div>
+<div class="container-fluid">
+    <div class="row">
+        {% if keys %}
+        <div class="col-xs-6 col-md-4">
+            <div class="btn-group-vertical" role="group" aria-label="...">
+            {% for key in keys %}
+                <a href="{% url 'stats:graph' key=key %}" class="text-left btn btn-default" role="button">{{ key }}</a>
+            {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-xs-6 col-md-4">
+            <div id="chart_div" style="width:600px; height:400px">Loading...</div>
+        </div>
+    </div>
+
+    {% if panic_board %}
     <a href="panicboard://?url={{ panic_board|urlencode:"" }}&panel=graph&sourceDisplayName={{ chart.label }}">Panic Board</a>
+    {% endif %}
+</div>
 {% endblock %}

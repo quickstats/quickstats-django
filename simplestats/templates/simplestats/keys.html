@@ -1,0 +1,13 @@
+{% extends "simplestats/base.html" %}
+
+{% block content %}
+<div class="row">
+    <ul>
+{% for key in keys %}
+        <li>
+            <a href="{% url 'stats:graph' key=key %}">{{ key }}</a>
+        </li>
+{% endfor %}
+    </ul>
+</div>
+{% endblock %}

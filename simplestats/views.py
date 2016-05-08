@@ -113,6 +113,29 @@ class Dashboard(View):
         })
 
 
+class KeysList(View):
+    def get(self, request):
+        return render(request, 'simplestats/keys.html', {
+            'keys': simplestats.models.Stat.objects.values_list('key', flat=True).distinct('key').order_by('key')
+        })
+
+
+class Graph(View):
+    '''Show the past 7 days for a single key'''
+    def get(self, request, key):
+        labels = [_('Datetime'), key]
+        dataTable = []
+
+        time_delta = datetime.timedelta(days=7)
+
+        for stat in simplestats.models.Stat.objects.order_by('created').filter(key=key).filter(created__gte=datetime.datetime.now() - time_delta):
+            dataTable.append([stat.created.strftime("%Y-%m-%d %H:%M"), stat.value])
+        return render(request, 'simplestats/chart/simple.html', {
+            'keys': simplestats.models.Stat.objects.values_list('key', flat=True).distinct('key').order_by('key'),
+            'dataTable': json.dumps([[str(_label) for _label in labels]] + dataTable),
+        })
+
+
 class LatestEntriesFeed(Feed):
     title = "Dashboard"
     # TODO: Fix hard coded link
