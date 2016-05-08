@@ -1,10 +1,9 @@
-import collections
 import datetime
 import json
-import operator
 
 import simplestats.models
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.syndication.views import Feed
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
@@ -12,6 +11,7 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View
+
 
 class RenderChart(View):
     def get(self, request, uuid):
@@ -28,6 +28,7 @@ class RenderChart(View):
             'dataTable': json.dumps([[str(_label) for _label in labels]] + dataTable),
             'panic_board': request.build_absolute_uri(reverse('stats:board', kwargs={'uuid': uuid})),
         })
+
 
 class RenderBoard(View):
     def get(self, request, uuid):
@@ -72,14 +73,14 @@ class Dashboard(View):
         })
 
 
-class KeysList(View):
+class KeysList(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'simplestats/keys.html', {
             'keys': simplestats.models.Stat.objects.values_list('key', flat=True).distinct('key').order_by('key')
         })
 
 
-class Graph(View):
+class Graph(LoginRequiredMixin, View):
     '''Show the past 7 days for a single key'''
     def get(self, request, key):
         labels = [_('Datetime'), key]
