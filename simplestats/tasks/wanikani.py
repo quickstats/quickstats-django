@@ -35,6 +35,7 @@ def collect():
     now = datetime.datetime.utcnow()
     url = 'https://www.wanikani.com/api/user/{}/study-queue'.format(API_KEY)
     result = requests.get(url)
+    result.raise_for_status()
     json = result.json()
     user = json['user_information']
     info = json['requested_information']
@@ -69,6 +70,7 @@ def report():
 
     url = 'https://www.wanikani.com/api/user/{}/study-queue'.format(API_KEY)
     result = requests.get(url)
+    result.raise_for_status()
     json = result.json()
     report.name = __name__
     report.text = render_to_string('simplestats/reports/wanikani.txt', json)

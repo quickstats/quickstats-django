@@ -26,6 +26,7 @@ def fukuoka():
         130.3462494
     )
     result = requests.get(url)
+    result.raise_for_status()
     json = result.json()
 
     Stat.objects.create(

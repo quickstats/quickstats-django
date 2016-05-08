@@ -24,6 +24,7 @@ def collect():
         result = requests.get(url, params={
             'app_id': os.environ.get('OPEN_EXCHANGE_RATES')
         })
+        result.raise_for_status()
         json = result.json()
         Stat.objects.create(
             created=now,
