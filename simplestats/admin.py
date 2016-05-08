@@ -35,3 +35,8 @@ class ChartAdmin(admin.ModelAdmin):
     _icon.boolean = True
 
     list_display = ('label', 'created', 'owner', 'keys', 'public', '_icon')
+
+
+@admin.register(simplestats.models.Report)
+class ReportModel(admin.ModelAdmin):
+    list_display = ('date', 'name', 'text')
