@@ -23,30 +23,30 @@ if os.path.exists(CONFIG_PATH):
 # delay our stats check a bit in case their queue is slow
 @periodic_task(run_every=crontab(minute='5,20,35,50'))
 def collect():
-        now = datetime.datetime.utcnow()
-        URL = 'https://www.wanikani.com/api/user/{}/study-queue'.format(API_KEY)
-        result = requests.get(URL)
-        json = result.json()
-        user = json['user_information']
-        info = json['requested_information']
+    now = datetime.datetime.utcnow()
+    URL = 'https://www.wanikani.com/api/user/{}/study-queue'.format(API_KEY)
+    result = requests.get(URL)
+    json = result.json()
+    user = json['user_information']
+    info = json['requested_information']
 
-        if info['reviews_available'] == 0:
-            countdown = Countdown.objects.filter(label='Next Review').first()
-            countdown.created = timezone.make_aware(datetime.datetime.fromtimestamp(info['next_review_date']))
-            countdown.save()
+    if info['reviews_available'] == 0:
+        countdown = Countdown.objects.filter(label='Next Review').first()
+        countdown.created = timezone.make_aware(datetime.datetime.fromtimestamp(info['next_review_date']))
+        countdown.save()
 
-        Stat.objects.create(
-            created=now,
-            key='wanikani.reviews',
-            value=info['reviews_available']
-        )
-        Stat.objects.create(
-            created=now,
-            key='wanikani.lessons',
-            value=info['lessons_available']
-        )
-        Stat.objects.create(
-            created=now,
-            key='wanikani.level',
-            value=user['level']
-        )
+    Stat.objects.create(
+        created=now,
+        key='wanikani.reviews',
+        value=info['reviews_available']
+    )
+    Stat.objects.create(
+        created=now,
+        key='wanikani.lessons',
+        value=info['lessons_available']
+    )
+    Stat.objects.create(
+        created=now,
+        key='wanikani.level',
+        value=user['level']
+    )
