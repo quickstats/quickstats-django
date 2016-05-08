@@ -51,47 +51,6 @@ class RenderBoard(View):
             }
         })
 
-class WaniKani(View):
-    def get_stats(self):
-        stats = collections.defaultdict(lambda: collections.defaultdict(int))
-        startdate = datetime.datetime.now() - datetime.timedelta(days=7)
-        for stat in simplestats.models.Stat.objects.order_by('created').filter(key__in=['wanikani.reviews', 'wanikani.lessons']).filter(created__gte=startdate):
-            stats[stat.created][stat.key] = stat.value
-        for date, stat in sorted(stats.items()):
-            yield [date.strftime("%Y-%m-%d %H:%M"), stat['wanikani.reviews'], stat['wanikani.lessons']]
-
-    def get(self, request):
-        return render(request, 'simplestats/chart/annotation.html', {
-            'dataTable': json.dumps([[str(_('Datetime')), 'Reviews', 'Lessons']] + list(self.get_stats()))
-        })
-
-
-class WaniKaniBoard(WaniKani):
-    def get(self, request):
-        reviews = {
-            'title': 'Reviews',
-            'color': 'red',
-            'datapoints': []
-        }
-        lessons = {
-            'title': 'Lessons',
-            'color': 'purple',
-            'datapoints': []
-        }
-        graph = {
-            'graph': {
-                'title': 'WaniKani',
-                'type': 'line',
-                'refreshEveryNSeconds': 120,
-                # 'datasequences': [reviews, lessons]
-                # Temporarily remove lessons for now
-                'datasequences': [reviews]
-            }
-        }
-        for t, r, l in self.get_stats():
-            reviews['datapoints'].append({'title': t, 'value': r})
-            lessons['datapoints'].append({'title': t, 'value': l})
-        return JsonResponse(graph)
 
 class Dashboard(View):
     '''
