@@ -86,13 +86,20 @@ class Graph(LoginRequiredMixin, View):
         labels = [_('Datetime'), key]
         dataTable = []
 
-        time_delta = datetime.timedelta(days=7)
+        meta = {m.key: m.value for m in simplestats.models.StatMeta.objects.filter(chart=key)}
+
+        meta['days'] = int(meta['days']) if 'days' in meta else 7
+        meta['divide'] = float(meta['days']) if 'divide' in meta else 1.0
+
+        time_delta = datetime.timedelta(days=meta['days'])
 
         for stat in simplestats.models.Stat.objects.order_by('created').filter(key=key).filter(created__gte=datetime.datetime.now() - time_delta):
-            dataTable.append([stat.created.strftime("%Y-%m-%d %H:%M"), stat.value])
+            dataTable.append([stat.created.strftime("%Y-%m-%d %H:%M"), stat.value / meta['divide']])
+
         return render(request, 'simplestats/chart/simple.html', {
-            'keys': simplestats.models.Stat.objects.values_list('key', flat=True).distinct('key').order_by('key'),
             'dataTable': json.dumps([[str(_label) for _label in labels]] + dataTable),
+            'keys': simplestats.models.Stat.objects.values_list('key', flat=True).distinct('key').order_by('key'),
+            'meta': meta,
         })
 
 

@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class Stat(models.Model):
     created = models.DateTimeField(default=timezone.now)
-    key = models.TextField()
+    key = models.CharField(max_length=64)
     value = models.FloatField()
 
     class Meta:
@@ -28,6 +28,12 @@ class Stat(models.Model):
             stat.save()
             return stat
 
+
+class StatMeta(models.Model):
+    '''Meta information for rendering stats'''
+    chart = models.CharField(max_length=64)
+    key = models.CharField(max_length=64)
+    value = models.CharField(max_length=64)
 
 
 class Countdown(models.Model):

@@ -11,6 +11,12 @@ class StatAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
 
 
+@admin.register(simplestats.models.StatMeta)
+class StatAdmin(admin.ModelAdmin):
+    list_display = ('chart', 'key', 'value')
+    list_filter = ('chart',)
+
+
 @admin.register(simplestats.models.Countdown)
 class CountdownAdmin(admin.ModelAdmin):
     def _icon(self, obj):

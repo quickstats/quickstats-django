@@ -31,6 +31,10 @@
         </div>
     </div>
 
+    {% if meta %}
+    <pre>{{ meta }}</pre>
+    {% endif %}
+
     {% if panic_board %}
     <a href="panicboard://?url={{ panic_board|urlencode:"" }}&panel=graph&sourceDisplayName={{ chart.label }}">Panic Board</a>
     {% endif %}
