@@ -2,6 +2,9 @@
 RescueTime Reports
 
 Reports for https://www.rescuetime.com/
+
+Manage keys: https://www.rescuetime.com/anapi/manage
+API Docs: https://www.rescuetime.com/anapi/setup/documentation
 '''
 import datetime
 import logging
@@ -27,9 +30,12 @@ PRODUCTIVITY = {
     2: 'rescuetime.veryproductive',
 }
 
+CATEGORY = {
+    'Uncategorized': 'rescuetime.uncategorized'
+}
 
 @periodic_task(run_every=crontab(minute=0, hour=0))
-def collect():
+def productivity():
     '''Collect daily stats from RescueTime'''
     response = requests.get('https://www.rescuetime.com/anapi/data', params={
         'key': RESCUE_TIME_KEY,
@@ -49,5 +55,32 @@ def collect():
         Stat.insert(
             created=timezone.make_aware(date),
             key=PRODUCTIVITY[productivity],
+            value=time,
+        )
+
+@periodic_task(run_every=crontab(minute=0, hour=0))
+def category():
+    '''Collect daily stats from RescueTime'''
+    response = requests.get('https://www.rescuetime.com/anapi/data', params={
+        'key': RESCUE_TIME_KEY,
+        'format': 'json',
+        'resolution_time': 'day',
+        'restrict_begin': datetime.date.today() - datetime.timedelta(days=7),
+        'restrict_end': datetime.date.today() - datetime.timedelta(days=1),
+        'perspective': 'interval',
+        'restrict_kind': 'category',
+    })
+
+    response.raise_for_status()
+    data = response.json()
+
+    for date, time, _, category in data['rows']:
+        if category not in CATEGORY:
+            continue
+
+        date = datetime.datetime.strptime(date, '%Y-%m-%dT00:00:00')
+        Stat.insert(
+            created=timezone.make_aware(date),
+            key=CATEGORY[category],
             value=time,
         )
