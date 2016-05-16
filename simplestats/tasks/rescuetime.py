@@ -34,6 +34,7 @@ CATEGORY = {
     'Uncategorized': 'rescuetime.uncategorized'
 }
 
+
 @periodic_task(run_every=crontab(minute=0, hour=0))
 def productivity():
     '''Collect daily stats from RescueTime'''
