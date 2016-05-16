@@ -89,7 +89,7 @@ class Graph(LoginRequiredMixin, View):
         meta = {m.key: m.value for m in simplestats.models.StatMeta.objects.filter(chart=key)}
 
         meta['days'] = int(meta['days']) if 'days' in meta else 7
-        meta['divide'] = float(meta['days']) if 'divide' in meta else 1.0
+        meta['divide'] = float(meta['divide']) if 'divide' in meta else 1.0
 
         time_delta = datetime.timedelta(days=meta['days'])
 
