@@ -4,11 +4,11 @@ import json
 import simplestats.models
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.syndication.views import Feed
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
+
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View
 
@@ -101,19 +101,3 @@ class Graph(LoginRequiredMixin, View):
             'keys': simplestats.models.Stat.objects.values_list('key', flat=True).distinct('key').order_by('key'),
             'meta': meta,
         })
-
-
-class LatestEntriesFeed(Feed):
-    title = "Dashboard"
-    # TODO: Fix hard coded link
-    link = '/stats/feeds/'
-    description = "Updates on changes and additions to police beat central."
-
-    def items(self):
-        return simplestats.models.Countdown.objects.order_by('-created')
-
-    def item_title(self, item):
-        return item.label
-
-    def item_description(self, item):
-        return '{}\n{}'.format(item.created, item.description)

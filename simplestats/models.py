@@ -2,7 +2,8 @@ import uuid
 
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
-from django.db import models, IntegrityError
+from django.core.urlresolvers import reverse
+from django.db import IntegrityError, models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -51,7 +52,7 @@ class Countdown(models.Model):
         return self.created - timezone.localtime(timezone.now())
 
     def get_absolute_url(self):
-        return ''
+        return reverse('api:countdown-detail', args=[self.pk])
 
 
 class Chart(models.Model):

@@ -1,3 +1,4 @@
+import simplestats.feed
 import simplestats.views
 
 from django.conf.urls import url
@@ -11,7 +12,7 @@ urlpatterns = [
     url(r'^board/(?P<uuid>.*)$', simplestats.views.RenderBoard.as_view(), name='board'),
 
     url(r'^dashboard$', simplestats.views.Dashboard.as_view(), name='dashboard'),
-    url(r'^feed$', simplestats.views.LatestEntriesFeed(), name='feed'),
+    url(r'^feed$', simplestats.feed.LatestEntriesFeed(), name='feed'),
 ]
 
 
