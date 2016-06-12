@@ -7,28 +7,21 @@ from django.utils.feedgenerator import Atom1Feed
 # See https://github.com/django/django/blob/master/django/contrib/syndication/views.py
 class CountdownFeed(Atom1Feed):
     def add_item_elements(self, handler, item):
-        pass
         super(CountdownFeed, self).add_item_elements(handler, item)
-        # print('item', item)
-        # handler.addQuickElement('itunes:explicit', 'clean')
+        handler.addQuickElement('embed:icon', str(item['icon']))
 
 
 # See https://github.com/django/django/blob/master/django/utils/feedgenerator.py
 class LatestEntriesFeed(Feed):
-    title = "Dashboard"
-    # TODO: Fix hard coded link
-    link = '/stats/feeds/'
-    description = "Updates on changes and additions to police beat central."
+    description = 'Updates on changes and additions to police beat central.'
+    description_template = 'simplestats/feeds/description.html'
     feed_type = CountdownFeed
+    link = '/stats/feeds/'  # TODO: Fix hard coded link
+    title = 'Dashboard'
+    title_template = 'simplestats/feeds/title.html'
 
     def items(self):
         return simplestats.models.Countdown.objects.order_by('-created')
-
-    def item_title(self, item):
-        return item.label
-
-    def item_description(self, item):
-        return '{}\n{}'.format(item.created, item.description)
 
     def item_updateddate(self, item):
         return item.created
