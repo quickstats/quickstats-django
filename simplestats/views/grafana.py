@@ -23,19 +23,18 @@ class Index(View):
 class Query(View):
     def post(self, request):
         body = json.loads(request.body.decode("utf-8"))
-        #logging.getLogger('django.db.backends').setLevel(logging.DEBUG)
 
         results = []
+
         for target in body['targets']:
             response = {
                 'target': target['target'],
                 'datapoints': []
             }
 
-            for stat in reversed(models.Stat.objects.order_by('-created').filter(key=target['target'])[:24]):
-                response['datapoints'].append([stat.value, int(time.mktime(stat.created.timetuple()))])
-
-            print(response)
+            for stat in reversed(models.Stat.objects.order_by('-created').filter(key=target['target'])[:100]):
+                # Time needs to be in milliseconds
+                response['datapoints'].append([stat.value, time.mktime(stat.created.timetuple()) * 1000])
 
             results.append(response)
         return JsonResponse(results, safe=False)
