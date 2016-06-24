@@ -1,3 +1,4 @@
+import time
 import uuid
 
 from django.conf import settings
@@ -28,6 +29,11 @@ class Stat(models.Model):
             stat.value = value
             stat.save()
             return stat
+
+    @property
+    def created_unix(self):
+        '''Unix timestamp in seconds'''
+        return time.mktime(self.created.timetuple())
 
 
 class StatMeta(models.Model):

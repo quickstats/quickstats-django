@@ -5,7 +5,6 @@ https://grafana.net/plugins/grafana-simple-json-datasource
 '''
 import datetime
 import json
-import time
 
 import simplestats.models as models
 
@@ -43,7 +42,7 @@ class Query(View):
                     .filter(created__gte=start)\
                     .filter(created__lte=end):
                 # Time needs to be in milliseconds
-                response['datapoints'].append([stat.value, time.mktime(stat.created.timetuple()) * 1000])
+                response['datapoints'].append([stat.value, stat.created_unix * 1000])
 
             results.append(response)
         return JsonResponse(results, safe=False)
