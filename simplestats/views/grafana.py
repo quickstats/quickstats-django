@@ -3,6 +3,7 @@ Data source for grafana
 
 https://grafana.net/plugins/grafana-simple-json-datasource
 '''
+import datetime
 import json
 import time
 
@@ -12,6 +13,8 @@ from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
+
+DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
 class Index(View):
@@ -23,6 +26,8 @@ class Index(View):
 class Query(View):
     def post(self, request):
         body = json.loads(request.body.decode("utf-8"))
+        start = datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT)
+        end = datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT)
 
         results = []
 
@@ -32,7 +37,11 @@ class Query(View):
                 'datapoints': []
             }
 
-            for stat in reversed(models.Stat.objects.order_by('-created').filter(key=target['target'])[:100]):
+            for stat in models.Stat.objects\
+                    .order_by('-created')\
+                    .filter(key=target['target'])\
+                    .filter(created__gte=start)\
+                    .filter(created__lte=end):
                 # Time needs to be in milliseconds
                 response['datapoints'].append([stat.value, time.mktime(stat.created.timetuple()) * 1000])
 
