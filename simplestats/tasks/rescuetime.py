@@ -35,15 +35,17 @@ CATEGORY = {
 }
 
 
-@periodic_task(run_every=crontab(minute=0, hour=0))
+@periodic_task(run_every=crontab(minute=0, hour=1))
 def productivity():
     '''Collect daily stats from RescueTime'''
+    now = timezone.localtime(timezone.now())
+
     response = requests.get('https://www.rescuetime.com/anapi/data', params={
         'key': RESCUE_TIME_KEY,
         'format': 'json',
         'resolution_time': 'day',
-        'restrict_begin': datetime.date.today() - datetime.timedelta(days=7),
-        'restrict_end': datetime.date.today() - datetime.timedelta(days=1),
+        'restrict_begin': now.today() - datetime.timedelta(days=7),
+        'restrict_end': now.today(),
         'perspective': 'interval',
         'restrict_kind': 'productivity',
     })
@@ -59,15 +61,18 @@ def productivity():
             value=time,
         )
 
-@periodic_task(run_every=crontab(minute=0, hour=0))
+
+@periodic_task(run_every=crontab(minute=0, hour=1))
 def category():
     '''Collect daily stats from RescueTime'''
+    now = timezone.localtime(timezone.now())
+
     response = requests.get('https://www.rescuetime.com/anapi/data', params={
         'key': RESCUE_TIME_KEY,
         'format': 'json',
         'resolution_time': 'day',
-        'restrict_begin': datetime.date.today() - datetime.timedelta(days=7),
-        'restrict_end': datetime.date.today() - datetime.timedelta(days=1),
+        'restrict_begin': now.date() - datetime.timedelta(days=7),
+        'restrict_end': now.date(),
         'perspective': 'interval',
         'restrict_kind': 'category',
     })
