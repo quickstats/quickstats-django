@@ -37,7 +37,7 @@ class Query(View):
             }
 
             for stat in models.Stat.objects\
-                    .order_by('-created')\
+                    .order_by('created')\
                     .filter(key=target['target'])\
                     .filter(created__gte=start)\
                     .filter(created__lte=end):
