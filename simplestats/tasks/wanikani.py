@@ -63,6 +63,24 @@ def collect():
 
 
 @periodic_task(run_every=crontab(minute=0, hour=0))
+def progression():
+    now = datetime.datetime.utcnow()
+    url = 'https://www.wanikani.com/api/user/{}/srs-distribution'.format(API_KEY)
+    result = requests.get(url)
+    result.raise_for_status()
+    json = result.json()
+    info = json['requested_information']
+
+    for level in ['apprentice', 'guru', 'master', 'enlighten', 'burned']:
+        for item in ['radicals', 'kanji', 'vocabulary', 'total']:
+            Stat.objects.create(
+                created=now,
+                key='wanikani.{}.{}'.format(level, item),
+                value=info[level][item]
+            )
+
+
+@periodic_task(run_every=crontab(minute=0, hour=0))
 def report():
     '''Generate weekly report'''
     report = Report()
