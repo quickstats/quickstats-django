@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^grafana$', grafana.Index.as_view()),
     url(r'^grafana/query$', grafana.Query.as_view()),
     url(r'^grafana/search$', grafana.Search.as_view()),
+    url(r'^grafana/annotations$', grafana.Annotations.as_view()),
 ]
 
 

@@ -11,6 +11,11 @@ class StatAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
 
 
+@admin.register(simplestats.models.Annotation)
+class AnnotiationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'created', 'tags', 'text')
+
+
 @admin.register(simplestats.models.StatMeta)
 class StatAdmin(admin.ModelAdmin):
     list_display = ('chart', 'key', 'value')

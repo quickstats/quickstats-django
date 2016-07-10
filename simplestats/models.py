@@ -36,6 +36,18 @@ class Stat(models.Model):
         return time.mktime(self.created.timetuple())
 
 
+class Annotation(models.Model):
+    created = models.DateTimeField(default=timezone.now)
+    title = models.CharField(max_length=64)
+    tags = models.CharField(max_length=64)
+    text = models.TextField()
+
+    @property
+    def created_unix(self):
+        '''Unix timestamp in seconds'''
+        return time.mktime(self.created.timetuple())
+
+
 class StatMeta(models.Model):
     '''Meta information for rendering stats'''
     chart = models.CharField(max_length=64)

@@ -7,6 +7,7 @@ import datetime
 import json
 
 import simplestats.models as models
+from django.utils.timezone import make_aware
 
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
@@ -25,8 +26,8 @@ class Index(View):
 class Query(View):
     def post(self, request):
         body = json.loads(request.body.decode("utf-8"))
-        start = datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT)
-        end = datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT)
+        start = make_aware(datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT))
+        end = make_aware(datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT))
 
         results = []
 
@@ -52,3 +53,25 @@ class Query(View):
 class Search(View):
     def post(self, request):
         return JsonResponse(list(models.Stat.objects.values_list('key', flat=True).distinct('key')), safe=False)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class Annotations(View):
+    def post(self, request):
+        body = json.loads(request.body.decode("utf-8"))
+        start = make_aware(datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT))
+        end = make_aware(datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT))
+
+        results = []
+        for annotation in models.Annotation.objects\
+                .order_by('created')\
+                .filter(created__gte=start)\
+                .filter(created__lte=end):
+            results.append({
+                'annotation': body['annotation']['name'],
+                'time': annotation.created_unix * 1000,
+                'title': annotation.title,
+                'tags': annotation.tags,
+                'text': annotation.text,
+                })
+
+        return JsonResponse(results, safe=False)
