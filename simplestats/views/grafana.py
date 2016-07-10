@@ -6,11 +6,13 @@ https://grafana.net/plugins/grafana-simple-json-datasource
 import datetime
 import json
 
+import pytz
+
 import simplestats.models as models
-from django.utils.timezone import make_aware
 
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
+from django.utils.timezone import make_aware
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
@@ -26,8 +28,12 @@ class Index(View):
 class Query(View):
     def post(self, request):
         body = json.loads(request.body.decode("utf-8"))
-        start = make_aware(datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT))
-        end = make_aware(datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT))
+        start = make_aware(
+            datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT),
+            pytz.utc)
+        end = make_aware(
+            datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT),
+            pytz.utc)
 
         results = []
 
@@ -58,8 +64,12 @@ class Search(View):
 class Annotations(View):
     def post(self, request):
         body = json.loads(request.body.decode("utf-8"))
-        start = make_aware(datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT))
-        end = make_aware(datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT))
+        start = make_aware(
+            datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT),
+            pytz.utc)
+        end = make_aware(
+            datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT),
+            pytz.utc)
 
         results = []
         for annotation in models.Annotation.objects\
