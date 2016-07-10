@@ -1,3 +1,3 @@
 Lessons Available: {{ requested_information.lessons_available }}
 Reviews Available: {{ requested_information.reviews_available }}
-Today's Reviews: {{ requested_information.reviews_available_next_day }}
+Tomorrows New Reviews: {{ requested_information.reviews_available_next_day }}
