@@ -7,15 +7,25 @@ of our custom headers and caching in a single place
 
 from __future__ import absolute_import
 
+from functools import wraps
+
 import requests
 
 from simplestats import __version__
 
 USER_AGENT = 'simplestats/%s https://github.com/kfdm/django-simplestats' % __version__
 
-def get(url, *args, **kwargs):
-    if 'headers' not in kwargs:
-        kwargs['headers'] = {}
-    kwargs['headers']['user-agent'] = USER_AGENT
-    response = requests.get(url, *args, **kwargs)
-    return response
+
+def add_args(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            kwargs['headers']['user-agent'] = USER_AGENT
+        except KeyError:
+            kwargs['headers'] = {'user-agent': USER_AGENT}
+        return func(*args, **kwargs)
+    return wrapper
+
+get = add_args(requests.get)
+post = add_args(requests.post)
+put = add_args(requests.put)
