@@ -51,3 +51,7 @@ class ChartAdmin(admin.ModelAdmin):
 @admin.register(simplestats.models.Report)
 class ReportModel(admin.ModelAdmin):
     list_display = ('date', 'name', 'text')
+
+@admin.register(simplestats.models.Token)
+class TokenAdmin(admin.ModelAdmin):
+    list_display = ('id', 'value')

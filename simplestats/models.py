@@ -99,3 +99,8 @@ class Report(models.Model):
     name = models.CharField(max_length=36)
     text = models.TextField(blank=True)
     html = models.TextField(blank=True)
+
+
+class Token(models.Model):
+    id = models.CharField(primary_key=True, max_length=36)
+    value = models.CharField(max_length=64)
