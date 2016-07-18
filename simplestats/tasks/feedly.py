@@ -1,3 +1,9 @@
+'''
+Use the Feedly API to graph count of unread items
+
+https://developer.feedly.com/v3/developer/
+https://developer.feedly.com/v3/streams/
+'''
 import datetime
 from urllib import parse
 
@@ -13,6 +19,7 @@ def unreadcount():
     now = datetime.datetime.utcnow().replace(microsecond=0, second=0)
     user = Token.objects.get(id='feedly_id')
     token = Token.objects.get(id='feedly')
+    # Need to ensure the tag is URL encoded
     tag = parse.quote('user/{}/tag/global.saved'.format(user.value), safe='')
 
     response = requests.get(
