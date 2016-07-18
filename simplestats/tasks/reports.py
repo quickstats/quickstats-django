@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 SPACER = '\n' + '-' * 80 + '\n'
 
 
-@periodic_task(run_every=crontab(minute=0, hour=0))
+@periodic_task(run_every=crontab(minute=0, hour=7))
 def daily_report():
     today = datetime.datetime.utcnow().replace(microsecond=0, second=0)
     # FIXME: Better date handling without -1 day shim
