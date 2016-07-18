@@ -103,4 +103,4 @@ class Report(models.Model):
 
 class Token(models.Model):
     id = models.CharField(primary_key=True, max_length=36)
-    value = models.CharField(max_length=64)
+    value = models.TextField()
