@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 LOCATIONS = [
     (33.5818585, 130.3462494, 'weather.fukuoka.temperature', 'weather.fukuoka.humidity'),
     (35.766667, -78.633333, 'weather.raleigh.temperature', 'weather.raleigh.humidity'),
+    (37.766667, -122.433333, 'weather.sanfrancisco.temperature', 'weather.sanfrancisco.humidity'),
 ]
 
 
