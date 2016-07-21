@@ -10,6 +10,7 @@ import os
 
 from celery.schedules import crontab
 from celery.task.base import periodic_task
+from celery import shared_task
 
 import simplestats.requests as requests
 from simplestats.models import Stat
@@ -23,16 +24,14 @@ LOCATIONS = [
 ]
 
 
-@periodic_task(run_every=crontab(minute=0))
-def collect(*args):
-    if not args:
-        for _args in LOCATIONS:
-            logger.info('Queuing %s', _args)
-            collect.delay(*_args)
-        return
+@periodic_task(run_every=crontab(minute=0, hour=0))
+def scheduled():
+    for args in LOCATIONS:
+        forecast.delay(*args)
 
-    lat, lng, temperature, humidity = args
 
+@shared_task
+def forecast(lat, lng, temperature, humidity):
     logger.info('Collecting %s %s', temperature, humidity)
 
     now = datetime.datetime.utcnow().replace(microsecond=0, second=0)
