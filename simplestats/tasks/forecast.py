@@ -16,14 +16,29 @@ from simplestats.models import Stat
 
 logger = logging.getLogger(__name__)
 
+LOCATIONS = [
+    (33.5818585, 130.3462494, 'weather.fukuoka.temperature', 'weather.fukuoka.humidity'),
+    (35.766667, -78.633333, 'weather.raleigh.temperature', 'weather.raleigh.humidity'),
+]
+
 
 @periodic_task(run_every=crontab(minute=0))
-def fukuoka():
+def collect(*args):
+    if not args:
+        for _args in LOCATIONS:
+            logger.info('Queuing %s', _args)
+            collect.delay(*_args)
+        return
+
+    lat, lng, temperature, humidity = args
+
+    logger.info('Collecting %s %s', temperature, humidity)
+
     now = datetime.datetime.utcnow().replace(microsecond=0, second=0)
     url = 'https://api.forecast.io/forecast/{0}/{1},{2}?units=si'.format(
         os.environ.get('FORECAST_IO'),
-        33.5818585,
-        130.3462494
+        lat,
+        lng,
     )
     result = requests.get(url)
     result.raise_for_status()
@@ -31,37 +46,12 @@ def fukuoka():
 
     Stat.objects.create(
         created=now,
-        key='weather.fukuoka.temperature',
+        key=temperature,
         value=json['currently']['temperature']
     )
 
     Stat.objects.create(
         created=now,
-        key='weather.fukuoka.humidity',
-        value=json['currently']['humidity']
-    )
-
-
-@periodic_task(run_every=crontab(minute=0))
-def raleigh():
-    now = datetime.datetime.utcnow().replace(microsecond=0, second=0)
-    url = 'https://api.forecast.io/forecast/{0}/{1},{2}?units=si'.format(
-        os.environ.get('FORECAST_IO'),
-        35.766667,
-        -78.633333
-    )
-    result = requests.get(url)
-    result.raise_for_status()
-    json = result.json()
-
-    Stat.objects.create(
-        created=now,
-        key='weather.raleigh.temperature',
-        value=json['currently']['temperature']
-    )
-
-    Stat.objects.create(
-        created=now,
-        key='weather.raleigh.humidity',
+        key=humidity,
         value=json['currently']['humidity']
     )
