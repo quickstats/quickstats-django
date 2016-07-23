@@ -67,6 +67,7 @@ class Countdown(models.Model):
     meta = JSONField()
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to='simplestats/countdown', blank=True)
+    more = models.URLField(blank=True)
 
     def remaining(self):
         return self.created - timezone.localtime(timezone.now())
