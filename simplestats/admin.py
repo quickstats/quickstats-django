@@ -41,6 +41,10 @@ class CountdownAdmin(admin.ModelAdmin):
 
 @admin.register(simplestats.models.Chart)
 class ChartAdmin(admin.ModelAdmin):
+    def refresh(self, request, queryset):
+        for chart in queryset:
+            chart.refresh()
+
     def _icon(self, obj):
         return True if obj.icon else False
     _icon.short_description = _('icon')
@@ -49,6 +53,7 @@ class ChartAdmin(admin.ModelAdmin):
     list_display = ('label', 'created', 'owner', 'keys', 'value', 'public',
                     '_icon')
     list_filter = ('owner', 'public',)
+    actions = ['refresh']
 
 
 @admin.register(simplestats.models.Report)

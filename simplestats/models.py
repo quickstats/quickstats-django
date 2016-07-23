@@ -87,6 +87,13 @@ class Chart(models.Model):
     value = models.FloatField()
     more = models.URLField(blank=True)
 
+    def refresh(self, value=None):
+        if value:
+            self.value = value
+        else:
+            latest = Stat.objects.filter(key=self.keys).latest('created')
+            self.value = latest.value
+        self.save()
 
 class Report(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -106,5 +113,4 @@ class Token(models.Model):
 def update_chart_latest(sender, instance, *args, **kwargs):
     latest = Stat.objects.filter(key=instance.key).latest('created')
     for chart in Chart.objects.filter(keys=instance.key):
-        chart.value = latest.value
-        chart.save()
+        chart.refresh(latest.value)
