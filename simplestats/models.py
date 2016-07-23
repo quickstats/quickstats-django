@@ -5,6 +5,8 @@ from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError, models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -79,17 +81,10 @@ class Chart(models.Model):
     label = models.CharField(max_length=36)
     keys = models.CharField(max_length=36)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'))
-    meta = JSONField()
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to='simplestats/countdown', blank=True)
-
-    def get_meta(self, key, default=None):
-        try:
-            return self.meta[key]
-        except KeyError:
-            return default
-        except TypeError:
-            return default
+    value = models.FloatField()
+    more = models.URLField(blank=True)
 
 
 class Report(models.Model):
@@ -104,3 +99,11 @@ class Report(models.Model):
 class Token(models.Model):
     id = models.CharField(primary_key=True, max_length=36)
     value = models.TextField()
+
+
+@receiver(post_save, sender=Stat)
+def update_chart_latest(sender, instance, *args, **kwargs):
+    latest = Stat.objects.filter(key=instance.key).latest('created')
+    for chart in Chart.objects.filter(keys=instance.key):
+        chart.value = latest.value
+        chart.save()

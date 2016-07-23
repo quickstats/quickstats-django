@@ -45,7 +45,7 @@ class ChartAdmin(admin.ModelAdmin):
     _icon.short_description = _('icon')
     _icon.boolean = True
 
-    list_display = ('label', 'created', 'owner', 'keys', 'public', '_icon')
+    list_display = ('label', 'created', 'owner', 'keys', 'value', 'public', '_icon')
 
 
 @admin.register(simplestats.models.Report)
