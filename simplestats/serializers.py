@@ -8,7 +8,7 @@ class CountdownSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Countdown
-        fields = ('id', 'created', 'label', 'owner', 'icon')  # , 'calendar')
+        fields = ('id', 'created', 'label', 'owner', 'icon', 'more')
         read_only_fields = ('id', 'icon',)
 
 
@@ -17,7 +17,8 @@ class ChartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chart
-        fields = ('id', 'created', 'label', 'owner', 'value', 'more')
+        fields = ('id', 'created', 'label', 'owner', 'value', 'icon', 'more')
+        read_only_fields = ('id', 'icon',)
 
 
 class StatSerializer(serializers.ModelSerializer):

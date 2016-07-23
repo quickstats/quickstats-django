@@ -17,7 +17,7 @@ class AnnotiationAdmin(admin.ModelAdmin):
 
 
 @admin.register(simplestats.models.StatMeta)
-class StatAdmin(admin.ModelAdmin):
+class StatMetaAdmin(admin.ModelAdmin):
     list_display = ('chart', 'key', 'value')
     list_filter = ('chart',)
 
@@ -34,7 +34,8 @@ class CountdownAdmin(admin.ModelAdmin):
     _calendar.short_description = _('calendar')
     _calendar.boolean = True
 
-    list_display = ('label', 'description', 'created', 'owner', 'public', '_calendar', '_icon')
+    list_display = ('label', 'description', 'created', 'owner', 'public',
+                    '_calendar', '_icon')
     list_filter = ('owner', 'public',)
 
 
@@ -45,12 +46,15 @@ class ChartAdmin(admin.ModelAdmin):
     _icon.short_description = _('icon')
     _icon.boolean = True
 
-    list_display = ('label', 'created', 'owner', 'keys', 'value', 'public', '_icon')
+    list_display = ('label', 'created', 'owner', 'keys', 'value', 'public',
+                    '_icon')
+    list_filter = ('owner', 'public',)
 
 
 @admin.register(simplestats.models.Report)
 class ReportModel(admin.ModelAdmin):
     list_display = ('date', 'name', 'text')
+
 
 @admin.register(simplestats.models.Token)
 class TokenAdmin(admin.ModelAdmin):
