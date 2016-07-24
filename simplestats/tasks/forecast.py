@@ -24,7 +24,7 @@ LOCATIONS = [
 ]
 
 
-@periodic_task(run_every=crontab(minute=0, hour=0))
+@periodic_task(run_every=crontab(minute=0))
 def scheduled():
     for args in LOCATIONS:
         forecast.delay(*args)
