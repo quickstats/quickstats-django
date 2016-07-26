@@ -1,18 +1,31 @@
 import datetime
-import logging
-import simplestats.requests as requests
-from django.conf import settings
+
+from celery import shared_task
 from celery.schedules import crontab
 from celery.task.base import periodic_task
 
+import simplestats.requests as requests
 from simplestats.models import Stat, Token
 
+from django.conf import settings
 
-logger = logging.getLogger(__name__)
+
+TAGS = [
+    ('_untagged_', 'pocket.count._untagged_'),
+    ('_github', 'pocket.count.github'),
+    ('_apps', 'pocket.count.apps'),
+    ('_hn', 'pocket.count.hn'),
+]
 
 
 @periodic_task(run_every=crontab(minute=0, hour=0))
-def unreadcount():
+def scheduled():
+    for args in TAGS:
+        unreadcount.delay(*args)
+
+
+@shared_task
+def unreadcount(pocket_tag, stat_key):
     now = datetime.datetime.utcnow().replace(microsecond=0, second=0)
     token = Token.objects.get(id='pocket')
 
@@ -24,7 +37,7 @@ def unreadcount():
         json={
             'consumer_key': settings.POCKET_CONSUMER_KEY,
             'access_token': token.value,
-            'tag': '_untagged_',
+            'tag': pocket_tag,
             'state': 'all',
             'detailType': 'simple'
         })
@@ -32,6 +45,6 @@ def unreadcount():
     unread_list = response.json()
     Stat.objects.create(
         created=now,
-        key='pocket.count._untagged_',
+        key=stat_key,
         value=len(unread_list['list'])
     )
