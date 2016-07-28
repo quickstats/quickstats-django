@@ -8,7 +8,7 @@ class CountdownSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Countdown
-        fields = ('id', 'created', 'label', 'owner', 'icon', 'more')
+        fields = ('id', 'created', 'label', 'owner', 'icon', 'more', 'description')
         read_only_fields = ('id', 'icon',)
 
 
