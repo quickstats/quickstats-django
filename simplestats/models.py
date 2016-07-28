@@ -69,8 +69,11 @@ class Countdown(models.Model):
     label = models.CharField(max_length=36)
     calendar = models.URLField(blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='coutdown', verbose_name=_('owner'))
-    meta = JSONField()
+
     public = models.BooleanField(default=False)
+    allday = models.BooleanField(default=False)
+    repeating = models.BooleanField(default=False)
+
     icon = models.ImageField(upload_to='simplestats/countdown', blank=True)
     more = models.URLField(blank=True)
 

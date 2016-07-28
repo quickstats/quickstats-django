@@ -17,13 +17,13 @@ def update_calendars():
     now = timezone.localtime(timezone.now())
     for countdown in simplestats.models.Countdown.objects.exclude(calendar__exact=''):
         next_event = None
-        include_all_day = isinstance(countdown.meta, dict) and 'all_day' in countdown.meta
 
         response = requests.get(countdown.calendar)
         calendar = icalendar.Calendar.from_ical(response.text)
         if 'X-WR-CALNAME' in calendar:
             logger.info('Reading calendar: %s', calendar['X-WR-CALNAME'])
             countdown.description = 'Next event in %s' % calendar['X-WR-CALNAME']
+
         for component in calendar.subcomponents:
             # Filter out non events
             if 'DTSTART' not in component:
@@ -32,7 +32,7 @@ def update_calendars():
 
             # Filter out all day events
             if not isinstance(component['DTSTART'].dt, datetime.datetime):
-                if include_all_day:
+                if countdown.allday:
                     logger.debug('Converting to midnight date: %s', component['SUMMARY'])
                     component['DTSTART'] = icalendar.vDatetime(timezone.make_aware(datetime.datetime.combine(component['DTSTART'].dt, datetime.time.min)))
                 else:
