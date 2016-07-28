@@ -76,7 +76,7 @@ class Dashboard(View):
 class KeysList(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'simplestats/keys.html', {
-            'keys': simplestats.models.Stat.objects.values_list('key', flat=True).distinct('key').order_by('key')
+            'keys': simplestats.models.Stat.unique_keys()
         })
 
 

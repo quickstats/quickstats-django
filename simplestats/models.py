@@ -32,6 +32,11 @@ class Stat(models.Model):
             stat.save()
             return stat
 
+    @classmethod
+    def unique_keys(cls):
+        for key in cls.objects.values_list('key', flat=True).distinct('key').order_by('key'):
+            yield key
+
     @property
     def created_unix(self):
         '''Unix timestamp in seconds'''
@@ -79,8 +84,11 @@ class Countdown(models.Model):
 class Chart(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField()
-    label = models.CharField(max_length=36)
-    keys = models.CharField(max_length=36)
+    label = models.CharField(max_length=64)
+    keys = models.CharField(
+        max_length=36,
+        choices=[(x, x) for x in Stat.unique_keys()]
+    )
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'))
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to='simplestats/countdown', blank=True)
