@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 
 from celery import shared_task
 from celery.schedules import crontab
@@ -16,6 +17,8 @@ TAGS = [
     ('_apps', 'pocket.count.apps'),
     ('_hn', 'pocket.count.hn'),
 ]
+
+logger = logging.getLogger(__name__)
 
 
 @periodic_task(run_every=crontab(minute=0, hour=0))
@@ -64,17 +67,19 @@ def sort():
                 'tags': '_apps',
             })
 
-    response = requests.get(
-        'https://getpocket.com/v3/send',
-        headers={
-            'X-Accept': 'application/json',
-        },
-        params={
-            'consumer_key': settings.POCKET_CONSUMER_KEY,
-            'access_token': token.value,
-            'actions': json.dumps(actions)
-        })
-    response.raise_for_status()
+    if actions:
+        logging.info('Updating %d items', len(actions))
+        response = requests.get(
+            'https://getpocket.com/v3/send',
+            headers={
+                'X-Accept': 'application/json',
+            },
+            params={
+                'consumer_key': settings.POCKET_CONSUMER_KEY,
+                'access_token': token.value,
+                'actions': json.dumps(actions)
+            })
+        response.raise_for_status()
 
 
 @shared_task
