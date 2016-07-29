@@ -13,7 +13,7 @@ from simplestats.models import Stat
 @periodic_task(run_every=crontab(minute=0, hour=0))
 def issue_count():
     now = datetime.datetime.utcnow().replace(microsecond=0, second=0)
-    url = 'https://api.github.com/search/issues?q=user:kfdm+state:open'
+    url = 'https://api.github.com/search/issues?q=user:kfdm+state:open&per_page=100'
     result = requests.get(url, params={
         'accept': 'application/vnd.github.drax-preview+json'
     })
