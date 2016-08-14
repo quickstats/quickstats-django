@@ -6,4 +6,5 @@ import simplestats.tasks.github
 import simplestats.tasks.pocket
 import simplestats.tasks.reports
 import simplestats.tasks.rescuetime
+import simplestats.tasks.utility
 import simplestats.tasks.wanikani
