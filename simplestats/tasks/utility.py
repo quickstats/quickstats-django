@@ -12,4 +12,4 @@ logger = logging.getLogger(__name__)
 
 @periodic_task(run_every=datetime.timedelta(minutes=5))
 def healthchecks():
-    requests.get(os.environ.get('HCHK_IO'))
+    requests.get(os.environ.get('HCHK_IO').strip()).raise_for_status()
