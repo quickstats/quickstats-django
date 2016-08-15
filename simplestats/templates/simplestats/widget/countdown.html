@@ -1,7 +1,9 @@
+{% load static %}
+{% get_media_prefix as MEDIA_PREFIX %}
 <div class="col-sm-4">
     <div class="thumbnail clearfix">
         {% if countdown.icon %}
-        <img src="{{ countdown.icon }}" alt="{{ countdown.label }}" class="pull-right">
+        <img src="{{ MEDIA_PREFIX }}{{ countdown.icon }}" alt="{{ countdown.label }}" class="pull-right">
         {% endif %}
         <div class="caption">
             <div class="glyphicon glyphicon-time" aria-hidden="true">
