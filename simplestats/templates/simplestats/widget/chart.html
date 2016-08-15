@@ -1,8 +1,16 @@
-<div class="col-md-6 panel panel-default">
-    <div class="panel-body">
-        <div class="glyphicon glyphicon-time" aria-hidden="true">
-            <time>{{ chart.created }}</time>
+<div class="col-xs-6 col-md-3">
+    <div class="thumbnail">
+        {% if chart.more %}
+        <a href="{{ chart.more }}" class="badge pull-right">More</a>
+        {% endif %}
+        {% if chart.icon %}
+        <img src="{{ chart.icon }}" alt="{{ chart.label }}" class="pull-left">
+        {% endif %}
+        <div class="caption">
+            <div class="glyphicon glyphicon-equalizer" aria-hidden="true">
+                <div>{{ chart.label }}</div>
+            </div>
+            <div>{{ chart.value }}</div>
         </div>
-        <div>{{ chart.label }}</div>
     </div>
 </div>
