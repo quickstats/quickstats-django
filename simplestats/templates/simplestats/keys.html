@@ -2,9 +2,9 @@
 
 {% block content %}
 <div class="row">
-    <ul>
+    <ul class="list-group row">
 {% for key in keys %}
-        <li>
+        <li class="list-group-item col-xs-4">
             <a href="{% url 'stats:graph' key=key %}">{{ key }}</a>
         </li>
 {% endfor %}
