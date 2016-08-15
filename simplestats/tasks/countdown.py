@@ -43,7 +43,7 @@ def update_calendars():
                     continue
 
             if component['DTSTART'].dt < now:
-                if 'RRULE' not in component:
+                if 'RRULE' not in component or countdown.repeating is False:
                     logger.debug('Filter out past event: %s', component['SUMMARY'])
                     continue
                 else:
