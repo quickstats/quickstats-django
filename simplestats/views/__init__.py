@@ -58,7 +58,7 @@ class Dashboard(View):
     Simple dashboard to show important views
     '''
     def get(self, request):
-        def charts(request):
+        def widgets(request):
             for countdown in simplestats.models.Countdown.objects.all():
                 yield render_to_string('simplestats/widget/countdown.html', {
                     'countdown': countdown,
@@ -69,7 +69,7 @@ class Dashboard(View):
                 })
 
         return render(request, 'simplestats/dashboard.html', {
-            'charts': charts(request)
+            'widgets': widgets(request)
         })
 
 

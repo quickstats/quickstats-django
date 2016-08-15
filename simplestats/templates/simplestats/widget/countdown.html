@@ -1,16 +1,16 @@
-<div class="col-xs-6 col-md-3">
-    <div class="thumbnail">
-        {% if countdown.more %}
-        <a href="{{ countdown.more }}" class="badge pull-right">More</a>
-        {% endif %}
+<div class="col-sm-4">
+    <div class="thumbnail clearfix">
         {% if countdown.icon %}
-        <img src="{{ countdown.icon }}" alt="{{ countdown.label }}" class="pull-left">
+        <img src="{{ countdown.icon }}" alt="{{ countdown.label }}" class="pull-right">
         {% endif %}
         <div class="caption">
             <div class="glyphicon glyphicon-time" aria-hidden="true">
                 {{ countdown.label }}
             </div>
             <div><time>{{ countdown.remaining }}</time></div>
+            {% if countdown.more %}
+            <a href="{{ countdown.more }}" class="badge pull-right">More</a>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -1,16 +1,16 @@
-<div class="col-xs-6 col-md-3">
-    <div class="thumbnail">
-        {% if chart.more %}
-        <a href="{{ chart.more }}" class="badge pull-right">More</a>
-        {% endif %}
+<div class="col-sm-4">
+    <div class="thumbnail clearfix">
         {% if chart.icon %}
-        <img src="{{ chart.icon }}" alt="{{ chart.label }}" class="pull-left">
+        <img src="{{ chart.icon }}" alt="{{ chart.label }}" class="pull-right">
         {% endif %}
         <div class="caption">
             <div class="glyphicon glyphicon-equalizer" aria-hidden="true">
-                <div>{{ chart.label }}</div>
+                {{ chart.label }}
             </div>
             <div>{{ chart.value }}</div>
+            {% if chart.more %}
+            <a href="{{ chart.more }}" class="badge pull-right">More</a>
+            {% endif %}
         </div>
     </div>
 </div>

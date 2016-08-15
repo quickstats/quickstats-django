@@ -1,9 +1,11 @@
 {% extends "simplestats/base.html" %}
 
 {% block content %}
-<div class="row">
-{% for chart in charts %}
-{{ chart }}
-{% endfor %}
+<div class="container-fluid">
+    <div class="row">
+    {% for widget in widgets %}
+    {{ widget }}
+    {% endfor %}
+    </div>
 </div>
 {% endblock %}
