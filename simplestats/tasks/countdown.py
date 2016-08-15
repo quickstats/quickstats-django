@@ -66,11 +66,16 @@ def update_calendars():
                         if entry.date() in exdate:
                             continue
 
-                        # If we find a valid date, then rewrite the original component with our
-                        # corrected RRULE date
-                        component['DTSTART'] = icalendar.vDatetime(
-                            timezone.make_aware(datetime.datetime.combine(entry, datetime.time.min)))
-                        break
+                        if next_event is None:
+                            logger.debug('Setting next to: %s', component['SUMMARY'])
+                            next_event = component['SUMMARY']
+                            next_time = entry
+                            break
+                        if entry < next_time:
+                            next_event = component['SUMMARY']
+                            next_time = entry
+                            break
+                    continue
 
             if next_event is None:
                 logger.debug('Setting next to: %s', component['SUMMARY'])
