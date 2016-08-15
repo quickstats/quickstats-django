@@ -3,6 +3,7 @@ import logging
 
 import icalendar
 from celery.task.base import periodic_task
+from dateutil.rrule import rrulestr
 
 import simplestats.models
 import simplestats.requests as requests
@@ -15,8 +16,10 @@ logger = logging.getLogger(__name__)
 @periodic_task(run_every=datetime.timedelta(minutes=30))
 def update_calendars():
     now = timezone.localtime(timezone.now())
+    end = now + datetime.timedelta(days=30)
     for countdown in simplestats.models.Countdown.objects.exclude(calendar__exact=''):
         next_event = None
+        next_time = None
 
         response = requests.get(countdown.calendar)
         calendar = icalendar.Calendar.from_ical(response.text)
@@ -40,20 +43,53 @@ def update_calendars():
                     continue
 
             if component['DTSTART'].dt < now:
-                logger.debug('Filter out past event: %s', component['SUMMARY'])
-                continue
+                if 'RRULE' not in component:
+                    logger.debug('Filter out past event: %s', component['SUMMARY'])
+                    continue
+                else:
+                    logger.debug('Processing RRULE')
+                    # Pull out our exclude dates into an easy list
+                    exdate = []
+                    if 'EXDATE' in component:
+                        try:
+                            for entry in component['EXDATE']:
+                                for item in entry.dts:
+                                    exdate.append(item.dt.date())
+                        except TypeError:
+                            for item in component['EXDATE'].dts:
+                                exdate.append(item.dt.date())
+
+                    for entry in rrulestr(
+                            component['RRULE'].to_ical().decode('utf-8'),
+                            dtstart=component['DTSTART'].dt).between(now, end):
+
+                        if entry.date() in exdate:
+                            continue
+
+                        if next_event is None:
+                            logger.debug('Setting next to: %s', component['SUMMARY'])
+                            next_event = component['SUMMARY']
+                            next_time = entry
+                            break
+                        if entry < next_time:
+                            next_event = component['SUMMARY']
+                            next_time = entry
+                            break
+                    continue
 
             if next_event is None:
                 logger.debug('Setting next to: %s', component['SUMMARY'])
-                next_event = component
+                next_event = component['SUMMARY']
+                next_time = component['DTSTART'].dt
                 continue
 
-            if component['DTSTART'].dt < next_event['DTSTART'].dt:
+            if component['DTSTART'].dt < next_time:
                 logger.debug('Setting next to: %s', component['SUMMARY'])
-                next_event = component
+                next_event = component['SUMMARY']
+                next_time = component['DTSTART'].dt
 
         if next_event:
-            countdown.label = next_event['SUMMARY']
-            countdown.created = next_event['DTSTART'].dt
+            countdown.label = next_event
+            countdown.created = next_time
             countdown.save()
             logger.info('Updating date for %s to %s', countdown.label, countdown.created)
