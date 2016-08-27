@@ -2,7 +2,6 @@ import time
 import uuid
 
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError, models
 from django.db.models.signals import post_save

@@ -33,7 +33,7 @@ setup(
         'requests',
     ],
     extras_require = {
-        'standalone': ['envdir']
+        'standalone': ['envdir', 'dj_database_url']
     },
     entry_points={
         'console_scripts': [
