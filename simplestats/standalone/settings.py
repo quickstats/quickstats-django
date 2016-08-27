@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     'simplestats',
 ]
 
@@ -118,3 +120,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Enable Sentry
+if 'SENTRY_DSN' in os.environ:
+    # Set your DSN value
+    RAVEN_CONFIG = {'dsn': os.environ.get('SENTRY_DSN')}
+    INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
