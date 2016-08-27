@@ -29,6 +29,9 @@ urlpatterns = [
     url('', include('simplestats.urls')),
     url('', include('django.contrib.auth.urls')),
     url(r'^about', TemplateView.as_view(template_name="about.html")),
+    url(r'^robots\.txt$', TemplateView.as_view(
+        template_name='robots.txt',
+        content_type='text/plain')),
     url(r'^api/', include(router.urls, namespace='api')),
     url(r'^admin/', admin.site.urls),
 ]
