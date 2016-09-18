@@ -2,17 +2,20 @@
 {% get_media_prefix as MEDIA_PREFIX %}
 <div class="col-sm-4">
     <div class="thumbnail clearfix">
-        {% if chart.icon %}
-        <img src="{{ MEDIA_PREFIX }}{{ chart.icon }}" alt="{{ chart.label }}" style="max-width:64px" class="pull-right">
+        {% if chart.more and chart.icon %}
+        <a href="{{ chart.more }}" class="btn btn-default pull-right">
+            <img src="{{ MEDIA_PREFIX }}{{ chart.icon }}" alt="{{ chart.label }}" style="max-width:64px">
+        </a>
+        {% elif chart.icon %}
+            <img src="{{ MEDIA_PREFIX }}{{ chart.icon }}" alt="{{ chart.label }}" style="max-width:64px" class="pull-right">
+        {% elif chart.more %}
+            <a href="{{ chart.more }}" class="btn btn-default pull-right">More</a>
         {% endif %}
         <div class="caption">
             <div class="glyphicon glyphicon-equalizer" aria-hidden="true">
                 {{ chart.label }}
             </div>
             <div>{{ chart.value }}</div>
-            {% if chart.more %}
-            <a href="{{ chart.more }}" class="badge pull-right">More</a>
-            {% endif %}
         </div>
     </div>
 </div>

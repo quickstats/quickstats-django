@@ -2,17 +2,20 @@
 {% get_media_prefix as MEDIA_PREFIX %}
 <div class="col-sm-4">
     <div class="thumbnail clearfix">
-        {% if countdown.icon %}
-        <img src="{{ MEDIA_PREFIX }}{{ countdown.icon }}" alt="{{ countdown.label }}" style="max-width:64px" class="pull-right">
+        {% if countdown.more and countdown.icon %}
+        <a href="{{ countdown.more }}" class="btn btn-default pull-right">
+            <img src="{{ MEDIA_PREFIX }}{{ countdown.icon }}" alt="{{ countdown.label }}" style="max-width:64px">
+        </a>
+        {% elif countdown.icon %}
+            <img src="{{ MEDIA_PREFIX }}{{ countdown.icon }}" alt="{{ countdown.label }}" style="max-width:64px" class="pull-right">
+        {% elif countdown.more %}
+            <a href="{{ countdown.more }}" class="btn btn-default pull-right">More</a>
         {% endif %}
         <div class="caption">
             <div class="glyphicon glyphicon-time" aria-hidden="true">
                 {{ countdown.label }}
             </div>
             <div><time>{{ countdown.remaining }}</time></div>
-            {% if countdown.more %}
-            <a href="{{ countdown.more }}" class="badge pull-right">More</a>
-            {% endif %}
         </div>
     </div>
 </div>
