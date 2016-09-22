@@ -1,7 +1,6 @@
 import simplestats.feed
 import simplestats.views
 import simplestats.views.grafana as grafana
-import simplestats.views.pocket as pocket
 
 from django.conf.urls import url
 from django.core.urlresolvers import reverse
@@ -20,9 +19,6 @@ urlpatterns = [
     url(r'^grafana/query$', grafana.Query.as_view()),
     url(r'^grafana/search$', grafana.Search.as_view()),
     url(r'^grafana/annotations$', grafana.Annotations.as_view()),
-
-    url(r'^pocket/auth', pocket.AuthPocket.as_view()),
-    url(r'^pocket/confirm', pocket.ConfirmPocket.as_view(), name='pocket_confirm'),
 ]
 
 
