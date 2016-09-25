@@ -2,11 +2,15 @@
     "name": "Simple stats server",
     "env": {
         "DJANGO_SETTINGS_MODULE": {
+            "description": "Default django settings module",
             "value": "simplestats.standalone.settings"
         },
         "SECRET_KEY": {
             "description": "A secret key for verifying the integrity of signed cookies.",
             "generator": "secret"
-        },
+        }
     },
+    "scripts": {
+        "postdeploy": "make bootstrap"
+    }
 }
