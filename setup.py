@@ -23,6 +23,7 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     install_requires=[
+        'Django',
         'django-filter',
         'djangorestframework-word-filter',
         'djangorestframework',
@@ -31,7 +32,17 @@ setup(
         'pytz',
         'requests',
     ],
+    extras_require={
+        'standalone': [
+            'envdir',
+            'dj_database_url',
+            'python-social-auth',
+        ]
+    },
     entry_points={
+        'console_scripts': [
+            'simplestats = simplestats.standalone.manage:main[standalone]',
+        ],
         'powerplug.apps': ['stats = simplestats'],
         'powerplug.subnav': ['stats = simplestats.urls:subnav'],
         'powerplug.urls': ['stats = simplestats.urls'],

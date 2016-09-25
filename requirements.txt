@@ -1,0 +1,5 @@
+# requirements.txt for Heroku
+-e .[standalone]
+psycopg2
+raven
+gunicorn

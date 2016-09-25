@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block javascript %}
+<style>
+  .form-signin {
+    max-width: 550px;
+    padding: 15px;
+    margin: 0 auto;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="form-signin">
+    {% if form.errors %}
+    <p class="alert alert-warning" role="alert">Your username and password didn't match. Please try again.</>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+        <p class="alert alert-warning" role="alert">Your account doesn't have access to this page. To proceed,
+        please login with an account that has access.</p>
+        {% else %}
+        <p class="alert alert-warning" role="alert">Please login to see this page.</p>
+        {% endif %}
+    {% endif %}
+
+    <h2 class="form-signin-heading">Login</h2>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}" />
+        <p><input type="text" name="{{ form.username.name }}" class="form-control" placeholder="{{ form.username.label }}" value="" required autofocus></p>
+        <p><input type="password" name="{{ form.password.name }}" class="form-control" placeholder="{{ form.password.label }}" value="" required autofocus></p>
+        <br />
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+
+    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+</div>
+
+<div class="form-signin">
+    <a class="btn btn-block btn-social btn-google" href="{% url 'social:begin' 'google-plus' %}">
+        <i class="fa fa-google"></i>
+        Sign in with Google+
+    </a>
+</div>
+
+{% endblock %}
