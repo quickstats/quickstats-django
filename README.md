@@ -20,5 +20,10 @@ simplestats runserver
 
 Using the [grafana-json] plugin you can connect to the ```/stats/grafana``` endpoint and generate graphs from the underlying data
 
+## Clients
+
+* https://github.com/kfdm/bitbar-simplestats
+* https://github.com/kfdm/alfred-simplestats
+
 [numerous]: https://www.youtube.com/watch?v=c0A9hEUnAOM
 [grafana-json]: https://grafana.net/plugins/grafana-simple-json-datasource
