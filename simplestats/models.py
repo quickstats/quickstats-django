@@ -89,7 +89,7 @@ class Chart(models.Model):
     label = models.CharField(max_length=64)
     keys = models.CharField(
         max_length=36,
-        choices=[(x, x) for x in Stat.unique_keys()]
+        #choices=[(x, x) for x in Stat.unique_keys()]  # disable for now to assist in bootstrap
     )
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'))
     public = models.BooleanField(default=False)
