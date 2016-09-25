@@ -63,9 +63,9 @@ class StatMeta(models.Model):
 
 class Countdown(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    description = models.CharField(max_length=128, blank=True)
+    description = models.CharField(max_length=512, blank=True)
     created = models.DateTimeField()
-    label = models.CharField(max_length=36)
+    label = models.CharField(max_length=64)
     calendar = models.URLField(blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='coutdown', verbose_name=_('owner'))
 
@@ -104,6 +104,7 @@ class Chart(models.Model):
             latest = Stat.objects.filter(key=self.keys).latest('created')
             self.value = latest.value
         self.save()
+
 
 class Report(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
