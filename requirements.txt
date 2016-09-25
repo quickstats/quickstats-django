@@ -2,3 +2,4 @@
 -e .[standalone]
 psycopg2
 raven
+gunicorn

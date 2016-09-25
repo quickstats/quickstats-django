@@ -79,7 +79,7 @@ ROOT_URLCONF = 'simplestats.standalone.urls'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {'default': dj_database_url.config(
-    env='DJANGO_DATABASE_URL',
+    env='DATABASE_URL',
     default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
 )}
 
