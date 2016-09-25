@@ -32,8 +32,12 @@ setup(
         'pytz',
         'requests',
     ],
-    extras_require = {
-        'standalone': ['envdir', 'dj_database_url']
+    extras_require={
+        'standalone': [
+            'envdir',
+            'dj_database_url',
+            'python-social-auth',
+        ]
     },
     entry_points={
         'console_scripts': [

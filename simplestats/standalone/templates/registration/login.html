@@ -27,7 +27,7 @@
     {% endif %}
 
     <h2 class="form-signin-heading">Login</h2>
-    <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+    <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ next }}" />
         <p><input type="text" name="{{ form.username.name }}" class="form-control" placeholder="{{ form.username.label }}" value="" required autofocus></p>

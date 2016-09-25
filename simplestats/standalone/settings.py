@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'social.apps.django_app.default',
     'simplestats',
 ]
 
@@ -126,3 +127,15 @@ if 'SENTRY_DSN' in os.environ:
     # Set your DSN value
     RAVEN_CONFIG = {'dsn': os.environ.get('SENTRY_DSN')}
     INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
+
+# See documentation here
+# http://psa.matiasaguirre.net/docs/backends/google.html?highlight=google
+SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
+AUTHENTICATION_BACKENDS = (
+    'social.backends.google.GooglePlusAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
+SOCIAL_AUTH_GOOGLE_PLUS_KEY = os.environ.get('SOCIAL_AUTH_GOOGLE_PLUS_KEY')
+SOCIAL_AUTH_GOOGLE_PLUS_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_PLUS_SECRET')
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/'
