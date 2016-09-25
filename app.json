@@ -11,6 +11,6 @@
         }
     },
     "scripts": {
-        "postdeploy": "make bootstrap"
+        "postdeploy": "python simplestats/standalone/manage.py migrate"
     }
 }
