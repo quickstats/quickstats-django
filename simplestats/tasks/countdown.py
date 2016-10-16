@@ -68,28 +68,29 @@ def update_calendars():
 
                         if next_event is None:
                             logger.debug('Setting next to: %s', component['SUMMARY'])
-                            next_event = component['SUMMARY']
+                            next_event = component
                             next_time = entry
                             break
                         if entry < next_time:
-                            next_event = component['SUMMARY']
+                            next_event = component
                             next_time = entry
                             break
                     continue
 
             if next_event is None:
                 logger.debug('Setting next to: %s', component['SUMMARY'])
-                next_event = component['SUMMARY']
+                next_event = component
                 next_time = component['DTSTART'].dt
                 continue
 
             if component['DTSTART'].dt < next_time:
                 logger.debug('Setting next to: %s', component['SUMMARY'])
-                next_event = component['SUMMARY']
+                next_event = component
                 next_time = component['DTSTART'].dt
 
         if next_event:
-            countdown.label = next_event
             countdown.created = next_time
+            countdown.label = next_event['SUMMARY']
+            countdown.more = next_event['URL'] if 'URL' in next_event else ''
             countdown.save()
             logger.info('Updating date for %s to %s', countdown.label, countdown.created)
