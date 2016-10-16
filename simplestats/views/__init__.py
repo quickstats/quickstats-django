@@ -58,12 +58,19 @@ class Dashboard(View):
     Simple dashboard to show important views
     '''
     def get(self, request):
+        if request.user.is_authenticated():
+            countdowns = simplestats.models.Countdown.objects.filter(owner=request.user)
+            charts = simplestats.models.Chart.objects.filter(owner=request.user)
+        else:
+            countdowns = simplestats.models.Countdown.objects.filter(public=True)
+            charts = simplestats.models.Chart.objects.filter(public=True)
+
         def widgets(request):
-            for countdown in simplestats.models.Countdown.objects.all():
+            for countdown in countdowns:
                 yield render_to_string('simplestats/widget/countdown.html', {
                     'countdown': countdown,
                 })
-            for chart in simplestats.models.Chart.objects.all():
+            for chart in charts:
                 yield render_to_string('simplestats/widget/chart.html', {
                     'chart': chart,
                 })
