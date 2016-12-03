@@ -50,6 +50,7 @@ setup(
             'chart = simplestats.rest:ChartViewSet',
             'countdown = simplestats.rest:CountdownViewSet',
             'stat = simplestats.rest:StatViewSet',
+            'report = simplestats.rest:ReportViewSet',
         ],
     },
 )

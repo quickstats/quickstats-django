@@ -6,9 +6,9 @@ from rest_framework.filters import DjangoFilterBackend, OrderingFilter
 from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 
-from simplestats.models import Chart, Countdown, Stat
+from simplestats.models import Chart, Countdown, Report, Stat
 from simplestats.serializers import (ChartSerializer, CountdownSerializer,
-                                     StatSerializer)
+                                     ReportSerializer, StatSerializer)
 
 
 class CountdownViewSet(viewsets.ModelViewSet):
@@ -50,3 +50,19 @@ class StatViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
     queryset = Stat.objects.all()
     serializer_class = StatSerializer
+
+
+class ReportViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+    filter_backends = (OrderingFilter,)
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+    queryset = Report.objects.all()
+    serializer_class = ReportSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated():
+            return Report.objects.filter(owner=self.request.user)
+        return Report.objects.filter(public=True)

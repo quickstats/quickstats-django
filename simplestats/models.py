@@ -109,7 +109,7 @@ class Chart(models.Model):
 class Report(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date = models.DateField()
-    #owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='report', verbose_name=_('owner'))
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='report', verbose_name=_('owner'))
     name = models.CharField(max_length=36)
     text = models.TextField(blank=True)
     html = models.TextField(blank=True)

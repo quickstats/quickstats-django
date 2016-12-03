@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from simplestats.models import Chart, Countdown, Stat
+from simplestats.models import Chart, Countdown, Report, Stat
 
 
 class CountdownSerializer(serializers.ModelSerializer):
@@ -25,3 +25,9 @@ class StatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stat
         fields = ('created', 'key', 'value')
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = ('date', 'name', 'text')
