@@ -28,6 +28,8 @@ class StatSerializer(serializers.ModelSerializer):
 
 
 class ReportSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+
     class Meta:
         model = Report
-        fields = ('date', 'name', 'text')
+        fields = ('date', 'name', 'text', 'url')
