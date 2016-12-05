@@ -11,11 +11,16 @@ from django.template.loader import render_to_string
 
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 
 
-class ReportDetail(DetailView):
+class ReportDetail(LoginRequiredMixin, DetailView):
     model = simplestats.models.Report
+
+
+class ReportList(LoginRequiredMixin, ListView):
+    model = simplestats.models.Report
+    paginate_by = 10
 
 
 class RenderChart(View):

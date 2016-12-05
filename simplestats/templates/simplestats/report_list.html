@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Reports</h1>
+</div>
+
+<div class="panel panel-default">
+    <table class="table table-bordered">
+{% for report in report_list %}
+        <tr>
+            <td>{{ report.date }}</td>
+            <td><a href="{% url 'stats:report-detail' report.id %}">{{ report.name }}</td>
+        </tr>
+{% endfor %}
+    </table>
+</div>
+{% endblock %}
