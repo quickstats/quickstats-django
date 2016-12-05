@@ -1,6 +1,6 @@
 import simplestats.feed
 import simplestats.views
-import simplestats.views.grafana as grafana
+import simplestats.grafana
 
 from django.conf.urls import url
 from django.core.urlresolvers import reverse
@@ -18,10 +18,10 @@ urlpatterns = [
 
     url(r'^feed$', simplestats.feed.LatestEntriesFeed(), name='feed'),
 
-    url(r'^grafana$', grafana.Index.as_view()),
-    url(r'^grafana/query$', grafana.Query.as_view()),
-    url(r'^grafana/search$', grafana.Search.as_view()),
-    url(r'^grafana/annotations$', grafana.Annotations.as_view()),
+    url(r'^grafana$', simplestats.grafana.Index.as_view()),
+    url(r'^grafana/query$', simplestats.grafana.Query.as_view()),
+    url(r'^grafana/search$', simplestats.grafana.Search.as_view()),
+    url(r'^grafana/annotations$', simplestats.grafana.Annotations.as_view()),
 ]
 
 

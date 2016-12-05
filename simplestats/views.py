@@ -8,10 +8,9 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
-
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic.base import View
 from django.views.generic import DetailView, ListView
+from django.views.generic.base import View
 
 
 class ReportDetail(LoginRequiredMixin, DetailView):
