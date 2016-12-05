@@ -114,6 +114,10 @@ class Report(models.Model):
     text = models.TextField(blank=True)
     html = models.TextField(blank=True)
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('stats:report-detail', args=[str(self.id)], current_app='stats')
+
 
 class Token(models.Model):
     id = models.CharField(primary_key=True, max_length=36)

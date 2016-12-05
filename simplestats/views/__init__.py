@@ -11,6 +11,11 @@ from django.template.loader import render_to_string
 
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import View
+from django.views.generic import DetailView
+
+
+class ReportDetail(DetailView):
+    model = simplestats.models.Report
 
 
 class RenderChart(View):

@@ -13,6 +13,8 @@ urlpatterns = [
     url(r'^chart/(?P<uuid>.*)$', simplestats.views.RenderChart.as_view(), name='chart'),
     url(r'^board/(?P<uuid>.*)$', simplestats.views.RenderBoard.as_view(), name='board'),
 
+    url(r'report/(?P<pk>.*)$', simplestats.views.ReportDetail.as_view(), name='report-detail'),
+
     url(r'^feed$', simplestats.feed.LatestEntriesFeed(), name='feed'),
 
     url(r'^grafana$', grafana.Index.as_view()),
