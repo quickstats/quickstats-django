@@ -22,6 +22,15 @@ class ReportList(LoginRequiredMixin, ListView):
     paginate_by = 10
 
 
+class LocationList(LoginRequiredMixin, ListView):
+    model = simplestats.models.Location
+    paginate_by = 10
+
+
+class LocationDetail(LoginRequiredMixin, DetailView):
+    model = simplestats.models.Location
+
+
 class RenderChart(View):
     def get(self, request, uuid):
         chart = simplestats.models.Chart.objects.get(id=uuid)

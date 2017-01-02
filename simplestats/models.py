@@ -136,6 +136,10 @@ class Location(models.Model):
     def __str__(self):
         return '<Location: {}>'.format(self.name)
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('stats:location-detail', args=[str(self.id)], current_app='stats')
+
     def record(self, state, url):
         return Movement.objects.create(location=self, state=state, map=url)
 

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ object.name }}</h1>
+<table class="table table-condensed">
+    <tr>
+        <th>Created</th>
+        <th>State</th>
+        <th>Map</th>
+    </tr>
+{% for movement in location.movement_set.all %}
+    <tr>
+        <td>{{ movement.created }}</td>
+        <td>{{ movement.state }}</td>
+        <td>{{ movement.map|urlize }}</td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}
