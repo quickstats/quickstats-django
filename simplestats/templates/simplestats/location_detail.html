@@ -2,18 +2,31 @@
 
 {% block content %}
 <h1>{{ object.name }}</h1>
-<table class="table table-condensed">
-    <tr>
-        <th>Created</th>
-        <th>State</th>
-        <th>Map</th>
-    </tr>
-{% for movement in location.movement_set.all %}
-    <tr>
-        <td>{{ movement.created }}</td>
-        <td>{{ movement.state }}</td>
-        <td>{{ movement.map|urlize }}</td>
-    </tr>
-{% endfor %}
-</table>
+
+<ol class="breadcrumb">
+  <li><a href="{% url 'stats:location-list' %}">Locations</a></li>
+  <li class="active">{{ location.name }}</li>
+</ol>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <input class="form-control" value="{{ request.scheme }}://{{ request.get_host }}{% url 'api:location-ifttt' location.id %}" />
+    </div>
+
+    <table class="table table-condensed">
+        <tr>
+            <th>Created</th>
+            <th>State</th>
+            <th>Map</th>
+        </tr>
+    {% for movement in location.movement_set.all %}
+        <tr>
+            <td>{{ movement.created }}</td>
+            <td>{{ movement.state }}</td>
+            <td>{{ movement.map|urlize }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
 {% endblock %}
