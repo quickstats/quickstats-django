@@ -120,11 +120,6 @@ class Report(models.Model):
         return reverse('stats:report-detail', args=[str(self.id)], current_app='stats')
 
 
-class Token(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
-    value = models.TextField()
-
-
 class Location(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='location', verbose_name=_('owner'))
