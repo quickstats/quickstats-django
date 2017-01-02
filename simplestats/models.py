@@ -124,6 +124,12 @@ class Token(models.Model):
     value = models.TextField()
 
 
+class Location(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='location', verbose_name=_('owner'))
+    name = models.CharField(max_length=36)
+
+
 @receiver(post_save, sender=Stat)
 def update_chart_latest(sender, instance, *args, **kwargs):
     latest = Stat.objects.filter(key=instance.key).latest('created')
