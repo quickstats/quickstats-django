@@ -65,3 +65,9 @@ class ReportModel(admin.ModelAdmin):
 @admin.register(simplestats.models.Token)
 class TokenAdmin(admin.ModelAdmin):
     list_display = ('id', 'value')
+
+
+@admin.register(simplestats.models.Location)
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'owner')
+    list_filter = ('name', 'owner')

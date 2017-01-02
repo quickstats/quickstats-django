@@ -16,6 +16,9 @@ urlpatterns = [
     url(r'report/$', simplestats.views.ReportList.as_view(), name='report-list'),
     url(r'report/(?P<pk>.*)$', simplestats.views.ReportDetail.as_view(), name='report-detail'),
 
+    url(r'location/$', simplestats.views.LocationList.as_view(), name='location-list'),
+    url(r'location/(?P<pk>.*)$', simplestats.views.LocationDetail.as_view(), name='location-detail'),
+
     url(r'^feed$', simplestats.feed.LatestEntriesFeed(), name='feed'),
 
     url(r'^grafana$', simplestats.grafana.Index.as_view()),
@@ -31,5 +34,6 @@ def subnav(namespace, request):
             (_('Index'), reverse(namespace + ':keys')),
             (_('Dashboard'), reverse(namespace + ':dashboard')),
             (_('Reports'), reverse(namespace + ':report-list')),
+            (_('Locations'), reverse(namespace + ':location-list')),
         ]
     }

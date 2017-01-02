@@ -7,6 +7,7 @@ from django.db import IntegrityError, models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -122,6 +123,45 @@ class Report(models.Model):
 class Token(models.Model):
     id = models.CharField(primary_key=True, max_length=36)
     value = models.TextField()
+
+
+class Location(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='location', verbose_name=_('owner'))
+    name = models.CharField(max_length=36)
+
+    class Meta:
+        unique_together = ('owner', 'name',)
+
+    def __str__(self):
+        return '<Location: {}>'.format(self.name)
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('stats:location-detail', args=[str(self.id)], current_app='stats')
+
+    def record(self, state, url):
+        return Movement.objects.create(location=self, state=state, map=url)
+
+
+class Movement(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created = models.DateTimeField(default=now)
+    location = models.ForeignKey(Location)
+    map = models.URLField()
+    state = models.CharField(
+        max_length=16,
+        choices=(
+            ('', _('Unselected')),
+            ('entered', _('Entered an Area')),
+            ('exited', _('Exited an Area')),
+            ('Do Button', _('Test Entry')),
+            ('Do Note', _('Manual Entry')),
+        )
+    )
+
+    def __str__(self):
+        return '{} {} {}'.format(self.location, self.state, self.map)
 
 
 @receiver(post_save, sender=Stat)

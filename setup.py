@@ -49,8 +49,9 @@ setup(
         'powerplug.rest': [
             'chart = simplestats.rest:ChartViewSet',
             'countdown = simplestats.rest:CountdownViewSet',
-            'stat = simplestats.rest:StatViewSet',
+            'location = simplestats.rest:LocationViewSet',
             'report = simplestats.rest:ReportViewSet',
+            'stat = simplestats.rest:StatViewSet',
         ],
     },
 )

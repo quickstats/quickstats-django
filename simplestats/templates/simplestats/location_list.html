@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Locations</h1>
+
+<ol class="breadcrumb">
+  <li class="active">Locations</li>
+</ol>
+
+<div class="panel panel-default">
+    <table class="table table-bordered">
+{% for location in location_list %}
+        <tr>
+            <td><a href="{% url 'stats:location-detail' location.id %}">{{ location.name }} ({{ location.movement_set.count }})</td>
+        </tr>
+{% endfor %}
+    </table>
+</div>
+{% endblock %}
