@@ -130,6 +130,9 @@ class Location(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='location', verbose_name=_('owner'))
     name = models.CharField(max_length=36)
 
+    class Meta:
+        unique_together = ('owner', 'name',)
+
     def __str__(self):
         return '<Location: {}>'.format(self.name)
 
