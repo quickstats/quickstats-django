@@ -113,7 +113,10 @@ class Report(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='report', verbose_name=_('owner'))
     name = models.CharField(max_length=36)
     text = models.TextField(blank=True)
-    html = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ('date', 'owner', 'name')
+        ordering = ['-date']
 
     def get_absolute_url(self):
         from django.urls import reverse
