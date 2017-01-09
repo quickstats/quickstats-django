@@ -106,7 +106,7 @@ class Chart(models.Model):
             self.value = latest.value
         self.save()
 
-    def record(created, value):
+    def record(self, created, value):
         return Stat.objects.create(
             created=created,
             key=self.keys,
