@@ -106,6 +106,17 @@ class Chart(models.Model):
             self.value = latest.value
         self.save()
 
+    def record(created, value):
+        return Stat.objects.create(
+            created=created,
+            key=self.keys,
+            value=value
+        )
+
+    @property
+    def stats(self):
+        return Stat.objects.filter(key=self.keys)
+
 
 class Report(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
