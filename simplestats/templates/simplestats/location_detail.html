@@ -18,12 +18,14 @@
             <th>Created</th>
             <th>State</th>
             <th>Map</th>
+            <th>Note</th>
         </tr>
     {% for movement in location.movement_set.all %}
         <tr>
             <td>{{ movement.created }}</td>
             <td>{{ movement.state }}</td>
-            <td>{{ movement.map|urlize }}</td>
+            <td>{{ movement.map|urlizetrunc:32 }}</td>
+            <td>{{ movement.note }}</td>
         </tr>
     {% endfor %}
     </table>

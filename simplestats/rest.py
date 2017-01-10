@@ -89,7 +89,7 @@ class LocationViewSet(viewsets.ModelViewSet):
     def ifttt(self, request, pk=None):
         location = get_object_or_404(Location, pk=pk)
         body = json.loads(request.body.decode("utf-8"))
-        movement = location.record(body['state'], body['location'])
+        movement = location.record(body['state'], body['location'], body.get('label'))
         logger.info('Logged movement from ifttt: %s', movement)
         return Response({'status': 'done'})
 

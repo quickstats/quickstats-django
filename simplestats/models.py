@@ -149,8 +149,8 @@ class Location(models.Model):
         from django.urls import reverse
         return reverse('stats:location-detail', args=[str(self.id)], current_app='stats')
 
-    def record(self, state, url):
-        return Movement.objects.create(location=self, state=state, map=url)
+    def record(self, state, url, note=''):
+        return Movement.objects.create(location=self, state=state, map=url, note=note)
 
 
 class Movement(models.Model):
@@ -168,6 +168,7 @@ class Movement(models.Model):
             ('Do Note', _('Manual Entry')),
         )
     )
+    note = models.TextField(blank=True)
 
     def __str__(self):
         return '{} {} {}'.format(self.location, self.state, self.map)
