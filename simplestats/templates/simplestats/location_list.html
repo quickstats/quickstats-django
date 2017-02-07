@@ -7,7 +7,7 @@
 <ol class="breadcrumb">
   <li class="active">Locations</li>
 </ol>
-
+<a href="{% url 'stats:location-calendar' pk=token.key %}">Calendar</a>
 <div class="panel panel-default">
     <table class="table table-bordered">
 {% for location in location_list %}

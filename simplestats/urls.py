@@ -18,6 +18,7 @@ urlpatterns = [
 
     url(r'location/$', simplestats.views.LocationList.as_view(), name='location-list'),
     url(r'location/(?P<pk>.*)$', simplestats.views.LocationDetail.as_view(), name='location-detail'),
+    url(r'movement/(?P<pk>.*).ics$', simplestats.views.LocationCalendar.as_view(), name='location-calendar'),
 
     url(r'^feed$', simplestats.feed.LatestEntriesFeed(), name='feed'),
 

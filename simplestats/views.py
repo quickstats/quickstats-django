@@ -1,12 +1,16 @@
 import datetime
 import json
 
+import pytz
+from icalendar import Calendar, Event
+from rest_framework.authtoken.models import Token
+
 import simplestats.models
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView
@@ -26,9 +30,59 @@ class LocationList(LoginRequiredMixin, ListView):
     model = simplestats.models.Location
     paginate_by = 10
 
+    def get_context_data(self, **kwargs):
+        context = super(LocationList, self).get_context_data(**kwargs)
+        context['token'], _ = Token.objects.get_or_create(user=self.request.user)
+        return context
+
 
 class LocationDetail(LoginRequiredMixin, DetailView):
     model = simplestats.models.Location
+
+
+class LocationCalendar(View):
+    def get(self, request, pk):
+        # Verify token exists
+        get_object_or_404(Token, pk=pk)
+
+        now = datetime.datetime.now(pytz.utc)
+        delta = datetime.timedelta(days=7)
+
+        cal = Calendar()
+        cal.add('prodid', '-//My calendar product//mxm.dk//')
+        cal.add('version', '2.0')
+
+        locations = {}
+        for location in simplestats.models.Movement.objects\
+                .filter(created__gte=datetime.datetime.now() - delta)\
+                .order_by('created'):
+            if location.state == 'entered':
+                locations[location.note] = location.created
+            elif location.state == 'exited':
+                if location.note in locations:
+                    entered = locations.pop(location.note)
+
+                    event = Event()
+                    event.add('summary', location.note)
+                    event.add('dtstart', entered)
+                    event.add('dtend', location.created)
+                    event['uid'] = location.id
+                    cal.add_component(event)
+
+        # Check for any remaining locations that have not been 'popped'
+        # and assume we're currently located there
+
+        for label, entered in locations.items():
+            event = Event()
+            event.add('summary', label)
+            event.add('dtstart', entered)
+            event.add('dtend', now.replace(minute=0, second=0, microsecond=0))
+            cal.add_component(event)
+
+        return HttpResponse(
+            content=cal.to_ical(),
+            content_type='text/plain; charset=utf-8'
+        )
 
 
 class RenderChart(View):
