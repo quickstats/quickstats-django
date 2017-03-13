@@ -17,7 +17,7 @@ class ChartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chart
-        fields = ('id', 'created', 'label', 'owner', 'value', 'icon', 'more')
+        fields = ('id', 'created', 'label', 'owner', 'value', 'icon', 'more', 'unit', 'public')
         read_only_fields = ('id', 'icon',)
 
 

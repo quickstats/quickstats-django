@@ -88,6 +88,7 @@ class Chart(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField()
     label = models.CharField(max_length=64)
+    unit = models.CharField(max_length=64, blank=True)
     keys = models.CharField(
         max_length=36,
         #choices=[(x, x) for x in Stat.unique_keys()]  # disable for now to assist in bootstrap
