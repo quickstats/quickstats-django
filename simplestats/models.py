@@ -172,7 +172,7 @@ class Movement(models.Model):
     note = models.TextField(blank=True)
 
     def __str__(self):
-        return '{} {} {}'.format(self.location, self.state, self.map)
+        return '{} {} {} {}'.format(self.location, self.state, self.map, self.created)
 
 
 @receiver(post_save, sender=Stat)

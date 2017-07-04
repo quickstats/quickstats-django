@@ -12,7 +12,7 @@ from django.urls import reverse
 class IFTTTTest(TestCase):
     def test_entered(self):
         self.user = User.objects.create_user(username='foo')
-        self.time = datetime.datetime(2017, 6, 8, 23, 18, tzinfo=datetime.timezone.utc)
+        self.time = datetime.datetime(2017, 6, 8, 14, 18, tzinfo=datetime.timezone.utc)
 
         self.location = models.Location.objects.create(name='Foo', owner=self.user)
 

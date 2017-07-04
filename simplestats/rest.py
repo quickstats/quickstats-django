@@ -1,6 +1,7 @@
 import json
 import logging
 
+import pytz
 from dateutil.parser import parse
 from rest_framework import viewsets
 from rest_framework.authentication import (BasicAuthentication,
@@ -90,12 +91,15 @@ class LocationViewSet(viewsets.ModelViewSet):
     def ifttt(self, request, pk=None):
         location = get_object_or_404(Location, pk=pk)
         body = json.loads(request.body.decode("utf-8"))
-        movement = location.record(
-            state=body['state'],
-            map=body['location'],
-            note=body.get('label'),
-            created=parse(body['created']),
-        )
+        kwargs = {}
+        kwargs['state'] = body['state']
+        kwargs['map'] = body['location']
+        kwargs['note'] = body.get('label')
+        kwargs['created'] = parse(body['created'])
+        if 'timezone' in body:
+            kwargs['created'] = kwargs['created'].replace(tzinfo=pytz.timezone(body['timezone']))
+
+        movement = location.record(**kwargs)
 
         logger.info('Logged movement from ifttt: %s', movement)
         return Response({'status': 'done'})
