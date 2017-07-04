@@ -1,6 +1,7 @@
 import json
 import logging
 
+from dateutil.parser import parse
 from rest_framework import viewsets
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
@@ -89,7 +90,13 @@ class LocationViewSet(viewsets.ModelViewSet):
     def ifttt(self, request, pk=None):
         location = get_object_or_404(Location, pk=pk)
         body = json.loads(request.body.decode("utf-8"))
-        movement = location.record(body['state'], body['location'], body.get('label'))
+        movement = location.record(
+            state=body['state'],
+            map=body['location'],
+            note=body.get('label'),
+            created=parse(body['created']),
+        )
+
         logger.info('Logged movement from ifttt: %s', movement)
         return Response({'status': 'done'})
 

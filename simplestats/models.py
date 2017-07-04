@@ -150,8 +150,8 @@ class Location(models.Model):
         from django.urls import reverse
         return reverse('stats:location-detail', args=[str(self.id)], current_app='stats')
 
-    def record(self, state, url, note=''):
-        return Movement.objects.create(location=self, state=state, map=url, note=note)
+    def record(self, **kwargs):
+        return Movement.objects.create(location=self, **kwargs)
 
 
 class Movement(models.Model):
