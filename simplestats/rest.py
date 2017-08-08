@@ -110,4 +110,4 @@ class LocationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_authenticated():
             return Location.objects.filter(owner=self.request.user)
-        return Location.objects.filter(public=True)
+        return Location.objects.filter(owner=None)
