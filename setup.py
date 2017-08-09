@@ -54,7 +54,7 @@ setup(
             'report = simplestats.rest:ReportViewSet',
             'stat = simplestats.rest:StatViewSet',
         ],
-        'powerplug.tasks': [
+        'powerplug.task': [
             'countdown = simplestats.tasks.countdown',
             'reports = simplestats.tasks.reports',
             'utility = simplestats.tasks.utility',
