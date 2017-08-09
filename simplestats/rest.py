@@ -75,9 +75,7 @@ class ReportViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        if self.request.user.is_authenticated():
-            return Report.objects.filter(owner=self.request.user)
-        return Report.objects.filter(public=True)
+        return Report.objects.filter(owner_id=self.request.user.id)
 
 
 class LocationViewSet(viewsets.ModelViewSet):
@@ -108,6 +106,4 @@ class LocationViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        if self.request.user.is_authenticated():
-            return Location.objects.filter(owner=self.request.user)
-        #return Location.objects.filter(owner=None)
+        return Location.objects.filter(owner_id=self.request.user.id)
