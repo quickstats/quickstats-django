@@ -114,6 +114,19 @@ class Chart(models.Model):
             value=value
         )
 
+    def upsert(self, created, value):
+        try:
+            return Stat.objects.create(
+                created=created,
+                key=self.keys,
+                value=value
+            )
+        except IntegrityError:
+            stat = Stat.objects.get(created=created, key=self.keys)
+            stat.value = value
+            stat.save()
+            return stat
+
     @property
     def stats(self):
         return Stat.objects.filter(key=self.keys)
