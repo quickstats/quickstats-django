@@ -1,21 +1,18 @@
 {% load static %}
 {% get_media_prefix as MEDIA_PREFIX %}
-<div class="col-sm-4">
-    <div class="thumbnail clearfix">
+<div class="card">
         {% if countdown.more and countdown.icon %}
-        <a href="{{ countdown.more }}" class="btn btn-default pull-right">
+        <a href="{{ countdown.more }}" class="btn btn-default">
             <img src="{{ MEDIA_PREFIX }}{{ countdown.icon }}" alt="{{ countdown.label }}" style="max-width:64px">
         </a>
         {% elif countdown.icon %}
-            <img src="{{ MEDIA_PREFIX }}{{ countdown.icon }}" alt="{{ countdown.label }}" style="max-width:64px" class="pull-right">
-        {% elif countdown.more %}
-            <a href="{{ countdown.more }}" class="btn btn-default pull-right">More</a>
+            <img src="{{ MEDIA_PREFIX }}{{ countdown.icon }}" alt="{{ countdown.label }}" style="max-width:64px">
         {% endif %}
-        <div class="caption">
-            <div class="glyphicon glyphicon-time" aria-hidden="true">
-                {{ countdown.label }}
-            </div>
-            <div><time>{{ countdown.remaining }}</time></div>
+        <div class="card-body">
+            <h4 class="card-title">{{countdown.label}}</h4>
+            <p class="card-text">{{ countdown.remaining }}</p>
+            {% if countdown.more and countdown.icon == False %}
+                <a href="{{ chart.more }}" class="btn btn-default card-link">More</a>
+            {% endif %}
         </div>
-    </div>
 </div>
