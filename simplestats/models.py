@@ -192,6 +192,9 @@ class Movement(models.Model):
     )
     note = models.TextField(blank=True)
 
+    class Meta:
+        ordering = ('-created',)
+
     def __str__(self):
         return '{} {} {} {}'.format(self.location, self.state, self.map, self.created)
 

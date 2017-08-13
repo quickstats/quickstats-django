@@ -3,10 +3,10 @@
 {% block content %}
 <h1>{{ object.name }}</h1>
 
-<ol class="breadcrumb">
-  <li><a href="{% url 'stats:location-list' %}">Locations</a></li>
-  <li class="active">{{ location.name }}</li>
-</ol>
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="{% url 'stats:location-list' %}">Locations</a>
+  <span class="breadcrumb-item active">{{ location.name }}</span>
+</nav>
 
 <div class="panel panel-default">
     <div class="panel-body">
