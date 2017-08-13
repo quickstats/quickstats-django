@@ -1,6 +1,6 @@
 import time
 import uuid
-
+import os
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError, models
@@ -63,6 +63,10 @@ class StatMeta(models.Model):
 
 
 class Countdown(models.Model):
+    def _upload_to_path(instance, filename):
+        root, ext = os.path.splitext(filename)
+        return 'simplestats/countdown/{}{}'.format(instance.pk, ext)
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     description = models.CharField(max_length=512, blank=True)
     created = models.DateTimeField()
@@ -74,7 +78,7 @@ class Countdown(models.Model):
     allday = models.BooleanField(default=False)
     repeating = models.BooleanField(default=False)
 
-    icon = models.ImageField(upload_to='simplestats/countdown', blank=True)
+    icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     more = models.URLField(blank=True)
 
     def remaining(self):
@@ -85,6 +89,10 @@ class Countdown(models.Model):
 
 
 class Chart(models.Model):
+    def _upload_to_path(instance, filename):
+        root, ext = os.path.splitext(filename)
+        return 'simplestats/chart/{}{}'.format(instance.pk, ext)
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField()
     label = models.CharField(max_length=64)
@@ -95,7 +103,7 @@ class Chart(models.Model):
     )
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'))
     public = models.BooleanField(default=False)
-    icon = models.ImageField(upload_to='simplestats/countdown', blank=True)
+    icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     value = models.FloatField()
     more = models.URLField(blank=True)
 
