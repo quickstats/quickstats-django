@@ -16,8 +16,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Internet :: WWW/HTTP',
@@ -45,7 +45,6 @@ setup(
             'simplestats = simplestats.standalone.manage:main[standalone]',
         ],
         'powerplug.apps': ['stats = simplestats'],
-        'powerplug.subnav': ['stats = simplestats.urls:subnav'],
         'powerplug.urls': ['stats = simplestats.urls'],
         'powerplug.rest': [
             'chart = simplestats.rest:ChartViewSet',

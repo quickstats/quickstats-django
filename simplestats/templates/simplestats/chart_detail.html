@@ -1,4 +1,5 @@
 {% extends "simplestats/base.html" %}
+
 {% block javascript %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
@@ -17,6 +18,11 @@
     });
 </script>
 {% endblock %}
+
 {% block content %}
-    <div id="chart_div" style="width:800px; height:400px">Loading...</div>
+<div class="container-fluid">
+    <div id="chart_div" style="width: 100%; min-height: 450px;">
+        Loading...
+    </div>
+</div>
 {% endblock %}
