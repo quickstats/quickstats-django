@@ -16,12 +16,6 @@ class AnnotiationAdmin(admin.ModelAdmin):
     list_display = ('title', 'created', 'tags', 'text')
 
 
-@admin.register(simplestats.models.StatMeta)
-class StatMetaAdmin(admin.ModelAdmin):
-    list_display = ('chart', 'key', 'value')
-    list_filter = ('chart',)
-
-
 @admin.register(simplestats.models.Countdown)
 class CountdownAdmin(admin.ModelAdmin):
     def _icon(self, obj):

@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class Stat(models.Model):
     created = models.DateTimeField(default=timezone.now)
-    key = models.CharField(max_length=64)
+    key = models.CharField(max_length=128)
     value = models.FloatField()
 
     class Meta:
@@ -55,13 +55,6 @@ class Annotation(models.Model):
         return time.mktime(self.created.timetuple())
 
 
-class StatMeta(models.Model):
-    '''Meta information for rendering stats'''
-    chart = models.CharField(max_length=64)
-    key = models.CharField(max_length=64)
-    value = models.CharField(max_length=64)
-
-
 class Countdown(models.Model):
     def _upload_to_path(instance, filename):
         root, ext = os.path.splitext(filename)
@@ -98,7 +91,7 @@ class Chart(models.Model):
     label = models.CharField(max_length=64)
     unit = models.CharField(max_length=64, blank=True)
     keys = models.CharField(
-        max_length=36,
+        max_length=128,
         #choices=[(x, x) for x in Stat.unique_keys()]  # disable for now to assist in bootstrap
     )
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'))
