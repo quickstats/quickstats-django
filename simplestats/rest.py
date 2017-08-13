@@ -3,12 +3,12 @@ import logging
 
 import pytz
 from dateutil.parser import parse
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
                                            TokenAuthentication)
 from rest_framework.decorators import detail_route
-from rest_framework.filters import DjangoFilterBackend, OrderingFilter
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
@@ -24,9 +24,9 @@ logger = logging.getLogger(__name__)
 
 
 class CountdownViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
     filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (DjangoModelPermissions,)
     queryset = Countdown.objects.all()
     serializer_class = CountdownSerializer
 
@@ -40,7 +40,7 @@ class CountdownViewSet(viewsets.ModelViewSet):
 
 
 class ChartViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
     filter_backends = (OrderingFilter,)
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     queryset = Chart.objects.all()
@@ -54,14 +54,29 @@ class ChartViewSet(viewsets.ModelViewSet):
             return Chart.objects.filter(owner=self.request.user)
         return Chart.objects.filter(public=True)
 
+    @detail_route(methods=['get', 'post'])
+    def stats(self, request, pk=None):
+        return getattr(self, 'stats_' + request.method)(request, pk)
 
-class StatViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('key',)
-    permission_classes = (DjangoModelPermissions,)
-    queryset = Stat.objects.all()
-    serializer_class = StatSerializer
+    def stats_GET(self, request, pk):
+        chart = self.get_object()
+        queryset = self.filter_queryset(Stat.objects.order_by('-created').filter(key=chart.keys))
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = StatSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = StatSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def stats_POST(self, request, pk):
+        chart = self.get_object()
+        serializer = StatSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(key=chart.keys)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ReportViewSet(viewsets.ModelViewSet):
