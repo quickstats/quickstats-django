@@ -26,8 +26,8 @@ router.register('chart', rest.ChartViewSet)
 router.register('countdown', rest.CountdownViewSet)
 
 urlpatterns = [
-    url('', include('simplestats.urls')),
-    url('', include('social.apps.django_app.urls', namespace='social')),
+    url('', include('simplestats.urls', namespace='stats')),
+    url('', include('social_django.urls', namespace='social')),
     url('', include('django.contrib.auth.urls')),
     url(r'^about', TemplateView.as_view(template_name="about.html")),
     url(r'^robots\.txt$', TemplateView.as_view(

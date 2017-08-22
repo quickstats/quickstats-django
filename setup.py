@@ -35,9 +35,9 @@ setup(
     ],
     extras_require={
         'standalone': [
-            'envdir',
             'dj_database_url',
-            'python-social-auth',
+            'envdir',
+            'social-auth-app-django',
         ]
     },
     entry_points={

@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'social.apps.django_app.default',
+    'social_django',
     'simplestats',
 ]
 
@@ -55,6 +55,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'standalone.urls'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
 
 TEMPLATES = [
     {
