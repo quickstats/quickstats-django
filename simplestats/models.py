@@ -108,29 +108,25 @@ class Chart(models.Model):
             self.value = latest.value
         self.save()
 
-    def record(self, created, value):
-        return Stat.objects.create(
-            created=created,
-            key=self.keys,
+    def record(self, timestamp, value):
+        return Data.objects.create(
+            timestamp=timestamp,
+            parent=self,
             value=value
         )
 
-    def upsert(self, created, value):
-        try:
-            return Stat.objects.create(
-                created=created,
-                key=self.keys,
-                value=value
-            )
-        except IntegrityError:
-            stat = Stat.objects.get(created=created, key=self.keys)
-            stat.value = value
-            stat.save()
-            return stat
+    def upsert(self, timestamp, value):
+        return Data.objects.update_or_create(
+            timestamp=timestamp,
+            parent=self,
+            defaults={'value': value}
+        )
 
-    @property
-    def stats(self):
-        return Stat.objects.filter(key=self.keys)
+
+class Data(models.Model):
+    parent = models.ForeignKey(Chart, related_name='data_set')
+    timestamp = models.DateTimeField()
+    value = models.FloatField()
 
 
 class Report(models.Model):
