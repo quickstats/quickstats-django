@@ -15,7 +15,7 @@ from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
 
-from simplestats.models import Chart, Countdown, Location, Report
+from simplestats.models import Chart, Countdown, Location, Report, Annotation
 from simplestats.serializers import (ChartSerializer, CountdownSerializer,
                                      DataSerializer, LocationSerializer,
                                      ReportSerializer, StatSerializer)
@@ -116,6 +116,33 @@ class ChartViewSet(viewsets.ModelViewSet):
                     ts(dp.timestamp)
                 ])
             results.append(response)
+        return JsonResponse(results, safe=False)
+
+    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
+    def annotations(self, request):
+        '''Grafana annotation'''
+        #TODO: Replace with something linked to user model
+        body = json.loads(request.body.decode("utf-8"))
+        start = make_aware(
+            datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT),
+            pytz.utc)
+        end = make_aware(
+            datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT),
+            pytz.utc)
+
+        results = []
+        for annotation in Annotation.objects\
+                .order_by('created')\
+                .filter(created__gte=start)\
+                .filter(created__lte=end):
+            results.append({
+                'annotation': body['annotation']['name'],
+                'time': annotation.created_unix * 1000,
+                'title': annotation.title,
+                'tags': annotation.tags,
+                'text': annotation.text,
+                })
+
         return JsonResponse(results, safe=False)
 
 
