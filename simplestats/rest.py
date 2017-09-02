@@ -87,7 +87,7 @@ class ChartViewSet(viewsets.ModelViewSet):
     def search(self, request):
         '''Grafana Search'''
         return JsonResponse(list(
-            Chart.objects.filter(owner=request.user).values_list('label', flat=True).distinct('label')
+            Chart.objects.filter(owner=request.user).values_list('keys', flat=True).distinct('label')
         ), safe=False)
 
     @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
@@ -105,7 +105,7 @@ class ChartViewSet(viewsets.ModelViewSet):
         results = []
 
         targets = [target['target'] for target in body['targets']]
-        for chart in Chart.objects.filter(owner=request.user, label__in=targets):
+        for chart in Chart.objects.filter(owner=request.user, keys__in=targets):
             response = {
                 'target': chart.label,
                 'datapoints': []

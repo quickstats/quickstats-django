@@ -146,7 +146,8 @@ def quick_record(owner, value, **kwargs):
         defaults={
             'created': kwargs['timestamp'],
             'value': value,
-            'label': _metric
+            'label': _metric,
+            'keys': _metric,
         }
     )
     if created:
