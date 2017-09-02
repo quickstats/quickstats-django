@@ -1,13 +1,17 @@
+import logging
 import os
 import time
 import uuid
 
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
 from django.db import IntegrityError, models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
+
+logger = logging.getLogger(__name__)
 
 
 def _upload_to_path(instance, filename):
@@ -96,6 +100,7 @@ class Chart(models.Model):
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     value = models.FloatField(default=0)
     more = models.URLField(blank=True)
+    labels = JSONField(default={})
 
     def record(self, timestamp, value):
         return Data.objects.create(
@@ -110,6 +115,43 @@ class Chart(models.Model):
             parent=self,
             defaults={'value': value}
         )
+
+
+def quick_record(owner, value, **kwargs):
+    '''
+    Chart.quick_record(
+        owner=owner,
+        metric='currency_rate',
+        labels={
+            'source': 'usd',
+            'destination': 'jpy'
+        },
+        timestamp=now,
+        value=json['rates']['JPY']
+    )
+    '''
+    kwargs.setdefault('labels', {})
+    if 'metric' in kwargs:
+        kwargs['labels']['__name__'] = kwargs.pop('metric')
+    if 'timestamp' not in kwargs:
+        kwargs['timestamp'] = timezone.now
+    # TODO Temporary label
+    _labels = kwargs['labels'].copy()
+    _metric = _labels.pop('__name__')
+    if _labels:
+        _metric += str(_labels)
+    chart, created = Chart.objects.get_or_create(
+        owner=owner,
+        labels=kwargs['labels'],
+        defaults={
+            'created': kwargs['timestamp'],
+            'value': value,
+            'label': _metric
+        }
+    )
+    if created:
+        logger.info('Created chart')
+    return chart.upsert(kwargs['timestamp'], value)
 
 
 class Data(models.Model):

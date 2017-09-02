@@ -46,7 +46,7 @@ class ChartAdmin(admin.ModelAdmin):
     _icon.short_description = _('icon')
     _icon.boolean = True
 
-    list_display = ('label', 'created', 'owner', 'keys', 'value', 'unit', 'public', '_icon')
+    list_display = ('label', 'created', 'owner', 'labels', 'value', 'unit', 'public', '_icon')
     list_filter = ('owner', 'public',)
     actions = ['refresh']
 
