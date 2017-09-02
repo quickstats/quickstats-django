@@ -4,8 +4,6 @@ import uuid
 
 from django.conf import settings
 from django.db import IntegrityError, models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import now
@@ -99,14 +97,6 @@ class Chart(models.Model):
     value = models.FloatField()
     more = models.URLField(blank=True)
 
-    def refresh(self, value=None):
-        if value:
-            self.value = value
-        else:
-            latest = Stat.objects.filter(key=self.keys).latest('created')
-            self.value = latest.value
-        self.save()
-
     def record(self, timestamp, value):
         return Data.objects.create(
             timestamp=timestamp,
@@ -183,10 +173,3 @@ class Movement(models.Model):
 
     def __str__(self):
         return '{} {} {} {}'.format(self.location, self.state, self.map, self.created)
-
-
-@receiver(post_save, sender=Stat)
-def update_chart_latest(sender, instance, *args, **kwargs):
-    latest = Stat.objects.filter(key=instance.key).latest('created')
-    for chart in Chart.objects.filter(keys=instance.key):
-        chart.refresh(latest.value)

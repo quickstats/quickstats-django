@@ -2,6 +2,7 @@ import simplestats.models
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+import simplestats.tasks.chart
 
 
 @admin.register(simplestats.models.Stat)
@@ -37,7 +38,8 @@ class CountdownAdmin(admin.ModelAdmin):
 class ChartAdmin(admin.ModelAdmin):
     def refresh(self, request, queryset):
         for chart in queryset:
-            chart.refresh()
+            # Call directly (don't queue)
+            simplestats.tasks.chart.update_chart(chart.pk)
 
     def _icon(self, obj):
         return True if obj.icon else False
