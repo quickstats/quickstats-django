@@ -19,8 +19,8 @@ def convert_stat_to_data(apps, schema_editor):
             charts[stat.key], _ = Chart.objects.get_or_create(
                 keys=stat.key,
                 defaults={'owner': owner}
-                ).pk
-        Data.objects.create(parent_id=charts[stat.key], timestamp=stat.created, value=stat.value)
+                )
+        Data.objects.create(parent_id=charts[stat.key].pk, timestamp=stat.created, value=stat.value)
 
 
 class Migration(migrations.Migration):
