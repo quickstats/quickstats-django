@@ -84,7 +84,7 @@ class Countdown(models.Model):
 
 class Chart(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created = models.DateTimeField()
+    created = models.DateTimeField(default=timezone.now)
     label = models.CharField(max_length=64)
     unit = models.CharField(max_length=64, blank=True)
     keys = models.CharField(
@@ -94,7 +94,7 @@ class Chart(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'))
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
-    value = models.FloatField()
+    value = models.FloatField(default=0)
     more = models.URLField(blank=True)
 
     def record(self, timestamp, value):
