@@ -4,6 +4,23 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
+from django.utils import timezone
+
+
+def convert_stat_to_data(apps, schema_editor):
+    charts = {}
+    User = apps.get_model("auth", "User")
+    Chart = apps.get_model("simplestats", "Chart")
+    Data = apps.get_model("simplestats", "Data")
+    print('Converting...')
+    owner, _ = User.objects.get_or_create(username='Migration')
+    for stat in apps.get_model("simplestats", "Stat").objects.all():
+        if stat.key not in charts:
+            charts[stat.key], _ = Chart.objects.get_or_create(
+                keys=stat.key,
+                defaults={'created': timezone.now(), 'owner': owner, 'value': 0}
+                ).pk
+        Data.objects.create(parent_id=charts[stat.key], timestamp=stat.created, value=stat.value)
 
 
 class Migration(migrations.Migration):
@@ -22,4 +39,5 @@ class Migration(migrations.Migration):
                 ('parent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='data_set', to='simplestats.Chart')),
             ],
         ),
+        migrations.RunPython(convert_stat_to_data, migrations.RunPython.noop),
     ]
