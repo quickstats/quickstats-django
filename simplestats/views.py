@@ -121,8 +121,8 @@ class ChartDetail(LoginRequiredMixin, DetailView):
         labels = [_('Datetime'), chart.label]
         dataTable = []
 
-        for stat in simplestats.models.Stat.objects.order_by('created').filter(key=chart.keys).filter(created__gte=datetime.datetime.now() - time_delta):
-            dataTable.append([stat.created.strftime("%Y-%m-%d %H:%M"), stat.value])
+        for stat in chart.data_set.order_by('timestamp').filter(timestamp__gte=datetime.datetime.now() - time_delta):
+            dataTable.append([stat.timestamp.strftime("%Y-%m-%d %H:%M"), stat.value])
 
         context['dataTable'] = json.dumps([[str(_label) for _label in labels]] + dataTable)
         return context
