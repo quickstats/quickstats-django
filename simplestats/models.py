@@ -12,6 +12,12 @@ from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 
+def _upload_to_path(instance, filename):
+    root, ext = os.path.splitext(filename)
+    return 'simplestats/{}/{}{}'.format(
+        instance.__class__.__name__, instance.pk, ext).lower()
+
+
 class Stat(models.Model):
     created = models.DateTimeField(default=timezone.now)
     key = models.CharField(max_length=128)
@@ -57,10 +63,6 @@ class Annotation(models.Model):
 
 
 class Countdown(models.Model):
-    def _upload_to_path(instance, filename):
-        root, ext = os.path.splitext(filename)
-        return 'simplestats/countdown/{}{}'.format(instance.pk, ext)
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     description = models.CharField(max_length=512, blank=True)
     created = models.DateTimeField()
@@ -83,10 +85,6 @@ class Countdown(models.Model):
 
 
 class Chart(models.Model):
-    def _upload_to_path(instance, filename):
-        root, ext = os.path.splitext(filename)
-        return 'simplestats/chart/{}{}'.format(instance.pk, ext)
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField()
     label = models.CharField(max_length=64)

@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='chart',
             name='icon',
-            field=models.ImageField(blank=True, upload_to=simplestats.models.Chart._upload_to_path),
+            field=models.ImageField(blank=True, upload_to=simplestats.models._upload_to_path),
         ),
         migrations.AlterField(
             model_name='chart',
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='countdown',
             name='icon',
-            field=models.ImageField(blank=True, upload_to=simplestats.models.Countdown._upload_to_path),
+            field=models.ImageField(blank=True, upload_to=simplestats.models._upload_to_path),
         ),
         migrations.AlterField(
             model_name='stat',
