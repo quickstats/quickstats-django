@@ -102,6 +102,12 @@ class Chart(models.Model):
     more = models.URLField(blank=True)
     labels = JSONField(default={})
 
+    def __str__(self):
+        return '{}:{}:{}'.format(self.owner, self.keys, self.labels)
+
+    def get_absolute_url(self):
+        return reverse('stats:chart', args=[self.pk], current_app='stats')
+
     def record(self, timestamp, value):
         return Data.objects.create(
             timestamp=timestamp,
