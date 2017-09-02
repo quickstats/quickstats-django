@@ -1,14 +1,23 @@
+import logging
+import os
 import time
 import uuid
-import os
+
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.contrib.postgres.fields import JSONField
 from django.db import IntegrityError, models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
+
+logger = logging.getLogger(__name__)
+
+
+def _upload_to_path(instance, filename):
+    root, ext = os.path.splitext(filename)
+    return 'simplestats/{}/{}{}'.format(
+        instance.__class__.__name__, instance.pk, ext).lower()
 
 
 class Stat(models.Model):
@@ -56,10 +65,6 @@ class Annotation(models.Model):
 
 
 class Countdown(models.Model):
-    def _upload_to_path(instance, filename):
-        root, ext = os.path.splitext(filename)
-        return 'simplestats/countdown/{}{}'.format(instance.pk, ext)
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     description = models.CharField(max_length=512, blank=True)
     created = models.DateTimeField()
@@ -82,12 +87,8 @@ class Countdown(models.Model):
 
 
 class Chart(models.Model):
-    def _upload_to_path(instance, filename):
-        root, ext = os.path.splitext(filename)
-        return 'simplestats/chart/{}{}'.format(instance.pk, ext)
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created = models.DateTimeField()
+    created = models.DateTimeField(default=timezone.now)
     label = models.CharField(max_length=64)
     unit = models.CharField(max_length=64, blank=True)
     keys = models.CharField(
@@ -97,40 +98,66 @@ class Chart(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'))
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
-    value = models.FloatField()
+    value = models.FloatField(default=0)
     more = models.URLField(blank=True)
+    labels = JSONField(default={})
 
-    def refresh(self, value=None):
-        if value:
-            self.value = value
-        else:
-            latest = Stat.objects.filter(key=self.keys).latest('created')
-            self.value = latest.value
-        self.save()
-
-    def record(self, created, value):
-        return Stat.objects.create(
-            created=created,
-            key=self.keys,
+    def record(self, timestamp, value):
+        return Data.objects.create(
+            timestamp=timestamp,
+            parent=self,
             value=value
         )
 
-    def upsert(self, created, value):
-        try:
-            return Stat.objects.create(
-                created=created,
-                key=self.keys,
-                value=value
-            )
-        except IntegrityError:
-            stat = Stat.objects.get(created=created, key=self.keys)
-            stat.value = value
-            stat.save()
-            return stat
+    def upsert(self, timestamp, value):
+        return Data.objects.update_or_create(
+            timestamp=timestamp,
+            parent=self,
+            defaults={'value': value}
+        )
 
-    @property
-    def stats(self):
-        return Stat.objects.filter(key=self.keys)
+
+def quick_record(owner, value, **kwargs):
+    '''
+    Chart.quick_record(
+        owner=owner,
+        metric='currency_rate',
+        labels={
+            'source': 'usd',
+            'destination': 'jpy'
+        },
+        timestamp=now,
+        value=json['rates']['JPY']
+    )
+    '''
+    kwargs.setdefault('labels', {})
+    if 'metric' in kwargs:
+        kwargs['labels']['__name__'] = kwargs.pop('metric')
+    if 'timestamp' not in kwargs:
+        kwargs['timestamp'] = timezone.now
+    # TODO Temporary label
+    _labels = kwargs['labels'].copy()
+    _metric = _labels.pop('__name__')
+    if _labels:
+        _metric += str(_labels)
+    chart, created = Chart.objects.get_or_create(
+        owner=owner,
+        labels=kwargs['labels'],
+        defaults={
+            'created': kwargs['timestamp'],
+            'value': value,
+            'label': _metric
+        }
+    )
+    if created:
+        logger.info('Created chart')
+    return chart.upsert(kwargs['timestamp'], value)
+
+
+class Data(models.Model):
+    parent = models.ForeignKey(Chart, related_name='data_set')
+    timestamp = models.DateTimeField()
+    value = models.FloatField()
 
 
 class Report(models.Model):
@@ -145,7 +172,6 @@ class Report(models.Model):
         ordering = ['-date']
 
     def get_absolute_url(self):
-        from django.urls import reverse
         return reverse('stats:report-detail', args=[str(self.id)], current_app='stats')
 
 
@@ -161,7 +187,6 @@ class Location(models.Model):
         return '<Location: {}>'.format(self.name)
 
     def get_absolute_url(self):
-        from django.urls import reverse
         return reverse('stats:location-detail', args=[str(self.id)], current_app='stats')
 
     def record(self, **kwargs):
@@ -190,10 +215,3 @@ class Movement(models.Model):
 
     def __str__(self):
         return '{} {} {} {}'.format(self.location, self.state, self.map, self.created)
-
-
-@receiver(post_save, sender=Stat)
-def update_chart_latest(sender, instance, *args, **kwargs):
-    latest = Stat.objects.filter(key=instance.key).latest('created')
-    for chart in Chart.objects.filter(keys=instance.key):
-        chart.refresh(latest.value)

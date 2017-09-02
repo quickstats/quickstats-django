@@ -1,5 +1,7 @@
+import datetime
 import json
 import logging
+import time
 
 import pytz
 from dateutil.parser import parse
@@ -7,20 +9,23 @@ from rest_framework import status, viewsets
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
                                            TokenAuthentication)
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
 
-from simplestats.models import Chart, Countdown, Location, Report, Stat
+from simplestats.models import Chart, Countdown, Location, Report
 from simplestats.serializers import (ChartSerializer, CountdownSerializer,
-                                     LocationSerializer, ReportSerializer,
-                                     StatSerializer)
+                                     DataSerializer, LocationSerializer,
+                                     ReportSerializer, StatSerializer)
 
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.utils.timezone import make_aware
 
 logger = logging.getLogger(__name__)
+DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
 class CountdownViewSet(viewsets.ModelViewSet):
@@ -46,6 +51,9 @@ class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.all()
     serializer_class = ChartSerializer
 
+    lookup_field = 'pk'
+    lookup_value_regex = '[0-9a-f]{32}'
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
@@ -60,11 +68,11 @@ class ChartViewSet(viewsets.ModelViewSet):
 
     def stats_GET(self, request, pk):
         chart = self.get_object()
-        queryset = self.filter_queryset(Stat.objects.order_by('-created').filter(key=chart.keys))
+        queryset = chart.data_set.order_by('-timestamp')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = StatSerializer(page, many=True)
+            serializer = DataSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
         serializer = StatSerializer(queryset, many=True)
@@ -72,11 +80,46 @@ class ChartViewSet(viewsets.ModelViewSet):
 
     def stats_POST(self, request, pk):
         chart = self.get_object()
-        serializer = StatSerializer(data=request.data)
+        serializer = DataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(key=chart.keys)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @list_route(methods=['post'])
+    def search(self, request):
+        '''Grafana Search'''
+        return JsonResponse(list(
+            Chart.objects.filter(owner=request.user).values_list('label', flat=True).distinct('label')
+        ), safe=False)
+
+    @list_route(methods=['post'])
+    def query(self, request):
+        '''Grafana Query'''
+        def ts(ts):
+            return time.mktime(ts.timetuple()) * 1000
+        body = json.loads(request.body.decode("utf-8"))
+        start = make_aware(
+            datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT),
+            pytz.utc)
+        end = make_aware(
+            datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT),
+            pytz.utc)
+        results = []
+
+        targets = [target['target'] for target in body['targets']]
+        for chart in Chart.objects.filter(owner=request.user, label__in=targets):
+            response = {
+                'target': chart.label,
+                'datapoints': []
+            }
+            for dp in chart.data_set.filter(timestamp__gte=start, timestamp__lte=end).order_by('timestamp'):
+                response['datapoints'].append([
+                    dp.value,
+                    ts(dp.timestamp)
+                ])
+            results.append(response)
+        return JsonResponse(results, safe=False)
 
 
 class ReportViewSet(viewsets.ModelViewSet):
