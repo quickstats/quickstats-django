@@ -1,11 +1,12 @@
+import os
 import time
 import uuid
-import os
+
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.db import IntegrityError, models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
@@ -141,7 +142,6 @@ class Report(models.Model):
         ordering = ['-date']
 
     def get_absolute_url(self):
-        from django.urls import reverse
         return reverse('stats:report-detail', args=[str(self.id)], current_app='stats')
 
 
@@ -157,7 +157,6 @@ class Location(models.Model):
         return '<Location: {}>'.format(self.name)
 
     def get_absolute_url(self):
-        from django.urls import reverse
         return reverse('stats:location-detail', args=[str(self.id)], current_app='stats')
 
     def record(self, **kwargs):
