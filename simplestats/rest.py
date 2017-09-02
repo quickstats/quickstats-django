@@ -83,14 +83,14 @@ class ChartViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    @list_route(methods=['post'])
+    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
     def search(self, request):
         '''Grafana Search'''
         return JsonResponse(list(
             Chart.objects.filter(owner=request.user).values_list('label', flat=True).distinct('label')
         ), safe=False)
 
-    @list_route(methods=['post'])
+    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
     def query(self, request):
         '''Grafana Query'''
         def ts(ts):
