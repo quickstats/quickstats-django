@@ -51,9 +51,6 @@ class ChartViewSet(viewsets.ModelViewSet):
     queryset = Chart.objects.all()
     serializer_class = ChartSerializer
 
-    lookup_field = 'pk'
-    lookup_value_regex = '[0-9a-f]{32}'
-
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 

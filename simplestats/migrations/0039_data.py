@@ -18,8 +18,13 @@ def convert_stat_to_data(apps, schema_editor):
         if stat.key not in charts:
             charts[stat.key], _ = Chart.objects.get_or_create(
                 keys=stat.key,
-                defaults={'owner': owner}
-                )
+                defaults={
+                    'owner': owner,
+                    'label': stat.key,
+                    'created': timezone.now,
+                    'value': 0
+                }
+            )
         Data.objects.create(parent_id=charts[stat.key].pk, timestamp=stat.created, value=stat.value)
 
 
