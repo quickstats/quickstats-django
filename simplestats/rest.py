@@ -15,11 +15,12 @@ from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
 
-from simplestats.models import Chart, Countdown, Location, Report, Annotation
+from simplestats.models import Annotation, Chart, Countdown, Location, Report
 from simplestats.serializers import (ChartSerializer, CountdownSerializer,
                                      DataSerializer, LocationSerializer,
                                      ReportSerializer, StatSerializer)
 
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
@@ -87,7 +88,9 @@ class ChartViewSet(viewsets.ModelViewSet):
     def search(self, request):
         '''Grafana Search'''
         return JsonResponse(list(
-            Chart.objects.filter(owner=request.user).values_list('keys', flat=True).distinct('label')
+            Chart.objects.filter(
+                Q(owner=request.user) | Q(public=True)
+            ).values_list('keys', flat=True).distinct('label')
         ), safe=False)
 
     @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
@@ -105,7 +108,9 @@ class ChartViewSet(viewsets.ModelViewSet):
         results = []
 
         targets = [target['target'] for target in body['targets']]
-        for chart in Chart.objects.filter(owner=request.user, keys__in=targets):
+        for chart in Chart.objects.filter(
+                Q(owner=request.user) | Q(public=True)
+                ).filter(keys__in=targets):
             response = {
                 'target': chart.label,
                 'datapoints': []
