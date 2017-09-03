@@ -5,6 +5,7 @@ from django.conf.urls import url
 
 urlpatterns = [
     url(r'^$', simplestats.views.Dashboard.as_view(), name='dashboard'),
+    url(r'^chart/metrics$', simplestats.views.ChartMetrics.as_view()),
     url(r'^chart/(?P<pk>.*)$', simplestats.views.ChartDetail.as_view(), name='chart'),
 
     url(r'report/$', simplestats.views.ReportList.as_view(), name='report-list'),
