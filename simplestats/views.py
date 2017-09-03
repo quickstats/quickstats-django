@@ -140,7 +140,7 @@ class ChartMetrics(View):
             if not metric in gauges:
                 gauges[metric] = Gauge(metric, metric, labels.keys(), registry=registry)
             if labels:
-                gauges[metric].labels(**labels).value = chart.value
+                gauges[metric].labels(**labels).set(chart.value)
             else:
-                gauges[metric].value = chart.value
+                gauges[metric].set(chart.value)
         return HttpResponse(generate_latest(registry), content_type="text/plain")
