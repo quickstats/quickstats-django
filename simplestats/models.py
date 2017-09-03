@@ -141,24 +141,29 @@ def quick_record(owner, value, **kwargs):
         kwargs['labels']['__name__'] = kwargs.pop('metric')
     if 'timestamp' not in kwargs:
         kwargs['timestamp'] = timezone.now
+    kwargs['value'] = value
+
     # TODO Temporary label
+    # This is used to bridge our old lables to the new one
     _labels = kwargs['labels'].copy()
-    _metric = _labels.pop('__name__')
+    kwargs['label'] = _labels.pop('__name__')
     if _labels:
-        _metric += str(_labels)
+        kwargs['label'] += str(_labels)
+    kwargs['keys'] = kwargs['labels']
+
+    # Pop a required parameter
+    labels = kwargs.pop('labels')
+    # Need to rename the value for our Chart Object
+    kwargs['created'] = kwargs.pop('timestamp')
+
     chart, created = Chart.objects.get_or_create(
         owner=owner,
-        labels=kwargs['labels'],
-        defaults={
-            'created': kwargs['timestamp'],
-            'value': value,
-            'label': _metric,
-            'keys': _metric,
-        }
+        labels=labels,
+        defaults=kwargs
     )
     if created:
         logger.info('Created chart')
-    return chart.upsert(kwargs['timestamp'], value)
+    return chart.upsert(kwargs['created'], value)
 
 
 class Data(models.Model):
