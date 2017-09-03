@@ -24,3 +24,8 @@ def update_chart_latest(sender, instance, *args, **kwargs):
     for chart in simplestats.models.Chart.objects.filter(keys=instance.key):
         chart.value = latest.value
         chart.save()
+
+
+@receiver(post_save, sender=simplestats.models.Data)
+def hook_update_data(sender, instance, *args, **kwargs):
+    update_chart.delay(instance.parent_id)
