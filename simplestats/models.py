@@ -140,7 +140,7 @@ def quick_record(owner, value, **kwargs):
     if 'metric' in kwargs:
         kwargs['labels']['__name__'] = kwargs.pop('metric')
     if 'timestamp' not in kwargs:
-        kwargs['timestamp'] = timezone.now
+        kwargs['timestamp'] = timezone.now()
     kwargs['value'] = value
 
     # TODO Temporary label

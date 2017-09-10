@@ -1,19 +1,21 @@
 import simplestats.feed
-import simplestats.views
+from simplestats import prometheus, views
 
 from django.conf.urls import url
 
 urlpatterns = [
-    url(r'^$', simplestats.views.Dashboard.as_view(), name='dashboard'),
-    url(r'^chart/metrics$', simplestats.views.ChartMetrics.as_view()),
-    url(r'^chart/(?P<pk>.*)$', simplestats.views.ChartDetail.as_view(), name='chart'),
+    url(r'^$', views.Dashboard.as_view(), name='dashboard'),
+    url(r'jobs/(?P<pk>.*)$', prometheus.PushGateway.as_view()),
+    url(r'^chart/metrics$', prometheus.Metrics.as_view()),
+    url(r'metrics/job/(?P<api_key>.*)$', prometheus.PushGateway.as_view()),
 
-    url(r'report/$', simplestats.views.ReportList.as_view(), name='report-list'),
-    url(r'report/(?P<pk>.*)$', simplestats.views.ReportDetail.as_view(), name='report-detail'),
 
-    url(r'location/$', simplestats.views.LocationList.as_view(), name='location-list'),
-    url(r'location/(?P<pk>.*)$', simplestats.views.LocationDetail.as_view(), name='location-detail'),
-    url(r'movement/(?P<pk>.*).ics$', simplestats.views.LocationCalendar.as_view(), name='location-calendar'),
+    url(r'report/$', views.ReportList.as_view(), name='report-list'),
+    url(r'report/(?P<pk>.*)$', views.ReportDetail.as_view(), name='report-detail'),
+
+    url(r'location/$', views.LocationList.as_view(), name='location-list'),
+    url(r'location/(?P<pk>.*)$', views.LocationDetail.as_view(), name='location-detail'),
+    url(r'movement/(?P<pk>.*).ics$', views.LocationCalendar.as_view(), name='location-calendar'),
 
     url(r'^feed$', simplestats.feed.LatestEntriesFeed(), name='feed'),
 ]

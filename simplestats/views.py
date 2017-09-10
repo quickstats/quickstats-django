@@ -3,7 +3,6 @@ import json
 
 import pytz
 from icalendar import Calendar, Event
-from prometheus_client import CollectorRegistry, Gauge, generate_latest
 from rest_framework.authtoken.models import Token
 
 import simplestats.models
@@ -127,20 +126,3 @@ class ChartDetail(LoginRequiredMixin, DetailView):
 
         context['dataTable'] = json.dumps([[str(_label) for _label in labels]] + dataTable)
         return context
-
-
-class ChartMetrics(View):
-    # TODO Temporary bridge
-    def get(self, request):
-        registry = CollectorRegistry()
-        gauges = {}
-        for chart in simplestats.models.Chart.objects.filter(public=True):
-            labels = chart.labels.copy()
-            metric = labels.pop('__name__', chart.keys).replace('.', '_')
-            if not metric in gauges:
-                gauges[metric] = Gauge(metric, metric, labels.keys(), registry=registry)
-            if labels:
-                gauges[metric].labels(**labels).set(chart.value)
-            else:
-                gauges[metric].set(chart.value)
-        return HttpResponse(generate_latest(registry), content_type="text/plain")
