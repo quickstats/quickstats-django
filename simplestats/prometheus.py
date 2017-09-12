@@ -30,17 +30,26 @@ class Metrics(View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class PushGateway(View):
-    def post(self, request, api_key):
+    def post(self, request, api_key, extra=None):
         try:
             token = Token.objects.get(key=api_key)
         except:
             return HttpResponseForbidden('Invalid token')
 
+        labels = {}
+        if extra:
+            key = None
+            for t in extra.split('/'):
+                if key:
+                    labels[key], key = t, None
+                else:
+                    key = t
+
         for family in text_string_to_metric_families(request.body.decode('utf8')):
             for sample in family.samples:
                 models.quick_record(
                     metric=sample[0],
-                    labels=sample[1],
+                    labels=dict(sample[1], **labels),
                     value=sample[2],
                     owner=token.user
                 )
