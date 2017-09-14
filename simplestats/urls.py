@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^$', views.Dashboard.as_view(), name='dashboard'),
     url(r'jobs/(?P<pk>.*)$', prometheus.PushGateway.as_view()),
     url(r'^chart/metrics$', prometheus.Metrics.as_view()),
+    url(r'^chart/(?P<pk>.*)$', views.ChartDetail.as_view(), name='chart'),
     url(r'metrics/job/(?P<api_key>[0-9a-fA-F]+)(/(?P<extra>.*))?$', prometheus.PushGateway.as_view()),
 
     url(r'report/$', views.ReportList.as_view(), name='report-list'),
