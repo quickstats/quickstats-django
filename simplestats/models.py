@@ -21,7 +21,7 @@ def _upload_to_path(instance, filename):
 
 
 class Widget(models.Model):
-    slug = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    slug = models.UUIDField(default=uuid.uuid4, editable=False)
     timestamp = models.DateTimeField(default=timezone.now)
     title = models.CharField(max_length=64)
     description = models.TextField(blank=True)
@@ -30,6 +30,10 @@ class Widget(models.Model):
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     value = models.FloatField(default=0)
     more = models.URLField(blank=True)
+    type = models.CharField(max_length=32, choices=[
+        ('chart', 'Chart'),
+        ('calendar', 'Calendar'),
+    ])
 
     def __str__(self):
         return 'Widget:{}:{}'.format(self.owner_id, self.slug)
@@ -69,7 +73,7 @@ class Label(models.Model):
 class Meta(models.Model):
     widget = models.ForeignKey(Widget)
     key = models.CharField(max_length=64)
-    value = models.CharField(max_length=64)
+    value = models.TextField()
     output = models.BooleanField(default=False)
 
     class Meta:

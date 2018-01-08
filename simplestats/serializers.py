@@ -8,7 +8,7 @@ class WidgetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Widget
-        fields = '__all__'
+        exclude = ('id',)
         read_only_fields = ('owner', 'icon',)
 
 
