@@ -51,6 +51,7 @@ setup(
             'countdown = simplestats.rest:CountdownViewSet',
             'location = simplestats.rest:LocationViewSet',
             'report = simplestats.rest:ReportViewSet',
+            'widget = simplestats.rest:WidgetViewSet',
         ],
         'powerplug.task': [
             'chart = simplestats.tasks.chart',

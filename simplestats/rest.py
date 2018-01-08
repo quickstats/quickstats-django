@@ -15,10 +15,12 @@ from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
 
-from simplestats.models import Annotation, Chart, Countdown, Location, Report
+from simplestats.models import (Annotation, Chart, Countdown, Location, Report,
+                                Widget)
 from simplestats.serializers import (ChartSerializer, CountdownSerializer,
                                      DataSerializer, LocationSerializer,
-                                     ReportSerializer, StatSerializer)
+                                     ReportSerializer, StatSerializer,
+                                     WidgetSerializer)
 
 from django.db.models import Q
 from django.http import JsonResponse
@@ -27,6 +29,25 @@ from django.utils.timezone import make_aware
 
 logger = logging.getLogger(__name__)
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
+
+
+class WidgetViewSet(viewsets.ModelViewSet):
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    filter_backends = (OrderingFilter,)
+    permission_classes = (DjangoModelPermissions,)
+    queryset = Widget.objects.all()
+    serializer_class = WidgetSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated():
+            return Widget.objects.filter(owner=self.request.user)
+        return Widget.objects.filter(public=True)
+
+    def search(self):
+        Widget.objects.filter(label__name='name', label__value='foo')
 
 
 class CountdownViewSet(viewsets.ModelViewSet):

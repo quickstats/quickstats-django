@@ -1,6 +1,15 @@
 from rest_framework import serializers
 
-from simplestats.models import Chart, Countdown, Data, Location, Report, Stat
+from simplestats.models import Chart, Countdown, Data, Location, Report, Stat, Widget
+
+
+class WidgetSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Widget
+        fields = '__all__'
+        read_only_fields = ('owner', 'icon',)
 
 
 class CountdownSerializer(serializers.ModelSerializer):
