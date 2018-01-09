@@ -4,7 +4,7 @@ from simplestats import prometheus, views
 from django.conf.urls import url
 
 urlpatterns = [
-    url(r'^$', views.Dashboard.as_view(), name='dashboard'),
+    url(r'^$', views.WidgetList.as_view(), name='dashboard'),
     url(r'jobs/(?P<pk>.*)$', prometheus.PushGateway.as_view()),
     url(r'^chart/metrics$', prometheus.Metrics.as_view()),
     url(r'^chart/(?P<pk>.*)$', views.ChartDetail.as_view(), name='chart'),

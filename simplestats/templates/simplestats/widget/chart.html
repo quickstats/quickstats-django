@@ -9,7 +9,7 @@
             <img src="{{ MEDIA_PREFIX }}{{ chart.icon }}" alt="{{ chart.label }}" style="max-width:64px">
         {% endif %}
     <div class="card-body">
-        <h4 class="card-title"><a href="{% url 'stats:chart' chart.pk %}">{{chart.label}}</a></h4>
+        <h4 class="card-title"><a href="{% url 'stats:chart' chart.pk %}">{{chart.title}}</a></h4>
         <p class="card-text">{{ chart.value }}</p>
         {% if chart.more and chart.icon == False %}
             <a href="{{ chart.more }}" class="btn btn-default card-link">More</a>

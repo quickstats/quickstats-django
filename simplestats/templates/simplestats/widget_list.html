@@ -1,0 +1,13 @@
+{% extends "simplestats/base.html" %}
+{% load simplestats %}
+{% block content %}
+<div style="
+    display: grid;
+    grid-template-columns: 250px 250px 250px;
+    grid-template-rows: 250px 250px;
+">
+    {% for widget in widget_list %}
+    {{ widget|render_widget }}
+    {% endfor %}
+</div>
+{% endblock %}

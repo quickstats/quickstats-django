@@ -11,16 +11,11 @@ from rest_framework.authentication import (BasicAuthentication,
                                            TokenAuthentication)
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import (DjangoModelPermissions,
-                                        DjangoModelPermissionsOrAnonReadOnly)
+from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 
-from simplestats.models import (Annotation, Chart, Countdown, Location, Report,
-                                Widget)
-from simplestats.serializers import (ChartSerializer, CountdownSerializer,
-                                     DataSerializer, LocationSerializer,
-                                     ReportSerializer, StatSerializer,
-                                     WidgetSerializer)
+from simplestats.models import Widget
+from simplestats.serializers import WidgetSerializer
 
 from django.db.models import Q
 from django.http import JsonResponse
@@ -37,6 +32,7 @@ class WidgetViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
     queryset = Widget.objects.all()
     serializer_class = WidgetSerializer
+    lookup_field = 'slug'
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -45,41 +41,6 @@ class WidgetViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated():
             return Widget.objects.filter(owner=self.request.user)
         return Widget.objects.filter(public=True)
-
-    def search(self):
-        Widget.objects.filter(label__name='name', label__value='foo')
-
-
-class CountdownViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
-    filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissions,)
-    queryset = Countdown.objects.all()
-    serializer_class = CountdownSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def get_queryset(self):
-        if self.request.user.is_authenticated():
-            return Countdown.objects.filter(owner=self.request.user)
-        return Countdown.objects.filter(public=True)
-
-
-class ChartViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
-    filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    queryset = Chart.objects.all()
-    serializer_class = ChartSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def get_queryset(self):
-        if self.request.user.is_authenticated():
-            return Chart.objects.filter(owner=self.request.user)
-        return Chart.objects.filter(public=True)
 
     @detail_route(methods=['get', 'post'])
     def stats(self, request, pk=None):
@@ -108,11 +69,18 @@ class ChartViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
     def search(self, request):
         '''Grafana Search'''
-        return JsonResponse(list(
-            Chart.objects.filter(
-                Q(owner=request.user) | Q(public=True)
-            ).values_list('keys', flat=True).distinct('label')
-        ), safe=False)
+        query = json.loads(request.body.decode("utf-8"))
+
+        qs = Widget.objects.filter(Q(owner=request.user) | Q(public=True))
+        qs = qs.filter(label__name='metric')
+
+        for k, v in query.items():
+            print('Filtering on', k, v)
+            qs = qs.filter(label__name=k, label__value__contains=v)
+
+        qs = qs.values_list('label__value', flat=True).distinct('label__value')
+
+        return JsonResponse(list(qs), safe=False)
 
     @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
     def query(self, request):
@@ -171,31 +139,9 @@ class ChartViewSet(viewsets.ModelViewSet):
 
         return JsonResponse(results, safe=False)
 
-
-class ReportViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
-    filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    queryset = Report.objects.all()
-    serializer_class = ReportSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def get_queryset(self):
-        return Report.objects.filter(owner_id=self.request.user.id)
-
-
-class LocationViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
-    filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    queryset = Location.objects.all()
-    serializer_class = LocationSerializer
-
     @detail_route(methods=['post'], permission_classes=[])
     def ifttt(self, request, pk=None):
-        location = get_object_or_404(Location, pk=pk)
+        location = get_object_or_404(Widget, pk=pk)
         body = json.loads(request.body.decode("utf-8"))
         kwargs = {}
         kwargs['state'] = body['state']
@@ -209,9 +155,3 @@ class LocationViewSet(viewsets.ModelViewSet):
 
         logger.info('Logged movement from ifttt: %s', movement)
         return Response({'status': 'done'})
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def get_queryset(self):
-        return Location.objects.filter(owner_id=self.request.user.id)

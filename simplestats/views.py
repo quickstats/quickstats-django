@@ -84,6 +84,13 @@ class LocationCalendar(View):
         )
 
 
+class WidgetList(LoginRequiredMixin, ListView):
+    model = simplestats.models.Widget
+
+    def get_queryset(self):
+        return self.model.objects.filter(owner=self.request.user)
+
+
 class Dashboard(View):
     '''
     Simple dashboard to show important views
