@@ -47,6 +47,27 @@ def migrate_objects(apps, schema_editor):
             if k == '__name__' and 'metric' not in c.labels:
                 k = 'metric'
             w.label_set.create(name=k, value=v)
+        # for d in c.data_set.all():
+        #     w.sample_set.create(
+        #         timestamp=d.timestamp,
+        #         value=d.value,
+        #     )
+        print('.', end='')
+
+    Location = apps.get_model("simplestats", "Location")
+    for l in Location.objects.all():
+        w = Widget.objects.create(
+            slug=l.id,
+            owner_id=l.owner_id,
+            title=l.name,
+            type='location',
+        )
+        for m in l.movement_set.all():
+            w.note_set.create(
+                title=m.note[:64],
+                timestamp=m.created,
+                description=m.map + '\n' + m.note
+            )
 
 
 class Migration(migrations.Migration):
