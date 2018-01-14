@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
+from django.db import transaction
 
 
 def migrate_objects(apps, schema_editor):
@@ -47,11 +48,14 @@ def migrate_objects(apps, schema_editor):
             if k == '__name__' and 'metric' not in c.labels:
                 k = 'metric'
             w.label_set.create(name=k, value=v)
-        # for d in c.data_set.all():
-        #     w.sample_set.create(
-        #         timestamp=d.timestamp,
-        #         value=d.value,
-        #     )
+
+        with transaction.atomic():
+            print('Migrating', w.title, end='')
+            for d in c.data_set.all():
+                w.sample_set.create(
+                    timestamp=d.timestamp,
+                    value=d.value,
+            )
         print('.', end='')
 
     Location = apps.get_model("simplestats", "Location")

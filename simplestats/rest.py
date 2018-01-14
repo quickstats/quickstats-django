@@ -11,7 +11,7 @@ from rest_framework.authentication import (BasicAuthentication,
                                            TokenAuthentication)
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.permissions import DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.response import Response
 
 from simplestats.models import Widget
@@ -29,7 +29,7 @@ DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 class WidgetViewSet(viewsets.ModelViewSet):
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     queryset = Widget.objects.all()
     serializer_class = WidgetSerializer
     lookup_field = 'slug'
@@ -71,14 +71,9 @@ class WidgetViewSet(viewsets.ModelViewSet):
         '''Grafana Search'''
         query = json.loads(request.body.decode("utf-8"))
 
-        qs = Widget.objects.filter(Q(owner=request.user) | Q(public=True))
-        qs = qs.filter(label__name='metric')
-
-        for k, v in query.items():
-            print('Filtering on', k, v)
-            qs = qs.filter(label__name=k, label__value__contains=v)
-
-        qs = qs.values_list('label__value', flat=True).distinct('label__value')
+        qs = self.get_queryset()\
+            .filter(label__name='metric', label__value__contains=query['target'])\
+            .values_list('label__value', flat=True).distinct('label__value')
 
         return JsonResponse(list(qs), safe=False)
 
@@ -97,14 +92,15 @@ class WidgetViewSet(viewsets.ModelViewSet):
         results = []
 
         targets = [target['target'] for target in body['targets']]
-        for chart in Chart.objects.filter(
-                Q(owner=request.user) | Q(public=True)
-                ).filter(keys__in=targets):
+        for widget in self.get_queryset()\
+                .filter(label__name='metric', label__value__in=targets):
             response = {
-                'target': chart.label,
+                'target': widget.title,
+                # 'target': str({l.name: l.value for l in widget.label_set.all()}),
                 'datapoints': []
             }
-            for dp in chart.data_set.filter(timestamp__gte=start, timestamp__lte=end).order_by('timestamp'):
+            for dp in widget.sample_set.filter(timestamp__gte=start, timestamp__lte=end).order_by('timestamp'):
+                print(dp)
                 response['datapoints'].append([
                     dp.value,
                     ts(dp.timestamp)
