@@ -14,10 +14,14 @@ class IFTTTTest(TestCase):
         self.user = User.objects.create_user(username='foo')
         self.time = datetime.datetime(2017, 6, 8, 14, 18, tzinfo=datetime.timezone.utc)
 
-        self.location = models.Location.objects.create(name='Foo', owner=self.user)
+        self.location = models.Widget.objects.create(
+            title='Location Test',
+            owner=self.user,
+            type='location',
+        )
 
         response = self.client.post(
-            reverse('api:location-ifttt', args=(self.location.id,)),
+            reverse('api:widget-ifttt', args=(self.location.slug,)),
             content_type='application/json',
             data=json.dumps({
                 'state': 'entered',
@@ -29,6 +33,6 @@ class IFTTTTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.movement = models.Movement.objects.get()
-        self.assertEqual(self.movement.state, 'entered')
-        self.assertEqual(self.movement.created, self.time)
+        wp = models.Waypoint.objects.get()
+        self.assertEqual(wp.state, 'entered')
+        self.assertEqual(wp.timestamp, self.time)

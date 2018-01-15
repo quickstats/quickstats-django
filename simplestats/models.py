@@ -223,6 +223,24 @@ class Location(models.Model):
         return Movement.objects.create(location=self, **kwargs)
 
 
+class Waypoint(models.Model):
+    widget = models.ForeignKey(Widget)
+    timestamp = models.DateTimeField(default=now)
+    lat = models.FloatField()
+    lon = models.FloatField()
+    state = models.CharField(
+        max_length=16,
+        choices=(
+            ('', _('Unselected')),
+            ('entered', _('Entered an Area')),
+            ('exited', _('Exited an Area')),
+            ('Do Button', _('Test Entry')),
+            ('Do Note', _('Manual Entry')),
+        )
+    )
+    description = models.TextField(blank=True)
+
+
 class Movement(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(default=now)

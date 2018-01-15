@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 from django.db import transaction
+from urllib.parse import parse_qs, urlparse
 
 
 def migrate_objects(apps, schema_editor):
@@ -67,10 +68,16 @@ def migrate_objects(apps, schema_editor):
             type='location',
         )
         for m in l.movement_set.all():
-            w.note_set.create(
-                title=m.note[:64],
+            # Parse out google maps URL and store as lat/lon
+            url = urlparse(m.map)
+            qs = parse_qs(url.query)
+            lat, lon = qs['q'][0].split(',')
+            w.waypoint_set.create(
+                description=m.note,
                 timestamp=m.created,
-                description=m.map + '\n' + m.note
+                lat=lat,
+                lon=lon,
+                state=m.state,
             )
 
 

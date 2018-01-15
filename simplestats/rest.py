@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import time
+from urllib.parse import parse_qs, urlparse
 
 import pytz
 from dateutil.parser import parse
@@ -11,13 +12,13 @@ from rest_framework.authentication import (BasicAuthentication,
                                            TokenAuthentication)
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import (DjangoModelPermissions,
+                                        DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
 
 from simplestats.models import Widget
 from simplestats.serializers import WidgetSerializer
 
-from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
@@ -136,18 +137,23 @@ class WidgetViewSet(viewsets.ModelViewSet):
         return JsonResponse(results, safe=False)
 
     @detail_route(methods=['post'], permission_classes=[])
-    def ifttt(self, request, pk=None):
-        location = get_object_or_404(Widget, pk=pk)
+    def ifttt(self, request, slug=None):
+        location = get_object_or_404(Widget, slug=slug)
         body = json.loads(request.body.decode("utf-8"))
         kwargs = {}
         kwargs['state'] = body['state']
-        kwargs['map'] = body['location']
-        kwargs['note'] = body.get('label')
-        kwargs['created'] = parse(body['created'])
-        if 'timezone' in body:
-            kwargs['created'] = kwargs['created'].replace(tzinfo=pytz.timezone(body['timezone']))
+        kwargs['description'] = body.get('label')
+        kwargs['timestamp'] = parse(body['created'])
 
-        movement = location.record(**kwargs)
+        if 'timezone' in body:
+            kwargs['timestamp'] = kwargs['timestamp'].replace(tzinfo=pytz.timezone(body['timezone']))
+
+        # Parse out google maps URL and store as lat/lon
+        url = urlparse(body['location'])
+        qs = parse_qs(url.query)
+        kwargs['lat'], kwargs['lon'] = qs['q'][0].split(',')
+
+        movement = location.waypoint_set.create(**kwargs)
 
         logger.info('Logged movement from ifttt: %s', movement)
         return Response({'status': 'done'})

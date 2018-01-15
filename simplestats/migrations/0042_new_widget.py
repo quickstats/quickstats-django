@@ -53,6 +53,17 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Waypoint',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('timestamp', models.DateTimeField(default=django.utils.timezone.now)),
+                ('lat', models.FloatField()),
+                ('lon', models.FloatField()),
+                ('state', models.CharField(choices=[('', 'Unselected'), ('entered', 'Entered an Area'), ('exited', 'Exited an Area'), ('Do Button', 'Test Entry'), ('Do Note', 'Manual Entry')], max_length=16)),
+                ('description', models.TextField(blank=True)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Widget',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -67,6 +78,11 @@ class Migration(migrations.Migration):
                 ('type', models.CharField(choices=[('chart', 'Chart'), ('calendar', 'Calendar')], max_length=32)),
                 ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='owner')),
             ],
+        ),
+        migrations.AddField(
+            model_name='waypoint',
+            name='widget',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='simplestats.Widget'),
         ),
         migrations.AddField(
             model_name='sample',
