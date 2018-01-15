@@ -17,7 +17,7 @@ from rest_framework.permissions import (DjangoModelPermissions,
 from rest_framework.response import Response
 
 from simplestats.models import Widget
-from simplestats.serializers import WidgetSerializer
+from simplestats.serializers import WidgetSerializer, SampleSerializer
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -30,7 +30,7 @@ DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 class WidgetViewSet(viewsets.ModelViewSet):
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (DjangoModelPermissions,)
     queryset = Widget.objects.all()
     serializer_class = WidgetSerializer
     lookup_field = 'slug'
@@ -44,30 +44,34 @@ class WidgetViewSet(viewsets.ModelViewSet):
         return Widget.objects.filter(public=True)
 
     @detail_route(methods=['get', 'post'])
-    def stats(self, request, pk=None):
-        return getattr(self, 'stats_' + request.method)(request, pk)
+    def stats(self, request, slug=None):
+        return getattr(self, 'stats_' + request.method)(request, slug)
 
-    def stats_GET(self, request, pk):
+    def stats_GET(self, request, slug):
         chart = self.get_object()
-        queryset = chart.data_set.order_by('-timestamp')
+        queryset = chart.sample_set.order_by('-timestamp')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = DataSerializer(page, many=True)
+            serializer = SampleSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = StatSerializer(queryset, many=True)
+        serializer = SampleSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def stats_POST(self, request, pk):
+    def stats_POST(self, request, slug):
         chart = self.get_object()
-        serializer = DataSerializer(data=request.data)
+        serializer = SampleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(key=chart.keys)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
+    @list_route(
+        methods=['post'],
+        authentication_classes=[BasicAuthentication],
+        permission_classes=[DjangoModelPermissionsOrAnonReadOnly]
+        )
     def search(self, request):
         '''Grafana Search'''
         query = json.loads(request.body.decode("utf-8"))
@@ -78,7 +82,11 @@ class WidgetViewSet(viewsets.ModelViewSet):
 
         return JsonResponse(list(qs), safe=False)
 
-    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
+    @list_route(
+        methods=['post'],
+        authentication_classes=[BasicAuthentication],
+        permission_classes=[DjangoModelPermissionsOrAnonReadOnly]
+        )
     def query(self, request):
         '''Grafana Query'''
         def ts(ts):
