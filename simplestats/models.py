@@ -32,7 +32,7 @@ class Widget(models.Model):
     more = models.URLField(blank=True)
     type = models.CharField(max_length=32, choices=[
         ('chart', 'Chart'),
-        ('calendar', 'Calendar'),
+        ('countdown', 'Countdown'),
         ('location', 'Location'),
     ])
 
