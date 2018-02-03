@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
                 ('icon', models.ImageField(blank=True, upload_to=simplestats.models._upload_to_path)),
                 ('value', models.FloatField(default=0)),
                 ('more', models.URLField(blank=True)),
-                ('type', models.CharField(choices=[('chart', 'Chart'), ('calendar', 'Calendar')], max_length=32)),
+                ('type', models.CharField(choices=[('chart', 'Chart'), ('calendar', 'Calendar'), ('location', 'Location')], max_length=32)),
                 ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='owner')),
             ],
         ),

@@ -33,6 +33,7 @@ class Widget(models.Model):
     type = models.CharField(max_length=32, choices=[
         ('chart', 'Chart'),
         ('calendar', 'Calendar'),
+        ('location', 'Location'),
     ])
 
     def __str__(self):
