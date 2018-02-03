@@ -50,14 +50,13 @@ def migrate_objects(apps, schema_editor):
                 k = 'metric'
             w.label_set.create(name=k, value=v)
 
+        print('Migrating', w.title)
         with transaction.atomic():
-            print('Migrating', w.title, end='')
             for d in c.data_set.all():
                 w.sample_set.create(
                     timestamp=d.timestamp,
                     value=d.value,
             )
-        print('.', end='')
 
     Location = apps.get_model("simplestats", "Location")
     for l in Location.objects.all():

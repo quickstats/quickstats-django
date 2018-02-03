@@ -129,11 +129,15 @@ class WidgetViewSet(viewsets.ModelViewSet):
             datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT),
             pytz.utc)
 
+        qs = self.get_queryset()
+        for k, v in json.loads(body['annotation']['query']).items():
+            qs = qs.filter(label__name=k, label__value=v)
+
         results = []
-        for annotation in Annotation.objects\
+        for annotation in qs.note_set\
                 .order_by('created')\
-                .filter(created__gte=start)\
-                .filter(created__lte=end):
+                .filter(timestamp__gte=start)\
+                .filter(timestamp__lte=end):
             results.append({
                 'annotation': body['annotation']['name'],
                 'time': annotation.created_unix * 1000,
