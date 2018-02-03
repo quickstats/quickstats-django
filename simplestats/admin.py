@@ -5,6 +5,21 @@ from django.utils.translation import ugettext_lazy as _
 import simplestats.tasks.chart
 
 
+class LabelInline(admin.TabularInline):
+    model = simplestats.models.Label
+
+
+class MetaInline(admin.TabularInline):
+    model = simplestats.models.Meta
+
+
+@admin.register(simplestats.models.Widget)
+class WidgetAdmin(admin.ModelAdmin):
+    list_display = ('slug', 'timestamp', 'title', 'owner', 'public')
+    list_filter = ('owner', 'public')
+    inlines = [LabelInline, MetaInline]
+
+
 @admin.register(simplestats.models.Stat)
 class StatAdmin(admin.ModelAdmin):
     list_display = ('created', 'key', 'value')

@@ -47,10 +47,7 @@ setup(
         'powerplug.apps': ['stats = simplestats'],
         'powerplug.urls': ['stats = simplestats.urls'],
         'powerplug.rest': [
-            'chart = simplestats.rest:ChartViewSet',
-            'countdown = simplestats.rest:CountdownViewSet',
-            'location = simplestats.rest:LocationViewSet',
-            'report = simplestats.rest:ReportViewSet',
+            'widget = simplestats.rest:WidgetViewSet',
         ],
         'powerplug.task': [
             'chart = simplestats.tasks.chart',

@@ -1,6 +1,7 @@
 import logging
 from django.utils import timezone
 from simplestats import models
+from django.db.models import Q
 
 
 logger = logging.getLogger(__name__)
@@ -21,29 +22,37 @@ def quick_record(owner, value, **kwargs):
     '''
     kwargs.setdefault('labels', {})
     if 'metric' in kwargs:
-        kwargs['labels']['__name__'] = kwargs.pop('metric')
+        kwargs['labels'].setdefault('metric', kwargs.pop('metric'))
     if 'timestamp' not in kwargs:
         kwargs['timestamp'] = timezone.now()
     kwargs['value'] = value
 
-    # TODO Temporary label
-    # This is used to bridge our old lables to the new one
-    _labels = kwargs['labels'].copy()
-    kwargs['label'] = _labels.pop('__name__')
-    if _labels:
-        kwargs['label'] += str(_labels)
-    kwargs['keys'] = kwargs['labels']
-
-    # Pop a required parameter
+    # Build a query looking for widgets that have all labels. If we do not
+    # already have a widget, build a new one
     labels = kwargs.pop('labels')
-    # Need to rename the value for our Chart Object
-    kwargs['created'] = kwargs.pop('timestamp')
+    qs = models.Widget.objects
+    for k, v in labels.items():
+        qs = qs.filter(Q(label__name=k, label__value=v))
+    try:
+        widget = qs.get()
+    except models.Widget.DoesNotExist:
+        widget = models.Widget.objects.create(
+            owner=owner,
+            title=labels['metric'],
+        )
+        for k, v in labels.items():
+            widget.label_set.create(name=k, value=v)
 
-    chart, created = models.Chart.objects.get_or_create(
-        owner=owner,
-        labels=labels,
-        defaults=kwargs
-    )
-    if created:
-        logger.info('Created chart')
-    return chart.upsert(kwargs['created'], value)
+    # TODO: Optimize to be more robust
+    # Add our new sample to our widget. We do a filter to see if we already
+    # have a sample for this timestamp that needs to be updated, otherwise
+    # we create a new sample. Perhaps can use sample_set.update ?
+    for sample in widget.sample_set.filter(timestamp=kwargs['timestamp']):
+        sample.value = value
+        sample.save()
+        return sample
+    else:
+        return widget.sample_set.create(
+            timestamp=kwargs['timestamp'],
+            value=value
+        )

@@ -20,6 +20,67 @@ def _upload_to_path(instance, filename):
         instance.__class__.__name__, instance.pk, ext).lower()
 
 
+class Widget(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False)
+    timestamp = models.DateTimeField(default=timezone.now)
+    title = models.CharField(max_length=64)
+    description = models.TextField(blank=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('owner'))
+    public = models.BooleanField(default=False)
+    icon = models.ImageField(upload_to=_upload_to_path, blank=True)
+    value = models.FloatField(default=0)
+    more = models.URLField(blank=True)
+    type = models.CharField(max_length=32, choices=[
+        ('chart', 'Chart'),
+        ('calendar', 'Calendar'),
+    ])
+
+    def __str__(self):
+        return 'Widget:{}:{}'.format(self.owner_id, self.slug)
+
+
+class Sample(models.Model):
+    widget = models.ForeignKey(Widget)
+    timestamp = models.DateTimeField(default=timezone.now)
+    value = models.FloatField()
+
+    class Meta:
+        unique_together = ('widget', 'timestamp')
+
+    def __str__(self):
+        return 'Sample:{}:{}'.format(self.widget_id, self.value)
+
+
+class Note(models.Model):
+    widget = models.ForeignKey(Widget)
+    timestamp = models.DateTimeField(default=timezone.now)
+    title = models.CharField(max_length=64)
+    description = models.TextField()
+
+
+class Label(models.Model):
+    widget = models.ForeignKey(Widget)
+    name = models.CharField(max_length=64)
+    value = models.CharField(max_length=64)
+
+    class Meta:
+        unique_together = ('widget', 'name')
+
+    def __str__(self):
+        return self.name + ':' + self.value
+
+
+class Meta(models.Model):
+    widget = models.ForeignKey(Widget)
+    key = models.CharField(max_length=64)
+    value = models.TextField()
+    output = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('widget', 'key')
+
+
+
 class Stat(models.Model):
     created = models.DateTimeField(default=timezone.now)
     key = models.CharField(max_length=128)
@@ -160,6 +221,24 @@ class Location(models.Model):
 
     def record(self, **kwargs):
         return Movement.objects.create(location=self, **kwargs)
+
+
+class Waypoint(models.Model):
+    widget = models.ForeignKey(Widget)
+    timestamp = models.DateTimeField(default=now)
+    lat = models.FloatField()
+    lon = models.FloatField()
+    state = models.CharField(
+        max_length=16,
+        choices=(
+            ('', _('Unselected')),
+            ('entered', _('Entered an Area')),
+            ('exited', _('Exited an Area')),
+            ('Do Button', _('Test Entry')),
+            ('Do Note', _('Manual Entry')),
+        )
+    )
+    description = models.TextField(blank=True)
 
 
 class Movement(models.Model):

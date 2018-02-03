@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import time
+from urllib.parse import parse_qs, urlparse
 
 import pytz
 from dateutil.parser import parse
@@ -15,12 +16,9 @@ from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
 
-from simplestats.models import Annotation, Chart, Countdown, Location, Report
-from simplestats.serializers import (ChartSerializer, CountdownSerializer,
-                                     DataSerializer, LocationSerializer,
-                                     ReportSerializer, StatSerializer)
+from simplestats.models import Widget
+from simplestats.serializers import WidgetSerializer, SampleSerializer
 
-from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
@@ -29,71 +27,66 @@ logger = logging.getLogger(__name__)
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
-class CountdownViewSet(viewsets.ModelViewSet):
+class WidgetViewSet(viewsets.ModelViewSet):
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     filter_backends = (OrderingFilter,)
     permission_classes = (DjangoModelPermissions,)
-    queryset = Countdown.objects.all()
-    serializer_class = CountdownSerializer
+    queryset = Widget.objects.all()
+    serializer_class = WidgetSerializer
+    lookup_field = 'slug'
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
         if self.request.user.is_authenticated():
-            return Countdown.objects.filter(owner=self.request.user)
-        return Countdown.objects.filter(public=True)
-
-
-class ChartViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
-    filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    queryset = Chart.objects.all()
-    serializer_class = ChartSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def get_queryset(self):
-        if self.request.user.is_authenticated():
-            return Chart.objects.filter(owner=self.request.user)
-        return Chart.objects.filter(public=True)
+            return Widget.objects.filter(owner=self.request.user)
+        return Widget.objects.filter(public=True)
 
     @detail_route(methods=['get', 'post'])
-    def stats(self, request, pk=None):
-        return getattr(self, 'stats_' + request.method)(request, pk)
+    def stats(self, request, slug=None):
+        return getattr(self, 'stats_' + request.method)(request, slug)
 
-    def stats_GET(self, request, pk):
+    def stats_GET(self, request, slug):
         chart = self.get_object()
-        queryset = chart.data_set.order_by('-timestamp')
+        queryset = chart.sample_set.order_by('-timestamp')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = DataSerializer(page, many=True)
+            serializer = SampleSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = StatSerializer(queryset, many=True)
+        serializer = SampleSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def stats_POST(self, request, pk):
+    def stats_POST(self, request, slug):
         chart = self.get_object()
-        serializer = DataSerializer(data=request.data)
+        serializer = SampleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(key=chart.keys)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
+    @list_route(
+        methods=['post'],
+        authentication_classes=[BasicAuthentication],
+        permission_classes=[DjangoModelPermissionsOrAnonReadOnly]
+        )
     def search(self, request):
         '''Grafana Search'''
-        return JsonResponse(list(
-            Chart.objects.filter(
-                Q(owner=request.user) | Q(public=True)
-            ).values_list('keys', flat=True).distinct('label')
-        ), safe=False)
+        query = json.loads(request.body.decode("utf-8"))
 
-    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
+        qs = self.get_queryset()\
+            .filter(label__name='metric', label__value__contains=query['target'])\
+            .values_list('label__value', flat=True).distinct('label__value')
+
+        return JsonResponse(list(qs), safe=False)
+
+    @list_route(
+        methods=['post'],
+        authentication_classes=[BasicAuthentication],
+        permission_classes=[DjangoModelPermissionsOrAnonReadOnly]
+        )
     def query(self, request):
         '''Grafana Query'''
         def ts(ts):
@@ -108,14 +101,15 @@ class ChartViewSet(viewsets.ModelViewSet):
         results = []
 
         targets = [target['target'] for target in body['targets']]
-        for chart in Chart.objects.filter(
-                Q(owner=request.user) | Q(public=True)
-                ).filter(keys__in=targets):
+        for widget in self.get_queryset()\
+                .filter(label__name='metric', label__value__in=targets):
             response = {
-                'target': chart.label,
+                'target': widget.title,
+                # 'target': str({l.name: l.value for l in widget.label_set.all()}),
                 'datapoints': []
             }
-            for dp in chart.data_set.filter(timestamp__gte=start, timestamp__lte=end).order_by('timestamp'):
+            for dp in widget.sample_set.filter(timestamp__gte=start, timestamp__lte=end).order_by('timestamp'):
+                print(dp)
                 response['datapoints'].append([
                     dp.value,
                     ts(dp.timestamp)
@@ -135,11 +129,15 @@ class ChartViewSet(viewsets.ModelViewSet):
             datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT),
             pytz.utc)
 
+        qs = self.get_queryset()
+        for k, v in json.loads(body['annotation']['query']).items():
+            qs = qs.filter(label__name=k, label__value=v)
+
         results = []
-        for annotation in Annotation.objects\
+        for annotation in qs.note_set\
                 .order_by('created')\
-                .filter(created__gte=start)\
-                .filter(created__lte=end):
+                .filter(timestamp__gte=start)\
+                .filter(timestamp__lte=end):
             results.append({
                 'annotation': body['annotation']['name'],
                 'time': annotation.created_unix * 1000,
@@ -150,47 +148,24 @@ class ChartViewSet(viewsets.ModelViewSet):
 
         return JsonResponse(results, safe=False)
 
-
-class ReportViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
-    filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    queryset = Report.objects.all()
-    serializer_class = ReportSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def get_queryset(self):
-        return Report.objects.filter(owner_id=self.request.user.id)
-
-
-class LocationViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
-    filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    queryset = Location.objects.all()
-    serializer_class = LocationSerializer
-
     @detail_route(methods=['post'], permission_classes=[])
-    def ifttt(self, request, pk=None):
-        location = get_object_or_404(Location, pk=pk)
+    def ifttt(self, request, slug=None):
+        location = get_object_or_404(Widget, slug=slug)
         body = json.loads(request.body.decode("utf-8"))
         kwargs = {}
         kwargs['state'] = body['state']
-        kwargs['map'] = body['location']
-        kwargs['note'] = body.get('label')
-        kwargs['created'] = parse(body['created'])
-        if 'timezone' in body:
-            kwargs['created'] = kwargs['created'].replace(tzinfo=pytz.timezone(body['timezone']))
+        kwargs['description'] = body.get('label')
+        kwargs['timestamp'] = parse(body['created'])
 
-        movement = location.record(**kwargs)
+        if 'timezone' in body:
+            kwargs['timestamp'] = kwargs['timestamp'].replace(tzinfo=pytz.timezone(body['timezone']))
+
+        # Parse out google maps URL and store as lat/lon
+        url = urlparse(body['location'])
+        qs = parse_qs(url.query)
+        kwargs['lat'], kwargs['lon'] = qs['q'][0].split(',')
+
+        movement = location.waypoint_set.create(**kwargs)
 
         logger.info('Logged movement from ifttt: %s', movement)
         return Response({'status': 'done'})
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def get_queryset(self):
-        return Location.objects.filter(owner_id=self.request.user.id)
