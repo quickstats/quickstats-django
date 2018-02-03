@@ -15,8 +15,8 @@ class MetaInline(admin.TabularInline):
 
 @admin.register(simplestats.models.Widget)
 class WidgetAdmin(admin.ModelAdmin):
-    list_display = ('slug', 'timestamp', 'title', 'owner', 'public')
-    list_filter = ('owner', 'public')
+    list_display = ('slug', 'timestamp', 'title', 'owner', 'public', 'type')
+    list_filter = ('owner', 'public', 'type')
     inlines = [LabelInline, MetaInline]
 
 
