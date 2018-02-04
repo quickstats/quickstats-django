@@ -24,7 +24,7 @@ def scheduled():
 
 @shared_task()
 def update_countdown(pk):
-    countdown = simplestats.models.Widget.objects.get(meta__pk=pk)
+    countdown = simplestats.models.Widget.objects.get(pk=pk)
     logger.debug(countdown)
 
     countdown.timestamp = datetime.datetime.min
