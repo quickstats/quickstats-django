@@ -17,19 +17,23 @@ logger = logging.getLogger(__name__)
 
 @periodic_task(run_every=datetime.timedelta(minutes=30))
 def scheduled():
-    for countdown in simplestats.models.Countdown.objects.exclude(calendar__exact=''):
-        update_countdown.delay(countdown.pk)
+    # Schedule all of our widgets that have a calendar subscription to update
+    for meta in simplestats.models.Meta.objects.filter(key='calendar.subscription'):
+        update_countdown.delay(meta.widget_id)
 
 
 @shared_task()
 def update_countdown(pk):
-    countdown = simplestats.models.Countdown.objects.get(pk=pk)
+    countdown = simplestats.models.Widget.objects.get(meta__pk=pk)
+    logger.debug(countdown)
+
+    countdown.timestamp = datetime.datetime.min
     now = timezone.localtime(timezone.now())
     end = now + datetime.timedelta(days=30)
     next_event = None
     next_time = None
 
-    response = requests.get(countdown.calendar)
+    response = requests.get(countdown['calendar.subscription'])
     calendar = icalendar.Calendar.from_ical(response.text)
     if 'X-WR-CALNAME' in calendar:
         logger.info('Reading calendar: %s', calendar['X-WR-CALNAME'])
@@ -43,7 +47,7 @@ def update_countdown(pk):
 
         # Filter out all day events
         if not isinstance(component['DTSTART'].dt, datetime.datetime):
-            if countdown.allday:
+            if countdown['calendar.allday']:
                 logger.debug('Converting to midnight date: %s', component['SUMMARY'])
                 component['DTSTART'] = icalendar.vDatetime(timezone.make_aware(datetime.datetime.combine(component['DTSTART'].dt, datetime.time.min)))
             else:
@@ -51,7 +55,7 @@ def update_countdown(pk):
                 continue
 
         if component['DTSTART'].dt < now:
-            if 'RRULE' not in component or countdown.repeating is False:
+            if 'RRULE' not in component or countdown['calendar.repeating'] is None:
                 logger.debug('Filter out past event: %s', component['SUMMARY'])
                 continue
             else:
@@ -97,8 +101,8 @@ def update_countdown(pk):
             next_time = component['DTSTART'].dt
 
     if next_event:
-        countdown.created = next_time
-        countdown.label = next_event['SUMMARY']
+        countdown.timestamp = next_time
+        countdown.title = next_event['SUMMARY']
         countdown.more = next_event['URL'] if 'URL' in next_event else ''
         countdown.save()
-        logger.info('Updating date for %s to %s', countdown.label, countdown.created)
+        logger.info('Updating date for %s to %s', countdown.title, countdown.timestamp)

@@ -39,6 +39,15 @@ class Widget(models.Model):
     def __str__(self):
         return 'Widget:{}:{}'.format(self.owner_id, self.slug)
 
+    def __getitem__(self, key):
+        # Override __getitem__ as an easy way to get our meta fields for our
+        # widget.
+        # TODO: Add test cases
+        # TODO: Add __setitem__
+        if not hasattr(self, '__meta'):
+            self.__meta = {x.key: x.value for x in self.meta_set.all()}
+        return self.__meta.get(key)
+
 
 class Sample(models.Model):
     widget = models.ForeignKey(Widget)
