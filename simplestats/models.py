@@ -8,6 +8,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import IntegrityError, models
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
@@ -39,14 +40,9 @@ class Widget(models.Model):
     def __str__(self):
         return 'Widget:{}:{}'.format(self.owner_id, self.slug)
 
-    def __getitem__(self, key):
-        # Override __getitem__ as an easy way to get our meta fields for our
-        # widget.
-        # TODO: Add test cases
-        # TODO: Add __setitem__
-        if not hasattr(self, '__meta'):
-            self.__meta = {x.key: x.value for x in self.meta_set.all()}
-        return self.__meta.get(key)
+    @cached_property
+    def meta(self):
+        return {x.key: x.value for x in self.meta_set.all()}
 
 
 class Sample(models.Model):
