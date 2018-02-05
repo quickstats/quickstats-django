@@ -33,7 +33,7 @@ def update_countdown(pk):
     next_event = None
     next_time = None
 
-    response = requests.get(countdown.meta['calendar.subscription'])
+    response = requests.get(countdown.meta('calendar.subscription'))
     calendar = icalendar.Calendar.from_ical(response.text)
     if 'X-WR-CALNAME' in calendar:
         logger.info('Reading calendar: %s', calendar['X-WR-CALNAME'])
@@ -47,7 +47,7 @@ def update_countdown(pk):
 
         # Filter out all day events
         if not isinstance(component['DTSTART'].dt, datetime.datetime):
-            if countdown.meta['calendar.allday']:
+            if countdown.meta('calendar.allday'):
                 logger.debug('Converting to midnight date: %s', component['SUMMARY'])
                 component['DTSTART'] = icalendar.vDatetime(timezone.make_aware(datetime.datetime.combine(component['DTSTART'].dt, datetime.time.min)))
             else:
@@ -55,7 +55,7 @@ def update_countdown(pk):
                 continue
 
         if component['DTSTART'].dt < now:
-            if 'RRULE' not in component or countdown.meta['calendar.repeating'] is None:
+            if 'RRULE' not in component or countdown.meta('calendar.repeating') is None:
                 logger.debug('Filter out past event: %s', component['SUMMARY'])
                 continue
             else:
