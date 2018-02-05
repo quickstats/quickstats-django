@@ -18,3 +18,7 @@ def render_widget(widget):
             'chart': widget,
         })
     return '*UNKNOWN*'
+
+@register.filter()
+def gmap(waypoint):
+    return 'http://maps.google.com?q={},{}'.format(waypoint.lat, waypoint.lon)

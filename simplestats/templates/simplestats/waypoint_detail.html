@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-
+{% load simplestats %}
 {% block content %}
 <h1>{{ object.name }}</h1>
 
 <nav class="breadcrumb">
-  <a class="breadcrumb-item" href="{% url 'stats:location-list' %}">Locations</a>
+  <a class="breadcrumb-item" href="{% url 'stats:dashboard' %}">Locations</a>
   <span class="breadcrumb-item active">{{ location.name }}</span>
 </nav>
 
 <div class="panel panel-default">
     <div class="panel-body">
-        <input class="form-control" value="{{ request.scheme }}://{{ request.get_host }}{% url 'api:location-ifttt' location.id %}" />
+        <input class="form-control" value="{{ request.scheme }}://{{ request.get_host }}{% url 'api:widget-ifttt' slug=widget.slug %}" />
     </div>
 
     <table class="table table-condensed">
@@ -20,12 +20,12 @@
             <th>Map</th>
             <th>Note</th>
         </tr>
-    {% for movement in location.movement_set.all %}
+    {% for waypoint in widget.waypoint_set.all %}
         <tr>
-            <td>{{ movement.created }}</td>
-            <td>{{ movement.state }}</td>
-            <td>{{ movement.map|urlizetrunc:32 }}</td>
-            <td>{{ movement.note }}</td>
+            <td>{{ waypoint.timestamp }}</td>
+            <td>{{ waypoint.state }}</td>
+            <td>{{ waypoint|gmap|urlizetrunc:32 }}</td>
+            <td>{{ waypoint.description }}</td>
         </tr>
     {% endfor %}
     </table>
