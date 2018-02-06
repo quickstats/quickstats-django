@@ -16,7 +16,7 @@ from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
 
-from simplestats.models import Note, Widget
+from simplestats.models import Note, Waypoint, Widget
 from simplestats.serializers import SampleSerializer, WidgetSerializer
 
 from django.http import JsonResponse
@@ -129,9 +129,18 @@ class WidgetViewSet(viewsets.ModelViewSet):
             pytz.utc)
         query = json.loads(body['annotation']['query'])
 
+        klass = query.pop('__model__', 'Note')
+        if klass == 'Note':
+            qs = Note.objects
+        if klass == 'Waypoint':
+            qs = Waypoint.objects
+            if 'state' in query:
+                qs = qs.filter(state=query.pop('state'))
+
         # Make sure we only get notes from widgets that our user owns
-        qs = Note.objects.filter(widget__owner=request.user)
+        qs = qs.filter(widget__owner=request.user)
         # Then loop through our query items to compare against labels
+
         for k, v in query.items():
             qs = qs.filter(widget__label__name=k, widget__label__value=v)
 
@@ -140,15 +149,26 @@ class WidgetViewSet(viewsets.ModelViewSet):
                 .order_by('timestamp')\
                 .filter(timestamp__gte=start)\
                 .filter(timestamp__lte=end):
-            results.append({
-                'annotation': body['annotation']['name'],
-                'time': self.__ts(annotation.timestamp),
-                'title': annotation.title,
-                'tags': [
-                    '{x.name}:{x.value}'.format(x=x) for x in annotation.widget.label_set.all()
-                    ],
-                'text': annotation.description,
-                })
+            if klass == 'Note':
+                results.append({
+                    'annotation': body['annotation']['name'],
+                    'time': self.__ts(annotation.timestamp),
+                    'title': annotation.title,
+                    'tags': [
+                        '{x.name}:{x.value}'.format(x=x) for x in annotation.widget.label_set.all()
+                        ],
+                    'text': annotation.description,
+                    })
+            if klass == 'Waypoint':
+                results.append({
+                    'annotation': body['annotation']['name'],
+                    'time': self.__ts(annotation.timestamp),
+                    'title': annotation.state,
+                    'tags': [
+                        '{x.name}:{x.value}'.format(x=x) for x in annotation.widget.label_set.all()
+                        ],
+                    'text': annotation.description,
+                    })
 
         return JsonResponse(results, safe=False)
 
