@@ -16,8 +16,8 @@ from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
 
-from simplestats.models import Widget
-from simplestats.serializers import WidgetSerializer, SampleSerializer
+from simplestats.models import Note, Widget
+from simplestats.serializers import SampleSerializer, WidgetSerializer
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -82,6 +82,9 @@ class WidgetViewSet(viewsets.ModelViewSet):
 
         return JsonResponse(list(qs), safe=False)
 
+    def __ts(self, ts):
+        return time.mktime(ts.timetuple()) * 1000
+
     @list_route(
         methods=['post'],
         authentication_classes=[BasicAuthentication],
@@ -89,8 +92,6 @@ class WidgetViewSet(viewsets.ModelViewSet):
         )
     def query(self, request):
         '''Grafana Query'''
-        def ts(ts):
-            return time.mktime(ts.timetuple()) * 1000
         body = json.loads(request.body.decode("utf-8"))
         start = make_aware(
             datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT),
@@ -109,10 +110,9 @@ class WidgetViewSet(viewsets.ModelViewSet):
                 'datapoints': []
             }
             for dp in widget.sample_set.filter(timestamp__gte=start, timestamp__lte=end).order_by('timestamp'):
-                print(dp)
                 response['datapoints'].append([
                     dp.value,
-                    ts(dp.timestamp)
+                    self.__ts(dp.timestamp)
                 ])
             results.append(response)
         return JsonResponse(results, safe=False)
@@ -120,7 +120,6 @@ class WidgetViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
     def annotations(self, request):
         '''Grafana annotation'''
-        #TODO: Replace with something linked to user model
         body = json.loads(request.body.decode("utf-8"))
         start = make_aware(
             datetime.datetime.strptime(body['range']['from'], DATETIME_FORMAT),
@@ -128,22 +127,27 @@ class WidgetViewSet(viewsets.ModelViewSet):
         end = make_aware(
             datetime.datetime.strptime(body['range']['to'], DATETIME_FORMAT),
             pytz.utc)
+        query = json.loads(body['annotation']['query'])
 
-        qs = self.get_queryset()
-        for k, v in json.loads(body['annotation']['query']).items():
-            qs = qs.filter(label__name=k, label__value=v)
+        # Make sure we only get notes from widgets that our user owns
+        qs = Note.objects.filter(widget__owner=request.user)
+        # Then loop through our query items to compare against labels
+        for k, v in query.items():
+            qs = qs.filter(widget__label__name=k, widget__label__value=v)
 
         results = []
-        for annotation in qs.note_set\
-                .order_by('created')\
+        for annotation in qs\
+                .order_by('timestamp')\
                 .filter(timestamp__gte=start)\
                 .filter(timestamp__lte=end):
             results.append({
                 'annotation': body['annotation']['name'],
-                'time': annotation.created_unix * 1000,
+                'time': self.__ts(annotation.timestamp),
                 'title': annotation.title,
-                'tags': annotation.tags,
-                'text': annotation.text,
+                'tags': [
+                    '{x.name}:{x.value}'.format(x=x) for x in annotation.widget.label_set.all()
+                    ],
+                'text': annotation.description,
                 })
 
         return JsonResponse(results, safe=False)
