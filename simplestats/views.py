@@ -52,19 +52,19 @@ class LocationCalendar(View):
         cal.add('version', '2.0')
 
         locations = {}
-        for location in simplestats.models.Movement.objects\
-                .filter(created__gte=datetime.datetime.now() - delta)\
-                .order_by('created'):
+        for location in simplestats.models.Waypoint.objects\
+                .filter(timestamp__gte=datetime.datetime.now() - delta)\
+                .order_by('timestamp'):
             if location.state == 'entered':
-                locations[location.note] = location.created
+                locations[location.widget.title] = location.timestamp
             elif location.state == 'exited':
-                if location.note in locations:
-                    entered = locations.pop(location.note)
+                if location.widget.title in locations:
+                    entered = locations.pop(location.widget.title)
 
                     event = Event()
-                    event.add('summary', location.note)
+                    event.add('summary', location.description)
                     event.add('dtstart', entered)
-                    event.add('dtend', location.created)
+                    event.add('dtend', location.timestamp)
                     event['uid'] = location.id
                     cal.add_component(event)
 
