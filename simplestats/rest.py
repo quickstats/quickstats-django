@@ -190,6 +190,10 @@ class WidgetViewSet(viewsets.ModelViewSet):
         kwargs['lat'], kwargs['lon'] = qs['q'][0].split(',')
 
         movement = location.waypoint_set.create(**kwargs)
+        # TODO: Move to a celery job
+        location.timestamp = movement.timestamp
+        location.save()
+
 
         logger.info('Logged movement from ifttt: %s', movement)
         return Response({'status': 'done'})
