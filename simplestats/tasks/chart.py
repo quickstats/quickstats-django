@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 @shared_task()
 def update_chart(pk):
     chart = simplestats.models.Widget.objects.get(pk=pk)
-    latest = simplestats.models.Sample.objects.filter(parent_id=pk).latest('timestamp')
+    latest = simplestats.models.Sample.objects.filter(widget_id=pk).latest('timestamp')
     chart.value = latest.value
     chart.save()
 
