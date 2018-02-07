@@ -1,5 +1,6 @@
 from django import template
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 register = template.Library()
 
@@ -19,6 +20,14 @@ def render_widget(widget):
         })
     return '*UNKNOWN*'
 
+
 @register.filter()
 def gmap(waypoint):
     return 'http://maps.google.com?q={},{}'.format(waypoint.lat, waypoint.lon)
+
+
+@register.filter()
+def timediff(ts):
+    ts = ts.replace(microsecond=0)
+    now = timezone.now().replace(microsecond=0)
+    return ts - now

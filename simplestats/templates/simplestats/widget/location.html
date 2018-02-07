@@ -1,18 +1,21 @@
 {% load static %}
 {% get_media_prefix as MEDIA_PREFIX %}
-    <div class="card">
-        {% if location.more and location.icon %}
-        <a href="{{ location.more }}" class="btn btn-default">
-            <img src="{{ MEDIA_PREFIX }}{{ location.icon }}" alt="{{ location.label }}" style="max-width:64px">
-        </a>
-        {% elif location.icon %}
-            <img src="{{ MEDIA_PREFIX }}{{ location.icon }}" alt="{{ location.label }}" style="max-width:64px">
-        {% endif %}
+<div class="card">
+    {% if location.icon %}
+    <img class="card-img-top" src="{{ MEDIA_PREFIX }}{{ location.icon }}" alt="map icon">
+    {% endif %}
     <div class="card-body">
-        <h4 class="card-title"><a href="{% url 'stats:waypoints' location.slug %}">{{location.title}}</a></h4>
-        <p class="card-text">{{ location.value }}</p>
-        {% if location.more and location.icon == False %}
-            <a href="{{ location.more }}" class="btn btn-default card-link">More</a>
+        <h5 class="card-title">
+            {% if location.icon %}
+            <img style="max-height:32px; max-width: 32px" class="card-img-top" src="{{ MEDIA_PREFIX }}{{ location.icon }}">
+            {% else %}
+            <img style="height:32px" src="{% static "/svg/map-marker.svg" %}" alt="graph icon">
+            {% endif %}
+            <a href="{% url 'stats:waypoints' location.slug %}">{{location.title}}</a>
+        </h5>
+        <p class="card-text">{{ location.description }}</p>
+        {% if location.more %}
+            <a href="{{ location.more }}" class="card-link">More</a>
         {% endif %}
     </div>
 </div>

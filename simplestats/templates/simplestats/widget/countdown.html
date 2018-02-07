@@ -1,18 +1,19 @@
 {% load static %}
+{% load simplestats %}
 {% get_media_prefix as MEDIA_PREFIX %}
 <div class="card">
-        {% if countdown.more and countdown.icon %}
-        <a href="{{ countdown.more }}" class="btn btn-default">
-            <img src="{{ MEDIA_PREFIX }}{{ countdown.icon }}" alt="{{ countdown.label }}" style="max-width:64px">
-        </a>
-        {% elif countdown.icon %}
-            <img src="{{ MEDIA_PREFIX }}{{ countdown.icon }}" alt="{{ countdown.label }}" style="max-width:64px">
-        {% endif %}
-        <div class="card-body">
-            <h4 class="card-title">{{countdown.title}}</h4>
-            <p class="card-text">{{ countdown.remaining }}</p>
-            {% if countdown.more and countdown.icon == False %}
-                <a href="{{ chart.more }}" class="btn btn-default card-link">More</a>
+    <div class="card-body">
+        <h5 class="card-title">
+            {% if countdown.icon %}
+            <img style="max-height:32px; max-width: 32px" class="card-img-top" src="{{ MEDIA_PREFIX }}{{ countdown.icon }}">
+            {% else %}
+            <img style="height:32px" src="{% static "/svg/calendar.svg" %}" alt="graph icon">
             {% endif %}
-        </div>
+            <a href="{% url 'stats:chart' countdown.slug %}">{{countdown.title}}</a>
+        </h5>
+        <p class="card-text">{{ countdown.timestamp|timediff }}</p>
+        {% if countdown.more %}
+            <a href="{{ countdown.more }}" class="card-link">More</a>
+        {% endif %}
+    </div>
 </div>
