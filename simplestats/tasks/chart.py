@@ -20,4 +20,4 @@ def update_chart(pk):
 
 @receiver(post_save, sender=simplestats.models.Sample)
 def hook_update_data(sender, instance, *args, **kwargs):
-    update_chart.delay(instance.parent_id)
+    update_chart.delay(instance.widget_id)
