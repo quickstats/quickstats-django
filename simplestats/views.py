@@ -88,7 +88,7 @@ class WidgetList(LoginRequiredMixin, ListView):
     model = simplestats.models.Widget
 
     def get_queryset(self):
-        return self.model.objects.filter(owner=self.request.user)
+        return self.model.objects.filter(owner=self.request.user).order_by('-timestamp')
 
 
 class Dashboard(View):
