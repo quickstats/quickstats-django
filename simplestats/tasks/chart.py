@@ -12,20 +12,12 @@ logger = logging.getLogger(__name__)
 
 @shared_task()
 def update_chart(pk):
-    chart = simplestats.models.Chart.objects.get(pk=pk)
-    latest = simplestats.models.Data.objects.filter(parent_id=pk).latest('timestamp')
+    chart = simplestats.models.Widget.objects.get(pk=pk)
+    latest = simplestats.models.Sample.objects.filter(parent_id=pk).latest('timestamp')
     chart.value = latest.value
     chart.save()
 
 
-@receiver(post_save, sender=simplestats.models.Stat)
-def update_chart_latest(sender, instance, *args, **kwargs):
-    latest = simplestats.models.Stat.objects.filter(key=instance.key).latest('created')
-    for chart in simplestats.models.Chart.objects.filter(keys=instance.key):
-        chart.value = latest.value
-        chart.save()
-
-
-@receiver(post_save, sender=simplestats.models.Data)
+@receiver(post_save, sender=simplestats.models.Sample)
 def hook_update_data(sender, instance, *args, **kwargs):
     update_chart.delay(instance.parent_id)
