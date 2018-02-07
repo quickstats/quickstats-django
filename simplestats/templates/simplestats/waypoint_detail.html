@@ -4,8 +4,8 @@
 <h1>{{ object.name }}</h1>
 
 <nav class="breadcrumb">
-  <a class="breadcrumb-item" href="{% url 'stats:dashboard' %}">Locations</a>
-  <span class="breadcrumb-item active">{{ location.name }}</span>
+  <a class="breadcrumb-item" href="{% url 'stats:dashboard' %}">Widgets</a>
+  <span class="breadcrumb-item active">{{ widget.title }}</span>
 </nav>
 
 <div class="panel panel-default">
@@ -20,7 +20,7 @@
             <th>Map</th>
             <th>Note</th>
         </tr>
-    {% for waypoint in widget.waypoint_set.all %}
+    {% for waypoint in widget.waypoint_set.all|dictsortreversed:"timestamp" %}
         <tr>
             <td>{{ waypoint.timestamp }}</td>
             <td>{{ waypoint.state }}</td>
