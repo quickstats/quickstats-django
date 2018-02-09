@@ -1,14 +1,18 @@
 
+import logging
+
 from prometheus_client import CollectorRegistry, Gauge, generate_latest
 from prometheus_client.parser import text_string_to_metric_families
 from rest_framework.authtoken.models import Token
 
-from simplestats import models
+from simplestats import models, shortcuts
 
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
+
+logger = logging.getLogger(__name__)
 
 
 class Metrics(View):
@@ -16,9 +20,12 @@ class Metrics(View):
     def get(self, request):
         registry = CollectorRegistry()
         gauges = {}
-        for chart in models.Chart.objects.filter(public=True):
-            labels = chart.labels.copy()
-            metric = labels.pop('__name__', chart.keys).replace('.', '_')
+        for chart in models.Widget.objects.filter(public=True):
+            labels = {x.name: x.value for x in chart.label_set.all()}
+            metric = labels.pop('metric', '').replace('.', '_')
+            if not metric:
+                logging.debug('Error with metric %s %s', chart, labels)
+                continue
             if not metric in gauges:
                 gauges[metric] = Gauge(metric, metric, labels.keys(), registry=registry)
             if labels:
@@ -47,7 +54,7 @@ class PushGateway(View):
 
         for family in text_string_to_metric_families(request.body.decode('utf8')):
             for sample in family.samples:
-                models.quick_record(
+                shortcuts.quick_record(
                     metric=sample[0],
                     labels=dict(sample[1], **labels),
                     value=sample[2],
