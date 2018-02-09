@@ -1,4 +1,5 @@
 {% load static %}
+{% load simplestats %}
 {% get_media_prefix as MEDIA_PREFIX %}
 <div class="card">
     {% if location.icon %}
@@ -14,6 +15,7 @@
             <a href="{% url 'stats:waypoints' location.slug %}">{{location.title}}</a>
         </h5>
         <p class="card-text">{{ location.description }}</p>
+        <time class="card-text" datetime="{{location.timestamp.isoformat}}">{{ location.timestamp|timesince }}</time>
         {% if location.more %}
             <a href="{{ location.more }}" class="card-link">More</a>
         {% endif %}

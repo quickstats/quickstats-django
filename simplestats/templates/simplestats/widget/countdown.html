@@ -9,9 +9,9 @@
             {% else %}
             <img style="height:32px" src="{% static "/svg/calendar.svg" %}" alt="graph icon">
             {% endif %}
-            <a href="{% url 'stats:chart' countdown.slug %}">{{countdown.title}}</a>
+            <a href="{% url 'stats:countdown' countdown.slug %}">{{countdown.title}}</a>
         </h5>
-        <p class="card-text">{{ countdown.timestamp|timediff }}</p>
+        <time class="card-text" datetime="{{countdown.timestamp.isoformat}}">{{ countdown.timestamp|timediff }}</time>
         {% if countdown.more %}
             <a href="{{ countdown.more }}" class="card-link">More</a>
         {% endif %}

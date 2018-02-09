@@ -9,34 +9,10 @@ import simplestats.models
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
-from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView
 from django.views.generic.base import View
-
-
-class ReportDetail(LoginRequiredMixin, DetailView):
-    model = simplestats.models.Report
-
-
-class ReportList(LoginRequiredMixin, ListView):
-    model = simplestats.models.Report
-    paginate_by = 10
-
-
-class LocationList(LoginRequiredMixin, ListView):
-    model = simplestats.models.Location
-    paginate_by = 10
-
-    def get_context_data(self, **kwargs):
-        context = super(LocationList, self).get_context_data(**kwargs)
-        context['token'], _ = Token.objects.get_or_create(user=self.request.user)
-        return context
-
-
-class LocationDetail(LoginRequiredMixin, DetailView):
-    model = simplestats.models.Location
 
 
 class LocationCalendar(View):
@@ -91,44 +67,22 @@ class WidgetList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user).order_by('-timestamp')
 
 
-class Dashboard(View):
-    '''
-    Simple dashboard to show important views
-    '''
-    def get(self, request):
-        if request.user.is_authenticated():
-            countdowns = simplestats.models.Countdown.objects.filter(owner=request.user)
-            charts = simplestats.models.Chart.objects.filter(owner=request.user)
-        else:
-            countdowns = simplestats.models.Countdown.objects.filter(public=True)
-            charts = simplestats.models.Chart.objects.filter(public=True)
-
-        def widgets(request):
-            for countdown in countdowns:
-                yield render_to_string('simplestats/widget/countdown.html', {
-                    'countdown': countdown,
-                })
-            for chart in charts:
-                yield render_to_string('simplestats/widget/chart.html', {
-                    'chart': chart,
-                })
-
-        return render(request, 'simplestats/dashboard.html', {
-            'widgets': widgets(request)
-        })
+class CountdownDetail(LoginRequiredMixin, DetailView):
+    model = simplestats.models.Widget
+    template_name = 'simplestats/countdown_detail.html'
 
 
-class WidgetWaypoints(LoginRequiredMixin, DetailView):
+class WaypointDetail(LoginRequiredMixin, DetailView):
     model = simplestats.models.Widget
     template_name = 'simplestats/waypoint_detail.html'
 
 
-class WidgetChart(LoginRequiredMixin, DetailView):
+class ChartDetail(LoginRequiredMixin, DetailView):
     model = simplestats.models.Widget
     template_name = 'simplestats/chart_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(WidgetChart, self).get_context_data(**kwargs)
+        context = super(ChartDetail, self).get_context_data(**kwargs)
         chart = self.get_object()
         time_delta = datetime.timedelta(days=7)
         labels = [_('Datetime'), chart.title]

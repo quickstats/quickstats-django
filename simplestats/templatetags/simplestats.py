@@ -1,4 +1,5 @@
 from django import template
+from django.template import defaultfilters
 from django.template.loader import render_to_string
 from django.utils import timezone
 
@@ -28,6 +29,6 @@ def gmap(waypoint):
 
 @register.filter()
 def timediff(ts):
-    ts = ts.replace(microsecond=0)
-    now = timezone.now().replace(microsecond=0)
-    return ts - now
+    if ts > timezone.now():
+        return defaultfilters.timeuntil_filter(ts)
+    return defaultfilters.timesince_filter(ts)
