@@ -70,9 +70,11 @@ class WidgetList(LoginRequiredMixin, ListView):
 
 class WidgetDetail(LoginRequiredMixin, DetailView):
     model = simplestats.models.Widget
+    template_name = 'simplestats/embed.html'
 
-    def get_template_names(self):
-        return 'simplestats/widget/{}.html'.format(self.object.type)
+    @property
+    def embed(self):
+        return 'simplestats/widget/{}.embed.html'.format(self.object.type)
 
 
 class CountdownDetail(LoginRequiredMixin, DetailView):
