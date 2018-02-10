@@ -8,18 +8,9 @@ register = template.Library()
 
 @register.filter()
 def render_widget(widget):
-    return render_to_string('simplestats/widget/{}.html'.format(widget.type), {
-        widget.type: widget,
+    return render_to_string('simplestats/widget/{}.embed.html'.format(widget.type), {
+        'object': widget,
     })
-    if widget.type == 'countdown':
-        return render_to_string('simplestats/widget/countdown.html', {
-            'countdown': widget,
-        })
-    if widget.type == 'chart':
-        return render_to_string('simplestats/widget/chart.html', {
-            'chart': widget,
-        })
-    return '*UNKNOWN*'
 
 
 @register.filter()

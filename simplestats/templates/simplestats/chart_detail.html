@@ -1,4 +1,22 @@
-{% extends "simplestats/base.html" %}
+{% extends "base.html" %}
+{% load simplestats %}
+{% block content %}
+<h1>{{ object.name }}</h1>
+
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="{% url 'stats:dashboard' %}">Widgets</a>
+  <span class="breadcrumb-item active">{{ widget.title }}</span>
+</nav>
+
+{% include 'simplestats/widget/chart.embed.html' %}
+
+<div class="container-fluid">
+    <div id="chart_div" style="width: 100%; min-height: 450px;">
+        Loading...
+    </div>
+</div>
+{% endblock %}
+
 
 {% block javascript %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -17,12 +35,4 @@
         wrap.draw();
     });
 </script>
-{% endblock %}
-
-{% block content %}
-<div class="container-fluid">
-    <div id="chart_div" style="width: 100%; min-height: 450px;">
-        Loading...
-    </div>
-</div>
 {% endblock %}

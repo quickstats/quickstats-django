@@ -8,9 +8,27 @@
   <span class="breadcrumb-item active">{{ widget.title }}</span>
 </nav>
 
+{% include 'simplestats/widget/location.embed.html' %}
+
 <div class="panel panel-default">
     <div class="panel-body">
         <input class="form-control" value="{{ request.scheme }}://{{ request.get_host }}{% url 'api:widget-ifttt' slug=widget.slug %}" />
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if waypoint_set.has_previous %}
+                <a href="?page={{ waypoint_set.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ waypoint_set.number }} of {{ waypoint_set.paginator.num_pages }}.
+            </span>
+
+            {% if waypoint_set.has_next %}
+                <a href="?page={{ waypoint_set.next_page_number }}">next</a>
+            {% endif %}
+        </span>
     </div>
 
     <table class="table table-condensed">
@@ -20,7 +38,7 @@
             <th>Map</th>
             <th>Note</th>
         </tr>
-    {% for waypoint in widget.waypoint_set.all|dictsortreversed:"timestamp" %}
+    {% for waypoint in waypoint_set %}
         <tr>
             <td>{{ waypoint.timestamp }}</td>
             <td>{{ waypoint.state }}</td>

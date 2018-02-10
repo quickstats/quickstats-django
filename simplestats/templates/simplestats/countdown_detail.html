@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load simplestats %}
+{% block content %}
+<h1>{{ object.name }}</h1>
+
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="{% url 'stats:dashboard' %}">Widgets</a>
+  <span class="breadcrumb-item active">{{ widget.title }}</span>
+</nav>
+
+{% include 'simplestats/widget/countdown.embed.html' %}
+
+<pre>{{ object.description }}</pre>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% load static %}
+{% load simplestats %}
+{% get_media_prefix as MEDIA_PREFIX %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">
+            {% if object.icon %}
+            <img style="max-height:32px; max-width: 32px" class="card-img-top" src="{{ MEDIA_PREFIX }}{{ object.icon }}">
+            {% else %}
+            <img style="height:32px" src="{% static "/svg/calendar.svg" %}" alt="graph icon">
+            {% endif %}
+            <a href="{% url 'stats:countdown' object.slug %}">{{object.title}}</a>
+        </h5>
+        <time class="card-text" datetime="{{object.timestamp.isoformat}}">{{ object.timestamp|timediff }}</time>
+        {% if object.more %}
+            <a href="{{ object.more }}" class="card-link">More</a>
+        {% endif %}
+    </div>
+</div>

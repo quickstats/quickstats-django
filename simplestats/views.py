@@ -8,6 +8,7 @@ from rest_framework.authtoken.models import Token
 import simplestats.models
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
@@ -67,6 +68,13 @@ class WidgetList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user).order_by('-timestamp')
 
 
+class WidgetDetail(LoginRequiredMixin, DetailView):
+    model = simplestats.models.Widget
+
+    def get_template_names(self):
+        return 'simplestats/widget/{}.html'.format(self.object.type)
+
+
 class CountdownDetail(LoginRequiredMixin, DetailView):
     model = simplestats.models.Widget
     template_name = 'simplestats/countdown_detail.html'
@@ -75,6 +83,16 @@ class CountdownDetail(LoginRequiredMixin, DetailView):
 class WaypointDetail(LoginRequiredMixin, DetailView):
     model = simplestats.models.Widget
     template_name = 'simplestats/waypoint_detail.html'
+    paginate_by = 50
+
+    def get_context_data(self, **kwargs):
+        context = super(WaypointDetail, self).get_context_data(**kwargs)
+
+        paginator = Paginator(context['object'].waypoint_set.order_by('-timestamp'), 25)
+        page = self.request.GET.get('page', 1)
+        context['waypoint_set'] = paginator.page(page)
+
+        return context
 
 
 class ChartDetail(LoginRequiredMixin, DetailView):
