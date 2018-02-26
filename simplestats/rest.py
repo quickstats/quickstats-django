@@ -40,8 +40,8 @@ class WidgetViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated():
-            return Widget.objects.filter(owner=self.request.user)
-        return Widget.objects.filter(public=True)
+            return Widget.objects.filter(owner=self.request.user).prefetch_related('meta_set')
+        return Widget.objects.filter(public=True).prefetch_related('meta_set')
 
     @detail_route(methods=['get', 'post'])
     def stats(self, request, slug=None):

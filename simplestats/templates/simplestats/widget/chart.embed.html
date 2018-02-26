@@ -8,7 +8,7 @@
             {% else %}
             <img style="height:32px" src="{% static "/svg/graph.svg" %}" alt="graph icon">
             {% endif %}
-            <a href="{% url 'stats:chart' object.slug %}">{{object.title}}</a>
+            <a href="{% url 'stats:widget-detail' object.slug %}">{{object.title}}</a>
         </h5>
         <p class="card-text">{{ object.value }}</p>
         {% if object.more %}

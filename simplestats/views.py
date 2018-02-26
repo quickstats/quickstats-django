@@ -70,7 +70,15 @@ class WidgetList(LoginRequiredMixin, ListView):
 
 class WidgetDetail(LoginRequiredMixin, DetailView):
     model = simplestats.models.Widget
-    template_name = 'simplestats/embed.html'
+
+    @property
+    def embed(self):
+        return 'simplestats/widget/{}.embed.html'.format(self.object.type)
+
+
+class WidgetEmbed(LoginRequiredMixin, DetailView):
+    model = simplestats.models.Widget
+    template_name = 'simplestats/widget/base.html'
 
     @property
     def embed(self):

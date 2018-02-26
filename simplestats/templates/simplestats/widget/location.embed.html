@@ -12,7 +12,7 @@
             {% else %}
             <img style="height:32px" src="{% static "/svg/map-marker.svg" %}" alt="graph icon">
             {% endif %}
-            <a href="{% url 'stats:waypoints' object.slug %}">{{object.title}}</a>
+            <a href="{% url 'stats:widget-detail' object.slug %}">{{object.title}}</a>
         </h5>
         <p class="card-text">{{ object.description }}</p>
         <time class="card-text" datetime="{{object.timestamp.isoformat}}">{{ object.timestamp|timesince }}</time>

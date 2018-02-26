@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load simplestats %}
+{% block content %}
+<h1>{{ object.name }}</h1>
+
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="{% url 'stats:dashboard' %}">Widgets</a>
+  <span class="breadcrumb-item active">{{ widget.title }}</span>
+</nav>
+
+<div class="container-fluid">
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" href="#">Active</a>
+  </li>
+
+{% if widget.waypoint_set.count %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'stats:waypoints' widget.slug %}">Waypoints</a>
+  </li>
+{% endif %}
+
+{% if widget.sample_set.count %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'stats:chart' widget.slug %}">Chart</a>
+  </li>
+{% endif %}
+
+{% if user.is_superuser %}
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'admin:simplestats_widget_change' widget.id %}">Admin</a>
+  </li>
+{% endif %}
+
+
+</ul>
+
+
+    {% include view.embed %}
+</div>
+
+
+{% endblock %}
