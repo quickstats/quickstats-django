@@ -21,6 +21,7 @@ def quick_record(owner, value, **kwargs):
     )
     '''
     kwargs.setdefault('labels', {})
+    kwargs.setdefault('type', 'chart')
     if 'metric' in kwargs:
         kwargs['labels'].setdefault('metric', kwargs.pop('metric'))
     if 'timestamp' not in kwargs:
