@@ -1,43 +1,50 @@
 {% extends "base.html" %}
 {% load simplestats %}
 {% block content %}
-<h1>{{ object.name }}</h1>
 
 <nav class="breadcrumb">
   <a class="breadcrumb-item" href="{% url 'stats:dashboard' %}">Widgets</a>
   <span class="breadcrumb-item active">{{ widget.title }}</span>
 </nav>
 
-<div class="container-fluid">
-<ul class="nav nav-tabs">
-  <li class="nav-item">
-    <a class="nav-link active" href="#">Active</a>
-  </li>
+<div class="container">
+  <div class="row align-items-start">
+    <div class="col-4">
+      {% include view.embed %}
+    </div>
+    <div class="col">
+        {% if user.is_superuser %}
+            <a class="nav-link" href="{% url 'admin:simplestats_widget_change' widget.id %}">Admin</a>
+        {% endif %}
+    </div>
 
-{% if widget.waypoint_set.count %}
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'stats:waypoints' widget.slug %}">Waypoints</a>
-  </li>
-{% endif %}
+    {% if widget.sample_set.count %}
+    <div id="chart_div" class="colo" style="width: 100%; min-height: 450px;">
+        Loading...
+    </div>
+    {% endif %}
 
-{% if widget.sample_set.count %}
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'stats:chart' widget.slug %}">Chart</a>
-  </li>
-{% endif %}
-
-{% if user.is_superuser %}
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'admin:simplestats_widget_change' widget.id %}">Admin</a>
-  </li>
-{% endif %}
-
-
-</ul>
-
-
-    {% include view.embed %}
+  </div>
 </div>
+{% endblock %}
 
-
+{% block javascript %}
+{% if widget.sample_set.count %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    // https://developers.google.com/chart/interactive/docs/gallery/annotationchart
+    google.load("visualization", "1");
+    google.setOnLoadCallback(function() {
+        var wrap = new google.visualization.ChartWrapper({
+            'chartType': 'Line',
+            'dataTable': {{ widget|dataTable|safe }},
+            'containerId': 'chart_div',
+            'options': {
+                isStacked: true,
+            }
+        });
+        wrap.draw();
+    });
+</script>
+{% endif %}
 {% endblock %}

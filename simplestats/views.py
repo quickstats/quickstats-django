@@ -103,21 +103,3 @@ class WaypointDetail(LoginRequiredMixin, DetailView):
         context['waypoint_set'] = paginator.page(page)
 
         return context
-
-
-class ChartDetail(LoginRequiredMixin, DetailView):
-    model = simplestats.models.Widget
-    template_name = 'simplestats/chart_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ChartDetail, self).get_context_data(**kwargs)
-        chart = self.get_object()
-        time_delta = datetime.timedelta(days=7)
-        labels = [_('Datetime'), chart.title]
-        dataTable = []
-
-        for stat in chart.sample_set.order_by('timestamp').filter(timestamp__gte=datetime.datetime.now() - time_delta):
-            dataTable.append([stat.timestamp.strftime("%Y-%m-%d %H:%M"), stat.value])
-
-        context['dataTable'] = json.dumps([[str(_label) for _label in labels]] + dataTable)
-        return context
