@@ -7,29 +7,123 @@
   <span class="breadcrumb-item active">{{ widget.title }}</span>
 </nav>
 
-<div class="container">
-  <div class="row align-items-start">
-    <div class="col-4">
-      {% include view.embed %}
-    </div>
-    <div class="col">
-        {% if user.is_superuser %}
-            <a class="nav-link" href="{% url 'admin:simplestats_widget_change' widget.id %}">Admin</a>
-        {% endif %}
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="detail-tab" data-toggle="tab" href="#detail" role="tab" aria-controls="detail" aria-selected="true">Details</a>
+    </li>
+{% if view.sample_set.paginator.count %}
+    <li class="nav-item">
+        <a class="nav-link" id="chart-tab" data-toggle="tab" href="#chart" role="tab" aria-controls="chart" aria-selected="true">Chart</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="sample-tab" data-toggle="tab" href="#sample" role="tab" aria-controls="sample" aria-selected="true">Samples</a>
+    </li>
+{% endif %}
+
+{% if view.waypoint_set.paginator.count %}
+    <li class="nav-item">
+        <a class="nav-link" id="waypoint-tab" data-toggle="tab" href="#waypoint" role="tab" aria-controls="waypoint" aria-selected="true">Waypoint</a>
+    </li>
+{% endif %}
+
+{% if user.is_superuser %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'admin:simplestats_widget_change' widget.id %}">Admin</a>
+    </li>
+{% endif %}
+</ul>
+
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="detail" role="tabpanel" aria-labelledby="detail-tab">
+        <div class="row align-items-start">
+            <div class="col-4">
+              {% include view.embed %}
+            </div>
+            <div class="col">
+                {% if widget.label_set.count %}
+                    {% for label in widget.label_set.all %}
+                        <span class="badge badge-pill badge-primary">{{label.name}}:{{label.value}}</span>
+                    {% endfor %}
+                {% endif %}
+
+                {% if widget.meta_set.count %}
+                    {% for meta in widget.meta_set.all %}
+                        <span class="badge badge-pill badge-info">{{meta.key}}:{{meta.value}}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
     </div>
 
-    {% if widget.sample_set.count %}
-    <div id="chart_div" class="colo" style="width: 100%; min-height: 450px;">
-        Loading...
+{% if view.sample_set.paginator.count %}
+    <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
+        <div id="chart_div" style="width: 512px; min-height: 450px;">
+            Loading...
+        </div>
     </div>
-    {% endif %}
+    <div class="tab-pane fade" id="sample" role="tabpanel" aria-labelledby="sample-tab">
+        <table class="table table-sm table-striped">
+            <tr>
+                <th>Timestamp</th>
+                <th>Value</th>
+            </tr>
+{% for sample in view.sample_set %}
+            <tr>
+                <td>{{sample.timestamp}}</td>
+                <td>{{sample.value}}</td>
+            </tr>
+{% endfor %}
+        </table>
+    </div>
+{% endif %}
 
-  </div>
+{% if view.waypoint_set.paginator.count %}
+    <div class="tab-pane fade" id="waypoint" role="tabpanel" aria-labelledby="waypoint-tab">
+        <div class="panel-body">
+            <input class="form-control" value="{{ request.scheme }}://{{ request.get_host }}{% url 'api:widget-ifttt' slug=widget.slug %}" />
+        </div>
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if view.waypoint_set.has_previous %}
+                    <a href="{% url 'stats:widget-waypoints' widget.slug %}?page={{ view.waypoint_set.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ view.waypoint_set.number }} of {{ view.waypoint_set.paginator.num_pages }}.
+                </span>
+
+                {% if view.waypoint_set.has_next %}
+                    <a href="{% url 'stats:widget-waypoints' widget.slug %}?page={{ view.waypoint_set.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+
+        <table class="table table-sm table-striped">
+            <tr>
+                <th>Timestamp</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>State</th>
+                <th>Description</th>
+            </tr>
+{% for waypoint in view.waypoint_set %}
+            <tr>
+                <td>{{waypoint.timestamp}}</td>
+                <td>{{waypoint.lat}}</td>
+                <td>{{waypoint.lon}}</td>
+                <td>{{waypoint.state}}</td>
+                <td>{{waypoint.description}}</td>
+            </tr>
+{% endfor %}
+        </table>
+    </div>
+{% endif %}
 </div>
 {% endblock %}
 
 {% block javascript %}
-{% if widget.sample_set.count %}
+{% if view.sample_set.paginator.count %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
     // https://developers.google.com/chart/interactive/docs/gallery/annotationchart

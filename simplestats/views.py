@@ -1,5 +1,4 @@
 import datetime
-import json
 
 import pytz
 from icalendar import Calendar, Event
@@ -11,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext_lazy as _
+from django.utils.functional import cached_property
 from django.views.generic import DetailView, ListView
 from django.views.generic.base import View
 
@@ -70,6 +69,14 @@ class WidgetList(LoginRequiredMixin, ListView):
 
 class WidgetDetail(LoginRequiredMixin, DetailView):
     model = simplestats.models.Widget
+
+    @cached_property
+    def sample_set(self):
+        return Paginator(self.object.sample_set.order_by('-timestamp'), 25).page(1)
+
+    @cached_property
+    def waypoint_set(self):
+        return Paginator(self.object.waypoint_set.order_by('-timestamp'), 25).page(1)
 
     @property
     def embed(self):
