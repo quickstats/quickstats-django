@@ -1,0 +1,19 @@
+machine:
+  python:
+    version: 3.5.1
+  environment:
+    SECRET_KEY: justfortesting
+dependencies:
+  override:
+    - pip install -e .[dev,standalone]
+test:
+  override:
+    - simplestats test
+  post:
+    - coverage html -d $CIRCLE_ARTIFACTS
+    - codecov
+
+general:
+  branches:
+    ignore:
+      - gh-pages

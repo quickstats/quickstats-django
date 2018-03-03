@@ -24,20 +24,27 @@ setup(
     ],
     install_requires=[
         'django-filter',
-        'Django',
+        'Django==1.11.7',
         'djangorestframework-word-filter',
         'djangorestframework',
         'icalendar',
         'Pillow',
+        'psycopg2',
         'python-dateutil',
         'pytz',
         'requests',
     ],
     extras_require={
         'standalone': [
+            'celery',
             'dj_database_url',
             'envdir',
             'social-auth-app-django',
+        ],
+        'dev': [
+            'codecov',
+            'django-nose',
+            'nose-cov',
         ]
     },
     entry_points={

@@ -25,7 +25,7 @@ class Widget(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
     title = models.CharField(max_length=64)
     description = models.TextField(blank=True)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('owner'))
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('owner'), on_delete=models.CASCADE)
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     value = models.FloatField(default=0)
@@ -50,7 +50,7 @@ class Widget(models.Model):
 
 
 class Sample(models.Model):
-    widget = models.ForeignKey(Widget)
+    widget = models.ForeignKey(Widget, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now)
     value = models.FloatField()
 
@@ -62,14 +62,14 @@ class Sample(models.Model):
 
 
 class Note(models.Model):
-    widget = models.ForeignKey(Widget)
+    widget = models.ForeignKey(Widget, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now)
     title = models.CharField(max_length=64)
     description = models.TextField()
 
 
 class Label(models.Model):
-    widget = models.ForeignKey(Widget)
+    widget = models.ForeignKey(Widget, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     value = models.CharField(max_length=64)
 
@@ -81,7 +81,7 @@ class Label(models.Model):
 
 
 class Meta(models.Model):
-    widget = models.ForeignKey(Widget)
+    widget = models.ForeignKey(Widget, on_delete=models.CASCADE)
     key = models.CharField(max_length=64)
     value = models.TextField()
     output = models.BooleanField(default=False)
@@ -141,7 +141,7 @@ class Countdown(models.Model):
     created = models.DateTimeField()
     label = models.CharField(max_length=64)
     calendar = models.URLField(blank=True)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='coutdown', verbose_name=_('owner'))
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='coutdown', verbose_name=_('owner'), on_delete=models.CASCADE)
 
     public = models.BooleanField(default=False)
     allday = models.BooleanField(default=False)
@@ -166,7 +166,7 @@ class Chart(models.Model):
         max_length=128,
         #choices=[(x, x) for x in Stat.unique_keys()]  # disable for now to assist in bootstrap
     )
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'))
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='chart', verbose_name=_('owner'), on_delete=models.CASCADE)
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     value = models.FloatField(default=0)
@@ -195,7 +195,7 @@ class Chart(models.Model):
 
 
 class Data(models.Model):
-    parent = models.ForeignKey(Chart, related_name='data_set')
+    parent = models.ForeignKey(Chart, related_name='data_set', on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
     value = models.FloatField()
 
@@ -203,7 +203,7 @@ class Data(models.Model):
 class Report(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date = models.DateField()
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='report', verbose_name=_('owner'))
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='report', verbose_name=_('owner'), on_delete=models.CASCADE)
     name = models.CharField(max_length=36)
     text = models.TextField(blank=True)
 
@@ -217,7 +217,7 @@ class Report(models.Model):
 
 class Location(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='location', verbose_name=_('owner'))
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='location', verbose_name=_('owner'), on_delete=models.CASCADE)
     name = models.CharField(max_length=36)
 
     class Meta:
@@ -234,7 +234,7 @@ class Location(models.Model):
 
 
 class Waypoint(models.Model):
-    widget = models.ForeignKey(Widget)
+    widget = models.ForeignKey(Widget, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=now)
     lat = models.FloatField()
     lon = models.FloatField()
@@ -254,7 +254,7 @@ class Waypoint(models.Model):
 class Movement(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(default=now)
-    location = models.ForeignKey(Location)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
     map = models.URLField()
     state = models.CharField(
         max_length=16,
