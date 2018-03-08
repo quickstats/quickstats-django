@@ -78,6 +78,10 @@ class WidgetDetail(LoginRequiredMixin, DetailView):
     def waypoint_set(self):
         return Paginator(self.object.waypoint_set.order_by('-timestamp'), 25).page(1)
 
+    @cached_property
+    def note_set(self):
+        return Paginator(self.object.note_set.order_by('-timestamp'), 25).page(1)
+
     @property
     def embed(self):
         return 'simplestats/widget/{}.embed.html'.format(self.object.type)

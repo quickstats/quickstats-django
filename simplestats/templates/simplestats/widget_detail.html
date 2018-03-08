@@ -26,6 +26,12 @@
     </li>
 {% endif %}
 
+{% if view.note_set.paginator.count %}
+    <li class="nav-item">
+        <a class="nav-link" id="note-tab" data-toggle="tab" href="#note" role="tab" aria-controls="note" aria-selected="true">Notes</a>
+    </li>
+{% endif %}
+
 {% if user.is_superuser %}
     <li class="nav-item">
         <a class="nav-link" href="{% url 'admin:simplestats_widget_change' widget.id %}">Admin</a>
@@ -71,6 +77,30 @@
             <tr>
                 <td>{{sample.timestamp}}</td>
                 <td>{{sample.value}}</td>
+            </tr>
+{% endfor %}
+        </table>
+    </div>
+{% endif %}
+
+{% if view.note_set.paginator.count %}
+    <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
+        <div id="chart_div" style="width: 512px; min-height: 450px;">
+            Loading...
+        </div>
+    </div>
+    <div class="tab-pane fade" id="note" role="tabpanel" aria-labelledby="note-tab">
+        <table class="table table-sm table-striped">
+            <tr>
+                <th>Timestamp</th>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+{% for note in view.note_set %}
+            <tr>
+                <td>{{note.timestamp}}</td>
+                <td>{{note.title}}</td>
+                <td>{{note.description}}</td>
             </tr>
 {% endfor %}
         </table>
