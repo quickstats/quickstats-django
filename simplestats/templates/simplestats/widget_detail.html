@@ -139,7 +139,11 @@
             </tr>
 {% for waypoint in view.waypoint_set %}
             <tr>
-                <td>{{waypoint.timestamp}}</td>
+                <td>
+                    <a href="https://www.google.com/maps/?q={{waypoint.lat}},{{waypoint.lon}}" rel="noreferrer">
+                        {{waypoint.timestamp}}
+                    </a>
+                </td>
                 <td>{{waypoint.lat}}</td>
                 <td>{{waypoint.lon}}</td>
                 <td>{{waypoint.state}}</td>
