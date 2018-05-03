@@ -1,14 +1,15 @@
-import json
 import datetime
+
 from simplestats import models
 from simplestats.shortcuts import quick_record
 
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 
 
 class ShortcutTest(TestCase):
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
     def test_record(self):
         ts = timezone.now()
         owner = User.objects.create_user(username='foo')

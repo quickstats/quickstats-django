@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'social_django',
     'simplestats',
+    'simplestats.standalone',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +61,7 @@ SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'standalone', 'templates')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,10 +134,14 @@ if 'SENTRY_DSN' in os.environ:
 # http://psa.matiasaguirre.net/docs/backends/google.html?highlight=google
 SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
 AUTHENTICATION_BACKENDS = (
-    'social.backends.google.GooglePlusAuth',
+    'social_core.backends.google.GooglePlusAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
 SOCIAL_AUTH_GOOGLE_PLUS_KEY = os.environ.get('SOCIAL_AUTH_GOOGLE_PLUS_KEY')
 SOCIAL_AUTH_GOOGLE_PLUS_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_PLUS_SECRET')
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
+
+TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
+TEST_OUTPUT_VERBOSE = 2
+TEST_OUTPUT_DIR = 'test-results'

@@ -36,15 +36,14 @@ setup(
     ],
     extras_require={
         'standalone': [
-            'celery',
+            'celery[redis]==4.0.2',
             'dj_database_url',
             'envdir',
-            'social-auth-app-django',
+            'prometheus_client',
+            'social-auth-app-django==2.1.0',
         ],
         'dev': [
-            'codecov',
-            'django-nose',
-            'nose-cov',
+            'unittest-xml-reporting',
         ]
     },
     entry_points={

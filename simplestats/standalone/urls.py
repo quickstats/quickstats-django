@@ -22,8 +22,7 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register('chart', rest.ChartViewSet)
-router.register('countdown', rest.CountdownViewSet)
+router.register('widgets', rest.WidgetViewSet)
 
 urlpatterns = [
     url('', include('simplestats.urls', namespace='stats')),
