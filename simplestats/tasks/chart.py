@@ -19,6 +19,6 @@ def update_chart(pk):
     chart.save()
 
 
-@receiver(post_save, sender=simplestats.models.Sample)
+@receiver(post_save, sender='simplestats.Sample', dispatch_uid='simplestats-refresh-chart')
 def hook_update_data(sender, instance, *args, **kwargs):
     update_chart.delay(instance.widget_id)
