@@ -7,3 +7,6 @@ CONFIG_DIR = os.path.expanduser('~/.config/simplestats')
 
 if os.path.exists(CONFIG_DIR):
     envdir.open(CONFIG_DIR)
+
+# Preload Celery App
+from . import celery # noqa
