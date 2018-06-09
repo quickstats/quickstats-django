@@ -24,7 +24,7 @@ setup(
     ],
     install_requires=[
         'django-filter',
-        'Django==1.11.7',
+        'Django>=2.0',
         'djangorestframework-word-filter',
         'djangorestframework',
         'icalendar',

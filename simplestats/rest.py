@@ -39,7 +39,7 @@ class WidgetViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             return Widget.objects.filter(owner=self.request.user).prefetch_related('meta_set')
         return Widget.objects.filter(public=True).prefetch_related('meta_set')
 

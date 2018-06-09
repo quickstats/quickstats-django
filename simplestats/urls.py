@@ -3,6 +3,7 @@ from simplestats import prometheus, views
 
 from django.conf.urls import url
 
+app_name = 'stats'
 urlpatterns = [
     url(r'^$', views.WidgetList.as_view(), name='dashboard'),
     url(r'jobs/(?P<pk>.*)$', prometheus.PushGateway.as_view()),

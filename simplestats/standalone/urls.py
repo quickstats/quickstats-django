@@ -25,13 +25,13 @@ router = routers.DefaultRouter(trailing_slash=False)
 router.register('widgets', rest.WidgetViewSet)
 
 urlpatterns = [
-    url('', include('simplestats.urls', namespace='stats')),
-    url('', include('social_django.urls', namespace='social')),
+    url('', include(('simplestats.urls', 'stats'))),
+    url('', include(('social_django.urls', 'social'))),
     url('', include('django.contrib.auth.urls')),
     url(r'^about', TemplateView.as_view(template_name="about.html")),
     url(r'^robots\.txt$', TemplateView.as_view(
         template_name='robots.txt',
         content_type='text/plain')),
-    url(r'^api/', include(router.urls, namespace='api')),
+    url(r'^api/', include((router.urls, 'api'))),
     url(r'^admin/', admin.site.urls),
 ]
