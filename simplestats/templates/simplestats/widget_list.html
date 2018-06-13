@@ -1,13 +1,21 @@
 {% extends "simplestats/base.html" %}
 {% load simplestats %}
 {% block content %}
+
+<nav class="breadcrumb">
+    <a class="breadcrumb-item" href="{% url 'stats:public' %}">Widgets</a>
+    <a class="breadcrumb-item active" href="{% url 'stats:dashboard' %}">My Widgets</a>
+</nav>
+
 <div style="
     display: grid;
     grid-template-columns: 250px 250px 250px;
     grid-template-rows: 250px 250px;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
 ">
     {% for widget in widget_list %}
-    {{ widget|render_widget }}
+    {{ widget|render_widget:request }}
     {% endfor %}
 </div>
 {% endblock %}

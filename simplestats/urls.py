@@ -1,21 +1,24 @@
 import simplestats.feed
 from simplestats import prometheus, views
 
-from django.conf.urls import url
-
+from django.urls import path
 app_name = 'stats'
 urlpatterns = [
-    url(r'^$', views.WidgetList.as_view(), name='dashboard'),
-    url(r'jobs/(?P<pk>.*)$', prometheus.PushGateway.as_view()),
-    url(r'^metrics$', prometheus.Metrics.as_view()),
+    path('', views.PublicList.as_view(), name='dashboard'),
+    path('my', views.WidgetList.as_view(), name='public'),
+    path('user/<username>', views.WidgetList.as_view(), name='username'),
 
-    url(r'^(?P<slug>[0-9a-f-]+)/countdown$', views.CountdownDetail.as_view(), name='countdown'),
-    url(r'^(?P<slug>[0-9a-f-]+)/waypoints$', views.WaypointDetail.as_view(), name='widget-waypoints'),
-    url(r'^(?P<slug>[0-9a-f-]+)/embed$', views.WidgetEmbed.as_view(), name='widget-embed'),
-    url(r'^(?P<slug>[0-9a-f-]+)$', views.WidgetDetail.as_view(), name='widget-detail'),
-    url(r'^(?P<pk>.*).ics$', views.LocationCalendar.as_view(), name='location-calendar'),
+    path('embed/<slug>', views.WidgetEmbed.as_view(), name='widget-embed'),
 
-    url(r'metrics/job/(?P<api_key>[0-9a-fA-F]+)(/(?P<extra>.*))?$', prometheus.PushGateway.as_view()),
+    path('<slug>/countdown$', views.CountdownDetail.as_view(), name='countdown'),
+    path('<slug>/waypoints$', views.WaypointDetail.as_view(), name='widget-waypoints'),
+    path('<slug>', views.WidgetDetail.as_view(), name='widget-detail'),
 
-    url(r'^feed$', simplestats.feed.LatestEntriesFeed(), name='feed'),
+    path('<slug>.ics$', views.LocationCalendar.as_view(), name='location-calendar'),
+
+    path('jobs/<pk>', prometheus.PushGateway.as_view()),
+    path('metrics', prometheus.Metrics.as_view()),
+    path('metrics/job/(?P<api_key>[0-9a-fA-F]+)(/(?P<extra>.*))?$', prometheus.PushGateway.as_view()),
+
+    path('feed', simplestats.feed.LatestEntriesFeed(), name='feed'),
 ]

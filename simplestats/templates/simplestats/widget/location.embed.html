@@ -12,12 +12,18 @@
             {% else %}
             <img style="height:32px" src="{% static "/svg/map-marker.svg" %}" alt="graph icon">
             {% endif %}
-            <a href="{% url 'stats:widget-detail' object.slug %}">{{object.title}}</a>
+            <a href="{% url 'stats:widget-embed' object.slug %}">{{object.title}}</a>
         </h5>
         <p class="card-text">{{ object.description }}</p>
         <time class="card-text" datetime="{{object.timestamp.isoformat}}">{{ object.timestamp|timesince }}</time>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'stats:username' object.owner.username %}" class="badge badge-dark">{{ object.owner.username }}</a>
+        {% if object.owner == request.user %}
+            <a href="{% url 'stats:widget-detail' object.slug %}" class="badge badge-info">Detail</a>
+        {% endif %}
         {% if object.more %}
-            <a href="{{ object.more }}" class="card-link">More</a>
+            <a href="{{ object.more }}" class="badge badge-primary">More</a>
         {% endif %}
     </div>
 </div>

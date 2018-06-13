@@ -11,9 +11,10 @@ register = template.Library()
 
 
 @register.filter()
-def render_widget(widget):
+def render_widget(widget, request):
     return render_to_string('simplestats/widget/{}.embed.html'.format(widget.type), {
         'object': widget,
+        'request': request,
     })
 
 

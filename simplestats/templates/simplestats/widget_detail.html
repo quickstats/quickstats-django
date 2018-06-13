@@ -3,8 +3,9 @@
 {% block content %}
 
 <nav class="breadcrumb">
-  <a class="breadcrumb-item" href="{% url 'stats:dashboard' %}">Widgets</a>
-  <span class="breadcrumb-item active">{{ widget.title }}</span>
+    <a class="breadcrumb-item" href="{% url 'stats:public' %}">Widgets</a>
+    <a class="breadcrumb-item" href="{% url 'stats:dashboard' %}">My Widgets</a>
+    <span class="breadcrumb-item active">{{ widget.title }}</span>
 </nav>
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">

@@ -60,11 +60,28 @@ class LocationCalendar(View):
         )
 
 
-class WidgetList(LoginRequiredMixin, ListView):
+class WidgetList(ListView):
     model = simplestats.models.Widget
 
     def get_queryset(self):
-        return self.model.objects.filter(owner=self.request.user).order_by('-timestamp')
+        if 'username' in self.kwargs:
+            if self.kwargs['username'] == self.request.user.username:
+                qs =  self.model.objects.filter(owner=self.request.user)
+            else:
+                qs = self.model.objects.filter(owner__username=self.kwargs['username'], public=True)
+        else:
+            qs = self.model.objects.filter(owner=self.request.user)
+
+        return qs.order_by('-timestamp').prefetch_related('owner')
+
+
+class PublicList(ListView):
+    model = simplestats.models.Widget
+
+    def get_queryset(self):
+        return self.model.objects.filter(public=True)\
+            .order_by('-timestamp')\
+            .prefetch_related('owner')
 
 
 class WidgetDetail(LoginRequiredMixin, DetailView):
