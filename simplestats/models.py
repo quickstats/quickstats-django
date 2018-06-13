@@ -1,12 +1,9 @@
 import logging
 import os
-import time
 import uuid
 
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
-from django.db import IntegrityError, models
-from django.urls import reverse
+from django.db import models
 from django.utils import timezone
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
