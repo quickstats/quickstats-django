@@ -104,7 +104,7 @@ class WidgetDetail(LoginRequiredMixin, DetailView):
         return 'simplestats/widget/{}.embed.html'.format(self.object.type)
 
 
-class WidgetEmbed(LoginRequiredMixin, DetailView):
+class WidgetEmbed(DetailView):
     model = simplestats.models.Widget
     template_name = 'simplestats/widget/base.html'
 

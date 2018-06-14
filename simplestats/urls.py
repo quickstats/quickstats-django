@@ -2,13 +2,15 @@ import simplestats.feed
 from simplestats import prometheus, views
 
 from django.urls import path
+from django.views.decorators.clickjacking import xframe_options_exempt
+
 app_name = 'stats'
 urlpatterns = [
     path('', views.PublicList.as_view(), name='dashboard'),
     path('my', views.WidgetList.as_view(), name='public'),
     path('user/<username>', views.WidgetList.as_view(), name='username'),
 
-    path('embed/<slug>', views.WidgetEmbed.as_view(), name='widget-embed'),
+    path('embed/<slug>', xframe_options_exempt(views.WidgetEmbed.as_view()), name='widget-embed'),
 
     path('<slug>/countdown$', views.CountdownDetail.as_view(), name='countdown'),
     path('<slug>/waypoints$', views.WaypointDetail.as_view(), name='widget-waypoints'),
