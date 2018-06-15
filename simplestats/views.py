@@ -114,7 +114,7 @@ class WidgetEmbed(View):
             if request.user != self.object.user:
                 return render(request, 'simplestats/widget/login.html')
 
-        return render(r equest, 'simplestats/widget/base.html', {
+        return render(request, 'simplestats/widget/base.html', {
             'object': self.object,
             'request': request,
             'embed': 'simplestats/widget/{}.embed.html'.format(self.object.type),
