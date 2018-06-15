@@ -6,10 +6,10 @@ from rest_framework.authtoken.models import Token
 
 import simplestats.models
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils.functional import cached_property
 from django.views.generic import DetailView, ListView
 from django.views.generic.base import View
@@ -104,13 +104,21 @@ class WidgetDetail(LoginRequiredMixin, DetailView):
         return 'simplestats/widget/{}.embed.html'.format(self.object.type)
 
 
-class WidgetEmbed(DetailView):
-    model = simplestats.models.Widget
-    template_name = 'simplestats/widget/base.html'
+class WidgetEmbed(View):
+    def get(self, request, slug):
+        self.object = get_object_or_404(simplestats.models.Widget, slug=slug)
 
-    @property
-    def embed(self):
-        return 'simplestats/widget/{}.embed.html'.format(self.object.type)
+        if self.object.public is False:
+            if request.user.is_authenticated is False:
+                return render(request, 'simplestats/widget/login.html')
+            if request.user != self.object.user:
+                return render(request, 'simplestats/widget/login.html')
+
+        return render(r equest, 'simplestats/widget/base.html', {
+            'object': self.object,
+            'request': request,
+            'embed': 'simplestats/widget/{}.embed.html'.format(self.object.type),
+        })
 
 
 class CountdownDetail(LoginRequiredMixin, DetailView):
