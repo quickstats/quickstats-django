@@ -103,3 +103,6 @@ class Waypoint(models.Model):
         )
     )
     description = models.TextField(blank=True)
+
+    def __str__(self):
+        return '{} {} {}'.format(self.lat, self.lon, self.timestamp)
