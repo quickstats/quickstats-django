@@ -111,7 +111,7 @@ class WidgetEmbed(View):
         if self.object.public is False:
             if request.user.is_authenticated is False:
                 return render(request, 'simplestats/widget/login.html')
-            if request.user != self.object.user:
+            if request.user != self.object.owner:
                 return render(request, 'simplestats/widget/login.html')
 
         return render(request, 'simplestats/widget/base.html', {
