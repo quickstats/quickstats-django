@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 
 import simplestats.models
 
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -66,7 +66,7 @@ class WidgetList(ListView):
     def get_queryset(self):
         if 'username' in self.kwargs:
             if self.kwargs['username'] == self.request.user.username:
-                qs =  self.model.objects.filter(owner=self.request.user)
+                qs = self.model.objects.filter(owner=self.request.user)
             else:
                 qs = self.model.objects.filter(owner__username=self.kwargs['username'], public=True)
         else:
