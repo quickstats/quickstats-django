@@ -1,0 +1,12 @@
+{
+    "t": "c",
+    "tst": 1529063617,
+    "acc": 10,
+    "_type": "transition",
+    "event": "leave",
+    "lon": 12.34,
+    "lat": 56.78,
+    "wtst": 1520039583,
+    "tid": "i7",
+    "desc": "アパート"
+}
