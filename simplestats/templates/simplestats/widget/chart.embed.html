@@ -13,7 +13,7 @@
         <p class="card-text">{{ object.value }}</p>
     </div>
     <div class="card-footer">
-        <a href="{% url 'stats:username' object.owner.username %}" class="badge badge-dark">{{ object.owner.username }}</a>
+        <a href="{% url 'stats:browse' object.owner.username %}" class="badge badge-dark">{{ object.owner.username }}</a>
         {% if object.owner == request.user %}
             <a href="{% url 'stats:widget-detail' object.slug %}" class="badge badge-info">Detail</a>
         {% endif %}

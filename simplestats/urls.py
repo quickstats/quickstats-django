@@ -1,14 +1,14 @@
-import simplestats.feed
-from simplestats import prometheus, views
-
 from django.urls import path, re_path
 from django.views.decorators.clickjacking import xframe_options_exempt
 
+import simplestats.feed
+from simplestats import prometheus, views
+
 app_name = 'stats'
 urlpatterns = [
-    path('', views.PublicList.as_view(), name='dashboard'),
-    path('my', views.WidgetList.as_view(), name='public'),
-    path('user/<username>', views.WidgetList.as_view(), name='username'),
+    path('', views.WidgetList.as_view(), name='dashboard'),
+    path('browse/<username>', views.WidgetList.as_view(), name='browse'),
+    path('browse', views.PublicList.as_view(), name='public'),
 
     path('embed/<slug>', xframe_options_exempt(views.WidgetEmbed.as_view()), name='widget-embed'),
 

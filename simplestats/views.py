@@ -7,6 +7,7 @@ from rest_framework.authtoken.models import Token
 import simplestats.models
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -67,12 +68,20 @@ class WidgetList(ListView):
         if 'username' in self.kwargs:
             if self.kwargs['username'] == self.request.user.username:
                 qs = self.model.objects.filter(owner=self.request.user)
+                self.owner = self.request.user
             else:
-                qs = self.model.objects.filter(owner__username=self.kwargs['username'], public=True)
+                self.owner = get_object_or_404(User, username=self.kwargs['username'])
+                qs = self.model.objects.filter(owner=self.owner, public=True)
         else:
             qs = self.model.objects.filter(owner=self.request.user)
+            self.owner = self.request.user
 
         return qs.order_by('-timestamp').prefetch_related('owner')
+
+    def get_context_data(self, **kwargs):
+        context = super(WidgetList, self).get_context_data(**kwargs)
+        context['owner'] = self.owner
+        return context
 
 
 class PublicList(ListView):

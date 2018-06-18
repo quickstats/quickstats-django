@@ -14,7 +14,7 @@
         <time class="card-text" datetime="{{object.timestamp.isoformat}}">{{ object.timestamp|timediff }}</time>
     </div>
     <div class="card-footer">
-        <a href="{% url 'stats:username' object.owner.username %}" class="badge badge-dark">{{ object.owner.username }}</a>
+        <a href="{% url 'stats:browse' object.owner.username %}" class="badge badge-dark">{{ object.owner.username }}</a>
         {% if object.owner == request.user %}
             <a href="{% url 'stats:widget-detail' object.slug %}" class="badge badge-info">Detail</a>
         {% endif %}

@@ -4,7 +4,9 @@
 
 <nav class="breadcrumb">
     <a class="breadcrumb-item" href="{% url 'stats:public' %}">Widgets</a>
-    <a class="breadcrumb-item active" href="{% url 'stats:dashboard' %}">My Widgets</a>
+    {% if owner %}
+    <a class="breadcrumb-item active" href="{% url 'stats:browse' owner.username %}">{{owner.username}}</a>
+    {% endif %}
 </nav>
 
 <div style="
