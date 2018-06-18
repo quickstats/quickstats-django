@@ -1,0 +1,10 @@
+<div class="card-footer">
+    <a href="{% url 'stats:browse' object.owner.username %}" class="badge badge-dark">{{ object.owner.username }}</a>
+    <a href="{{request.get_current_url}}?type={{object.type}}" class="badge badge-secondary">{{object.type}}</a>
+    {% if object.owner == request.user %}
+        <a href="{% url 'stats:widget-detail' object.slug %}" class="badge badge-info">Detail</a>
+    {% endif %}
+    {% if object.more %}
+        <a href="{{ object.more }}" class="badge badge-primary">More</a>
+    {% endif %}
+</div>

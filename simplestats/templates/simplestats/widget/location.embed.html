@@ -17,13 +17,5 @@
         <p class="card-text">{{ object.description }}</p>
         <time class="card-text" datetime="{{object.timestamp.isoformat}}">{{ object.timestamp|timesince }}</time>
     </div>
-    <div class="card-footer">
-        <a href="{% url 'stats:browse' object.owner.username %}" class="badge badge-dark">{{ object.owner.username }}</a>
-        {% if object.owner == request.user %}
-            <a href="{% url 'stats:widget-detail' object.slug %}" class="badge badge-info">Detail</a>
-        {% endif %}
-        {% if object.more %}
-            <a href="{{ object.more }}" class="badge badge-primary">More</a>
-        {% endif %}
-    </div>
+    {% include 'simplestats/widget/footer.inc.html' %}
 </div>

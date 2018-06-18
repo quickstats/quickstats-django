@@ -9,6 +9,10 @@
     {% endif %}
 </nav>
 
+{% for k, v in type_choices %}
+<a href="{{request.get_current_url}}?type={{k}}" class="badge badge-secondary">{{v}}</a>
+{% endfor %}
+
 <div style="
     display: grid;
     grid-template-columns: repeat(auto-fill, 250px);

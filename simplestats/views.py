@@ -76,11 +76,15 @@ class WidgetList(ListView):
             qs = self.model.objects.filter(owner=self.request.user)
             self.owner = self.request.user
 
+        if 'type' in self.request.GET:
+            qs = qs.filter(type=self.request.GET['type'])
+
         return qs.order_by('-timestamp').prefetch_related('owner')
 
     def get_context_data(self, **kwargs):
         context = super(WidgetList, self).get_context_data(**kwargs)
         context['owner'] = self.owner
+        context['type_choices'] = self.model._meta.get_field('type').choices
         return context
 
 
@@ -88,9 +92,19 @@ class PublicList(ListView):
     model = simplestats.models.Widget
 
     def get_queryset(self):
-        return self.model.objects.filter(public=True)\
+        qs = self.model.objects.filter(public=True)\
             .order_by('-timestamp')\
             .prefetch_related('owner')
+
+        if 'type' in self.request.GET:
+            return qs.filter(type=self.request.GET['type'])
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(PublicList, self).get_context_data(**kwargs)
+        context['type_choices'] = self.model._meta.get_field('type').choices
+        return context
 
 
 class WidgetDetail(LoginRequiredMixin, DetailView):
