@@ -3,6 +3,7 @@ import logging
 from celery import shared_task
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from simplestats.models import Widget
 
@@ -32,6 +33,9 @@ def event(topic, data):
         widget.meta_set.create(key='owntracks.tst', value=data['wtst'])
     else:
         logger.info('found widget %s', widget)
+        widget.timestamp = timezone.now()
+        widget.save()
+        logger.info('Updated widget timestamp %s', widget)
 
     # Mapping for Owntracks state to IFTTT
     state = 'entered' if data['event'] == 'enter' else 'exited'
