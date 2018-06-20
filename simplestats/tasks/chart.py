@@ -12,11 +12,13 @@ logger = logging.getLogger(__name__)
 
 @shared_task()
 def update_chart(pk):
-    chart = simplestats.models.Widget.objects.get(pk=pk)
-    latest = simplestats.models.Sample.objects.filter(widget_id=pk).latest('timestamp')
-    chart.value = latest.value
-    chart.timestamp = latest.timestamp
-    chart.save()
+    widget = simplestats.models.Widget.objects.get(pk=pk)
+    if widget.type not in ["chart"]:
+        return
+    latest = simplestats.models.Sample.objects.filter(widget_id=pk).latest("timestamp")
+    widget.value = latest.value
+    widget.timestamp = latest.timestamp
+    widget.save()
 
 
 @receiver(post_save, sender='simplestats.Sample', dispatch_uid='simplestats-refresh-chart')
