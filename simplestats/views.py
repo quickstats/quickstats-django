@@ -61,7 +61,7 @@ class LocationCalendar(View):
         )
 
 
-class WidgetList(ListView):
+class WidgetList(LoginRequiredMixin, ListView):
     model = simplestats.models.Widget
 
     def get_queryset(self):
