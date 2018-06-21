@@ -8,7 +8,7 @@ app_name = 'stats'
 urlpatterns = [
     path('', views.WidgetList.as_view(), name='dashboard'),
     path('browse/<username>', views.WidgetList.as_view(), name='browse'),
-    path('browse', views.PublicList.as_view(), name='public'),
+    path('browse', views.WidgetList.as_view(), name='public'),
 
     path('embed/<slug>', xframe_options_exempt(views.WidgetEmbed.as_view()), name='widget-embed'),
 

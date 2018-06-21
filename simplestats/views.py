@@ -61,7 +61,7 @@ class LocationCalendar(View):
         )
 
 
-class WidgetList(LoginRequiredMixin, ListView):
+class WidgetList(ListView):
     model = simplestats.models.Widget
 
     def get_queryset(self):
@@ -73,8 +73,12 @@ class WidgetList(LoginRequiredMixin, ListView):
                 self.owner = get_object_or_404(User, username=self.kwargs['username'])
                 qs = self.model.objects.filter(owner=self.owner, public=True)
         else:
-            qs = self.model.objects.filter(owner=self.request.user)
-            self.owner = self.request.user
+            if self.request.user.is_authenticated:
+                qs = self.model.objects.filter(owner=self.request.user)
+                self.owner = self.request.user
+            else:
+                qs = self.model.objects.filter(public=True)
+                self.owner = None
 
         if 'type' in self.request.GET:
             qs = qs.filter(type=self.request.GET['type'])
@@ -84,25 +88,6 @@ class WidgetList(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(WidgetList, self).get_context_data(**kwargs)
         context['owner'] = self.owner
-        context['type_choices'] = self.model._meta.get_field('type').choices
-        return context
-
-
-class PublicList(ListView):
-    model = simplestats.models.Widget
-
-    def get_queryset(self):
-        qs = self.model.objects.filter(public=True)\
-            .order_by('-timestamp')\
-            .prefetch_related('owner')
-
-        if 'type' in self.request.GET:
-            return qs.filter(type=self.request.GET['type'])
-
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super(PublicList, self).get_context_data(**kwargs)
         context['type_choices'] = self.model._meta.get_field('type').choices
         return context
 
