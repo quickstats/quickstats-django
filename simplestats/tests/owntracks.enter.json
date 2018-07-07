@@ -6,7 +6,7 @@
     "event": "enter",
     "lon": 12.34,
     "lat": 56.78,
-    "wtst": 1520039583,
-    "tid": "i7",
-    "desc": "アパート"
+    "wtst": 1234567890,
+    "tid": "aa",
+    "desc": "test-entry"
 }
