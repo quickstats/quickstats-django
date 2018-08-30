@@ -28,7 +28,7 @@ DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
 class WidgetViewSet(viewsets.ModelViewSet):
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
     filter_backends = (OrderingFilter,)
     permission_classes = (DjangoModelPermissions,)
     queryset = Widget.objects.all()
