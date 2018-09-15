@@ -40,7 +40,7 @@ def quick_record(owner, value, **kwargs):
         widget = models.Widget.objects.create(
             owner=owner,
             title=labels['metric'],
-            **kwargs,
+            type=kwargs['type'],
         )
         for k, v in labels.items():
             widget.label_set.create(name=k, value=v)
