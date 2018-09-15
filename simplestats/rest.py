@@ -16,7 +16,7 @@ from rest_framework.permissions import (DjangoModelPermissions,
                                         DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.response import Response
 
-from simplestats.models import Note, Waypoint, Widget
+from simplestats.models import Note, Waypoint, Widget, Sample
 from simplestats.serializers import SampleSerializer, WidgetSerializer
 
 from django.http import JsonResponse
@@ -25,6 +25,15 @@ from django.utils.timezone import make_aware
 
 logger = logging.getLogger(__name__)
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
+
+
+class SampleViewSet(viewsets.ModelViewSet):
+    authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
+    permission_classes = (DjangoModelPermissions,)
+    serializer_class = SampleSerializer
+
+    def get_queryset(self):
+        return Sample.objects.filter(widget__slug=self.kwargs['widget_slug'])
 
 
 class WidgetViewSet(viewsets.ModelViewSet):

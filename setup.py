@@ -42,6 +42,7 @@ setup(
             'prometheus_client',
             'raven',
             'social-auth-app-django==2.1.0',
+            'drf-nested-routers',
         ],
         'dev': [
             'unittest-xml-reporting',
