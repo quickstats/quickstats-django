@@ -80,7 +80,7 @@ class WaypointsSubView(object):
 
     def waypoint_GET(self, request, slug):
         chart = self.get_object()
-        queryset = chart.note_set.order_by('-timestamp')
+        queryset = chart.waypoint_set.order_by('-timestamp')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
