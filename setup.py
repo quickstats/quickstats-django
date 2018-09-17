@@ -33,6 +33,7 @@ setup(
         'python-dateutil',
         'pytz',
         'requests',
+        'drf-nested-routers',
     ],
     extras_require={
         'standalone': [
@@ -42,7 +43,7 @@ setup(
             'prometheus_client',
             'raven',
             'social-auth-app-django==2.1.0',
-            'drf-nested-routers',
+            'drf_yasg',
         ],
         'dev': [
             'unittest-xml-reporting',

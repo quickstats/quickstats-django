@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'social_django',
     'simplestats',
     'simplestats.standalone',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
