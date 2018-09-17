@@ -31,3 +31,9 @@ class SampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Sample
         fields = ('timestamp', 'value')
+
+
+class NoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Note
+        fields = ('timestamp', 'title', 'description')
