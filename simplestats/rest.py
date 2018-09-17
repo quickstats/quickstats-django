@@ -73,7 +73,33 @@ class NotesSubView(object):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class WidgetViewSet(StatsSubView, NotesSubView, grafana.GrafanaWidgetView, viewsets.ModelViewSet):
+class WaypointsSubView(object):
+    @detail_route(methods=['get', 'post'])
+    def waypoints(self, request, slug=None):
+        return getattr(self, 'waypoint_' + request.method)(request, slug)
+
+    def waypoint_GET(self, request, slug):
+        chart = self.get_object()
+        queryset = chart.note_set.order_by('-timestamp')
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = serializers.WaypointSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = serializers.WaypointSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def waypoint_POST(self, request, slug):
+        chart = self.get_object()
+        serializer = serializers.WaypointSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(key=chart.keys)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class WidgetViewSet(StatsSubView, NotesSubView, WaypointsSubView, grafana.GrafanaWidgetView, viewsets.ModelViewSet):
     authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
     filter_backends = (OrderingFilter,)
     permission_classes = (DjangoModelPermissions,)

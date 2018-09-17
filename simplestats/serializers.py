@@ -37,3 +37,9 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Note
         fields = ('timestamp', 'title', 'description')
+
+
+class WaypointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Waypoint
+        fields = ('timestamp', 'lat', 'lon', 'state', 'description')
