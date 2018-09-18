@@ -2,7 +2,6 @@
 import json
 import time
 
-import pytz
 from dateutil.parser import parse
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import list_route
@@ -11,7 +10,6 @@ from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from simplestats import models
 
 from django.http import JsonResponse
-from django.utils.timezone import make_aware
 
 
 class GrafanaWidgetView(object):
@@ -41,8 +39,8 @@ class GrafanaWidgetView(object):
     def query(self, request):
         '''Grafana Query'''
         body = json.loads(request.body.decode("utf-8"))
-        start = make_aware(parse(body['range']['from']), pytz.utc)
-        end = make_aware(parse(body['range']['to']), pytz.utc)
+        start = parse(body['range']['from'])
+        end = parse(body['range']['to'])
         results = []
 
         targets = [target['target'] for target in body['targets']]
@@ -65,8 +63,8 @@ class GrafanaWidgetView(object):
     def annotations(self, request):
         '''Grafana annotation'''
         body = json.loads(request.body.decode("utf-8"))
-        start = make_aware(parse(body['range']['from']), pytz.utc)
-        end = make_aware(parse(body['range']['to']), pytz.utc)
+        start = parse(body['range']['from'])
+        end = parse(body['range']['to'])
         query = json.loads(body['annotation']['query'])
 
         klass = query.pop('__model__', 'Note')
