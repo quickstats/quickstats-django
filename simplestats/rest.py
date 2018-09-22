@@ -11,10 +11,9 @@ from rest_framework.authentication import (BasicAuthentication,
                                            TokenAuthentication)
 from rest_framework.decorators import detail_route
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 
-from simplestats import grafana, models, serializers
+from simplestats import grafana, models, permissions, serializers
 
 from django.shortcuts import get_object_or_404
 
@@ -102,7 +101,7 @@ class WaypointsSubView(object):
 class WidgetViewSet(StatsSubView, NotesSubView, WaypointsSubView, grafana.GrafanaWidgetView, viewsets.ModelViewSet):
     authentication_classes = (BasicAuthentication, SessionAuthentication, TokenAuthentication)
     filter_backends = (OrderingFilter,)
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = (permissions.IsOwnerOrReadOnly,)
     queryset = models.Widget.objects.all()
     serializer_class = serializers.WidgetSerializer
     lookup_field = 'slug'
