@@ -7,7 +7,7 @@ from django.urls import include, path
 
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register("widgets", rest.WidgetViewSet)
+router.register("widget", rest.WidgetViewSet)
 
 urlpatterns = [
     path("api/", include((router.urls, "api"))),
