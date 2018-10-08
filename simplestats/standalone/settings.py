@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'social_django',
     'simplestats',
     'simplestats.standalone',
+    'simplestats.prometheus',
 ]
 
 MIDDLEWARE = [

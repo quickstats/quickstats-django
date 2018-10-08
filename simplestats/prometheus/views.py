@@ -16,11 +16,16 @@ logger = logging.getLogger(__name__)
 
 
 class Metrics(View):
+    def get_queryset(self):
+        # if self.request.user.is_authenticated:
+        #     return models.Widget.objects.filter(owner=self.request.user)
+        return models.Widget.objects.filter(public=True)
+
     # TODO Temporary bridge
     def get(self, request):
         registry = CollectorRegistry()
         gauges = {}
-        for chart in models.Widget.objects.filter(public=True):
+        for chart in self.get_queryset():
             labels = {x.name: x.value for x in chart.label_set.all()}
             metric = labels.pop('metric', '').replace('.', '_')
             if not metric:
