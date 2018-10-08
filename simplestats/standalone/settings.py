@@ -125,7 +125,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.environ.get('STATIC_ROOT')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.environ.get('STATIC_ROOT')
+MEDIA_ROOT = os.environ.get('MEDIA_ROOT')
 
 # Enable Sentry
 if 'SENTRY_DSN' in os.environ:
