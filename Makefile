@@ -1,15 +1,13 @@
-.PHONY: test run clean
 
-test: .env
-	.env/bin/simplestats test
+test:
+	pipenv run simplestats test
+.PHONY:	test
 
-run: .env
-	.env/bin/simplestats migrate
-	.env/bin/simplestats runserver
+setup:
+	pipenv install --dev
+.PHONY:	setup
 
-.env:
-	python3 -m venv .env
-	.env/bin/pip install -e .[dev,standalone]
-
-clean:
-	rm -rf .env
+run:
+	pipenv run simplestats migrate
+	pipenv run simplestats runserver
+.PHONY:	run

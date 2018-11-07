@@ -1,0 +1,3 @@
+simple_metric 1
+label_metric{foo="bar"} 1
+label_metric{foo="baz"} 1
