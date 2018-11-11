@@ -154,3 +154,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20,
 }
+
+if 'CELERY_BROKER_URL' in os.environ:
+    CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+else:
+    CELERY_TASK_ALWAYS_EAGER = True
