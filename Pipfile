@@ -10,11 +10,14 @@ requests = "*"
 python-dateutil = "*"
 pytz = "*"
 django-simplestats = {editable = true, path = "."}
+prometheus-client = "*"
 
 [dev-packages]
 "psycopg2-binary" = "*"
 black = "==19.3b0"
 isort = "*"
+"flake8" = "*"
+nose = "*"
 
 [requires]
 python_version = "3.7"

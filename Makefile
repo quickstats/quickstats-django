@@ -1,5 +1,5 @@
 test:
-	pipenv run simplestats test
+	pipenv run simplestats test -v 2
 
 run:
 	pipenv run simplestats runserver

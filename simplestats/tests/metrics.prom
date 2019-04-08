@@ -1,0 +1,2 @@
+simple_test 1
+label_test{foo="bar"} 1
