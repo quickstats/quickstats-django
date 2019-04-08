@@ -2,6 +2,7 @@ from pathlib import Path
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from simplestats import models
 from django.urls import reverse
 
 QUERY = Path(__file__).parent / "grafana.query.json"
@@ -20,9 +21,15 @@ class GrafanaTest(TestCase):
                 content_type="application/json",
             )
         self.assertEqual(response.status_code, 200, "Successful grafana query")
+        print(response.json())
 
     def test_search(self):
         user, _ = get_user_model().objects.get_or_create(username="grafanatest")
+        one = models.Widget.objects.create(owner=user, name="foo1")
+        two = models.Widget.objects.create(owner=user, name="foo2")
+        models.Subscription.objects.create(owner=user, widget=one)
+        models.Subscription.objects.create(owner=user, widget=two)
+
         self.client.force_login(user)
         with SEARCH.open("r") as fp:
             response = self.client.post(
@@ -31,6 +38,7 @@ class GrafanaTest(TestCase):
                 content_type="application/json",
             )
         self.assertEqual(response.status_code, 200, "Successful grafana search")
+        print(response.json())
 
     def test_annotations(self):
         user, _ = get_user_model().objects.get_or_create(username="grafanatest")
@@ -42,3 +50,4 @@ class GrafanaTest(TestCase):
                 content_type="application/json",
             )
         self.assertEqual(response.status_code, 200, "Successful grafana annotations")
+        print(response.json())

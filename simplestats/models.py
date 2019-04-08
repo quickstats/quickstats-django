@@ -7,7 +7,7 @@ class Widget(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     description = models.TextField()
-    public = models.BooleanField()
+    public = models.BooleanField(default=False)
     publications = models.ManyToManyField("simplestats.Series")
 
 
