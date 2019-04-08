@@ -1,8 +1,8 @@
 test:
-	pipenv run python -m simplestats.standalone.manage test
+	pipenv run simplestats test
 
 run:
-	pipenv run python -m simplestats.standalone.manage runserver
+	pipenv run simplestats runserver
 
 migrate:
-	pipenv run python -m simplestats.standalone.manage migrate
+	pipenv run simplestats migrate

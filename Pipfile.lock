@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "733ca54505707428a4be57be422baf33666973c3326f04d43d8f4e9f59881f8c"
+            "sha256": "ce010e0fef31c0cce8b14045a349bdd1923a0da70b594453d8140248969f54da"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -37,6 +37,10 @@
             ],
             "index": "pypi",
             "version": "==2.2"
+        },
+        "django-simplestats": {
+            "editable": true,
+            "path": "."
         },
         "djangorestframework": {
             "hashes": [
