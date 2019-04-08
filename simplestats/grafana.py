@@ -1,14 +1,13 @@
+import json
 import logging
 
-import json
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-from django.views import View
 from dateutil.parser import parse
-from django.http import JsonResponse
-
 
 from . import models
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.views import View
 
 logger = logging.getLogger(__name__)
 

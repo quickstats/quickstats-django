@@ -1,6 +1,6 @@
-from django.urls import path
-
 from . import grafana, prometheus
+
+from django.urls import path
 
 urlpatterns = [
     path("metrics/job/<job>", prometheus.PushGateway.as_view(), name="push"),

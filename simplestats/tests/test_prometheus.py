@@ -1,10 +1,10 @@
-import os
 from pathlib import Path
 
+from simplestats import models
+
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from simplestats import models
-from django.contrib.auth import get_user_model
 
 METRICS = Path(__file__).parent / "metrics.prom"
 

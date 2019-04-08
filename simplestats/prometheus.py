@@ -1,15 +1,14 @@
-import operator
 import logging
 from urllib.parse import urlencode
+
+from prometheus_client.parser import text_string_to_metric_families
+
+from . import models
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.utils import timezone
 from django.views import View
-
-from prometheus_client.parser import text_string_to_metric_families
-
-from . import models
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,9 @@
 from pathlib import Path
 
+from simplestats import models
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from simplestats import models
 from django.urls import reverse
 
 QUERY = Path(__file__).parent / "grafana.query.json"
