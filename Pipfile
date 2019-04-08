@@ -14,6 +14,7 @@ django-simplestats = {editable = true, path = "."}
 [dev-packages]
 "psycopg2-binary" = "*"
 black = "==19.3b0"
+isort = "*"
 
 [requires]
 python_version = "3.7"
