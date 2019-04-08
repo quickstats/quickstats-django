@@ -1,0 +1,19 @@
+{
+    "range": {
+        "from": "2016-10-31T06:33:44.866Z",
+        "to": "2016-10-31T12:33:44.866Z"
+    },
+    "targets": [
+        {
+            "target": "upper_50",
+            "refId": "A",
+            "type": "timeserie"
+        },
+        {
+            "target": "upper_75",
+            "refId": "B",
+            "type": "timeserie"
+        }
+    ],
+    "maxDataPoints": 550
+}

@@ -1,0 +1,13 @@
+{
+    "range": {
+        "from": "2016-04-15T13:44:39.070Z",
+        "to": "2016-04-15T14:44:39.070Z"
+    },
+    "annotation": {
+        "name": "deploy",
+        "datasource": "Simple JSON Datasource",
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "enable": true,
+        "query": "#deploy"
+    }
+}
