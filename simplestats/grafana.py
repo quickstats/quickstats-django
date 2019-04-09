@@ -7,12 +7,16 @@ from . import models
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.views import View
-
 from django.urls import path
-
+from django.views import View
+from django.views.generic.base import TemplateView
 
 logger = logging.getLogger(__name__)
+
+
+class Home(TemplateView):
+
+    template_name = "simplestats/grafana/home.html"
 
 
 class Search(LoginRequiredMixin, View):
@@ -55,6 +59,7 @@ class Annotations(LoginRequiredMixin, View):
 
 
 urlpatterns = [
+    path("", Home.as_view(), name="home"),
     path("query", Query.as_view(), name="query"),
     path("search", Search.as_view(), name="search"),
     path("annotations", Annotations.as_view(), name="annotations"),

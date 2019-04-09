@@ -28,6 +28,7 @@ router.register("subscription", rest.SubscriptionViewSet)
 
 
 urlpatterns = [
+    path('accounts/', include('django.contrib.auth.urls')),
     path("admin/", admin.site.urls),
     path("api/", include((router.urls, "api"), namespace="api")),
     path("", include(("simplestats.urls", "stats"), namespace="stats")),

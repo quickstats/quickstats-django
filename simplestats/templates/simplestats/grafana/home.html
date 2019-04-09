@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>
+    Grafana Instructions
+</h1>
+<ol>
+    <li>Install <a href="https://github.com/grafana/simple-json-datasource">simple-json-datasource</a></li>
+    <li>Register <input readonly value="{{request.build_absolute_uri}}"></li>
+</ol>
+{% endblock %}
