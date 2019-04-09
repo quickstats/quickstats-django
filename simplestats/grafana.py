@@ -9,6 +9,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views import View
 
+from django.urls import path
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -49,3 +52,10 @@ class Annotations(LoginRequiredMixin, View):
         query = json.loads(request.body.decode("utf8"))
         logger.debug("annotations %s", query)
         return JsonResponse({})
+
+
+urlpatterns = [
+    path("query", Query.as_view(), name="query"),
+    path("search", Search.as_view(), name="search"),
+    path("annotations", Annotations.as_view(), name="annotations"),
+]
