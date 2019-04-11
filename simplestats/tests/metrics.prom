@@ -1,2 +1,6 @@
+# TYPE simple_test counter
+# HELP simple_test Testing with no labels
 simple_test 1
+# TYPE label_test gauge
+# HELP label_test Testing with labels
 label_test{foo="bar"} 1

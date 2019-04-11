@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 
 from simplestats import models
@@ -16,10 +17,22 @@ class PrometheusTest(TestCase):
 
         with METRICS.open("r") as fp:
             response = self.client.post(
-                reverse("push", args=("job_name",)),
+                reverse("prometheus:push", args=("job_name",)),
                 data=fp.read(),
                 content_type="text/xml",
             )
         self.assertEqual(response.status_code, 200, "Succeeded Pushing metrics")
         self.assertEqual(models.Series.objects.count(), 2, "Found two series")
         self.assertEqual(models.Sample.objects.count(), 2, "Found two samples")
+
+        # Slight delay and test posting again
+        time.sleep(2)
+        with METRICS.open("r") as fp:
+            response = self.client.post(
+                reverse("prometheus:push", args=("job_name",)),
+                data=fp.read(),
+                content_type="text/xml",
+            )
+        self.assertEqual(response.status_code, 200, "Succeeded Pushing metrics")
+        self.assertEqual(models.Series.objects.count(), 2, "Found same two series")
+        self.assertEqual(models.Sample.objects.count(), 4, "Found two new samples")
