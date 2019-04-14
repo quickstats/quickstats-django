@@ -6,7 +6,7 @@
 <div class="card" style="width: 18rem;">
     <img src="..." class="card-img-top" alt="...">
     <div class="card-body">
-        <h5 class="card-title">{{subscription.widget.name}}</h5>
+        <h5 class="card-title">{{subscription.widget.name}} <small class="float-right">{{subscription.widget.owner.username}}</small></h5>
         <p class="card-text">{{subscription.widget.description}}</p>
         <form class="form-inline" action="{% url 'stats:subscription-delete' pk=subscription.pk %}" method="POST">
             {% csrf_token %}
