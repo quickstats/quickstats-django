@@ -10,7 +10,7 @@ from prometheus_client import (
 from prometheus_client.parser import text_string_to_metric_families
 
 from . import models, version
-
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.urls import path
@@ -42,7 +42,7 @@ class PushGateway(LoginRequiredMixin, View):
                 labels = labels_from_sample(s)
                 series, created = models.Series.objects.filter_labels(
                     **labels
-                ).get_or_create(name=s.name, owner=request.user)
+                ).get_or_create(owner=request.user, defaults={"name": s.name})
                 if created:
                     logger.debug("Created series %s", series)
                     series.label_set.bulk_create(
@@ -67,6 +67,6 @@ class Metrics(View):
 
 
 urlpatterns = [
-    path("metrics/job/<job>", PushGateway.as_view(), name="push"),
+    path("metrics/job/<job>", csrf_exempt(PushGateway.as_view()), name="push"),
     path("metrics", Metrics.as_view(), name="metrics"),
 ]

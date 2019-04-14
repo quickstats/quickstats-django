@@ -11,6 +11,7 @@ python-dateutil = "*"
 pytz = "*"
 django-simplestats = {editable = true, path = "."}
 prometheus-client = "*"
+django-environ = "*"
 
 [dev-packages]
 "psycopg2-binary" = "*"
