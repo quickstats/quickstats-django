@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView
+from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 
@@ -48,7 +48,7 @@ class WidgetFromSeries(LoginRequiredMixin, View):
         for series_id in request.POST.get("series_id", []):
             widget.series.add(models.Series.objects.get(pk=series_id))
         sub = models.Subscription.objects.create(owner=request.user, widget=widget)
-        return redirect("stats:widgets")
+        return redirect("stats:widget-list")
 
 
 class WidgetSubscription(LoginRequiredMixin, View):
@@ -66,6 +66,13 @@ class WidgetListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return self.model.objects.filter(owner=self.request.user)
+
+
+class WidgetUpdate(UpdateView):
+    model = models.Widget
+    fields = ["name", "description", "public", "type"]
+    template_name_suffix = "_update_form"
+    success_url = reverse_lazy("stats:widget-list")
 
 
 class SeriesListView(LoginRequiredMixin, ListView):

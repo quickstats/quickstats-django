@@ -29,6 +29,9 @@
             <a class="btn btn-xm btn-secondary"
                 href="{% url 'api:widget-detail' pk=widget.pk format='json' %}">Embed</a>
         </td>
+        <td>
+            <a class="btn btn-xm btn-warning" href="{% url 'stats:widget-update' pk=widget.pk %}">Update</a>
+        </td>
     </tr>
     {% endfor %}
 </table>
