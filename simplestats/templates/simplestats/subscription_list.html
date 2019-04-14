@@ -1,5 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Simplestats List</h1>
+
+{% for subscription in object_list %}
+<div class="card" style="width: 18rem;">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">{{subscription.widget.name}}</h5>
+        <p class="card-text">{{subscription.widget.description}}</p>
+        <form class="form-inline" action="{% url 'stats:subscription-delete' pk=subscription.pk %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-danger">Unsubscribe</button>
+        </form>
+        <a class="btn btn-sm btn-secondary" href="{% url 'api:widget-detail' pk=subscription.widget.pk format='json' %}">Embed</a>
+    </div>
+</div>
+{% empty %}
+    <div>Sorry, no subscriptions in this list.</div>
+{% endfor %}
+
 {% endblock %}

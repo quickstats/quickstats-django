@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Widget</h1>
+
+<table>
+    <tr>
+        <th>&nbsp;</th>
+        <th>Name</th>
+        <th>Owner</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Public</th>
+    </tr>
+    {% for widget in object_list %}
+    <tr>
+        <td><a href="{{widget.get_absolute_url}}">{{widget.name}}</a></td>
+        <td>{{widget.owner}}</td>
+        <td>{{widget.get_type_display}}</td>
+        <td>{{widget.description}}</td>
+        <td>{{widget.public}}</td>
+        <td>
+            <form id="new-widget" action="{% url 'stats:widget-subscribe' pk=widget.pk %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-xm btn-success">Subscribe</button>
+            </form>
+        </td>
+        <td>
+            <a class="btn btn-xm btn-secondary"
+                href="{% url 'api:widget-detail' pk=widget.pk format='json' %}">Embed</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

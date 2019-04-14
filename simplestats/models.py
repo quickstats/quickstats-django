@@ -1,11 +1,12 @@
-import uuid
 import logging
+import uuid
+
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Q
-
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,9 @@ class Subscription(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     widget = models.ForeignKey("simplestats.Widget", on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ("owner", "widget")
+
 
 class Series(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -60,6 +64,9 @@ class Series(models.Model):
     value = models.FloatField(default=0)
 
     objects = SeriesQuerySet.as_manager()
+
+    def get_absolute_url(self):
+        return reverse("stats:series-detail", args=(self.pk,))
 
 
 class Label(models.Model):

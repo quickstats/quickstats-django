@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Series</h1>
+
+
+<table>
+    <tr>
+        <th>&nbsp;</th>
+        <th>Name</th>
+        <th>Public</th>
+        <th>Value</th>
+    </tr>
+    {% for series in object_list %}
+    <tr>
+        <td><input form="new-widget" name="series_id[]" value="{{series.pk}}" type="checkbox" /></td>
+        <td><a href="{{series.get_absolute_url}}">{{series.name}}</a></td>
+        <td>{{series.public}}</td>
+        <td>{{series.value}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<form id="new-widget" action="{% url 'stats:widget-new' %}" method="POST">
+    {% csrf_token %}
+    <button class="btn btn-success">New widget</button>
+</form>
+
+{% endblock %}
+
