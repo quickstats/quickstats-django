@@ -4,19 +4,29 @@
 <h1>Series</h1>
 
 
-<table>
-    <tr>
-        <th>&nbsp;</th>
-        <th>Name</th>
-        <th>Public</th>
-        <th>Value</th>
-    </tr>
+<table class="table table-sm table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>&nbsp;</th>
+            <th>Name</th>
+            <th>Public</th>
+            <th>Value</th>
+            <th>Labels</th>
+        </tr>
+    </thead>
     {% for series in object_list %}
     <tr>
         <td><input form="new-widget" name="series_id[]" value="{{series.pk}}" type="checkbox" /></td>
         <td><a href="{{series.get_absolute_url}}">{{series.name}}</a></td>
         <td>{{series.public}}</td>
         <td>{{series.value}}</td>
+        <td>
+            {% for label in series.label_set.all|dictsort:'name' %}
+            <span class="badge badge-secondary">{{label.name}}:{{label.value}}</span>
+            {% empty %}
+            <p>No Labels</p>>
+            {% endfor %}
+        </td>
     </tr>
     {% endfor %}
 </table>
@@ -27,4 +37,3 @@
 </form>
 
 {% endblock %}
-

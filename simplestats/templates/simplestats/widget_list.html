@@ -3,15 +3,17 @@
 {% block content %}
 <h1>Widget</h1>
 
-<table>
-    <tr>
-        <th>&nbsp;</th>
-        <th>Name</th>
-        <th>Owner</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Public</th>
-    </tr>
+<table class="table table-sm table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Public</th>
+            <th colspan="3">Actions</th>
+        </tr>
+    </thead>
     {% for widget in object_list %}
     <tr>
         <td><a href="{{widget.get_absolute_url}}">{{widget.name}}</a></td>
@@ -26,8 +28,7 @@
             </form>
         </td>
         <td>
-            <a class="btn btn-xm btn-secondary"
-                href="{% url 'api:widget-detail' pk=widget.pk format='json' %}">Embed</a>
+            <a class="btn btn-xm btn-secondary" href="{% url 'api:widget-detail' pk=widget.pk format='json' %}">Embed</a>
         </td>
         <td>
             <a class="btn btn-xm btn-warning" href="{% url 'stats:widget-update' pk=widget.pk %}">Update</a>
