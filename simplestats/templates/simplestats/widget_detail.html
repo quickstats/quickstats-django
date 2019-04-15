@@ -50,4 +50,19 @@
     {% endfor %}
 </table>
 
+
+<table class="table table-sm table-bordered">
+    {% for comment in widget.comment_set.all %}
+    <tr>
+        <td>{{comment.timestamp}}</td>
+        <td>{{comment.owner.username}}</td>
+        <td>{{comment.body}}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td>No Comments</td>
+    </tr>
+    {% endfor %}
+</table>
+
 {% endblock %}
