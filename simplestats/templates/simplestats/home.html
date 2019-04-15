@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-{% for widget in object_list %}
-<div class="card" style="width: 18rem;">
-    <img src="..." class="card-img-top" alt="...">
-    <div class="card-body">
-        <h5 class="card-title">{{widget.name}} <small class="float-right">{{widget.owner.username}}</small></h5>
-        <p class="card-text">{{widget.description}}</p>
-        <form class="form-inline" action="{% url 'stats:widget-subscribe' pk=widget.pk %}" method="POST">
-            {% csrf_token %}
-            <button class="btn btn-sm btn-success">Subscribe</button>
-        </form>
-        <a class="btn btn-sm btn-secondary" href="{% url 'api:widget-detail' pk=widget.pk format='json' %}">Embed</a>
+<div class="card-group">
+    {% for widget in object_list %}
+    <div class="card w-25 h-25">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">{{widget.name}} <small class="float-right">{{widget.owner.username}}</small></h5>
+            <p class="card-text">{{widget.description}}</p>
+            <form class="form-inline" action="{% url 'stats:widget-subscribe' pk=widget.pk %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-success">Subscribe</button>
+            </form>
+            <a class="btn btn-sm btn-secondary"
+                href="{% url 'api:widget-detail' pk=widget.pk format='json' %}">Embed</a>
+        </div>
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
-
 {% endblock %}

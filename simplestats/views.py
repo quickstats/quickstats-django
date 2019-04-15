@@ -45,10 +45,16 @@ class WidgetFromSeries(LoginRequiredMixin, View):
         widget = models.Widget.objects.create(
             owner=request.user, name="foo", description="bar"
         )
-        for series_id in request.POST.get("series_id", []):
-            widget.series.add(models.Series.objects.get(pk=series_id))
-        sub = models.Subscription.objects.create(owner=request.user, widget=widget)
-        return redirect("stats:widget-list")
+
+        series = [
+            models.Series.objects.get(pk=pk)
+            for pk in request.POST.getlist("series_id[]")
+        ]
+
+        if series:
+            widget.series.add(*series)
+        _ = models.Subscription.objects.create(owner=request.user, widget=widget)
+        return redirect("stats:widget-detail", pk=widget.pk)
 
 
 class WidgetSubscription(LoginRequiredMixin, View):
@@ -77,6 +83,10 @@ class WidgetUpdate(UpdateView):
     model = models.Widget
     fields = ["name", "description", "public", "type"]
     template_name_suffix = "_update_form"
+
+
+class WidgetDelete(LoginRequiredMixin, DeleteView):
+    model = models.Widget
     success_url = reverse_lazy("stats:widget-list")
 
 

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<dl class="row">
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9">{{object.name}}</dd>
+    <dt class="col-sm-3">Description</dt>
+    <dd class="col-sm-9">{{object.description}}</dd>
+    <dt class="col-sm-3">Type</dt>
+    <dd class="col-sm-9">{{object.get_type_display}}</dd>
+</dl>
+
+<form method="post">{% csrf_token %}
+    <p>Are you sure you want to delete "{{ object.name }}"?</p>
+    <button class="btn btn-danger">Confirm</button>
+</form>
+{% endblock %}
