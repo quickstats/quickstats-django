@@ -23,9 +23,11 @@ class Widget(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     public = models.BooleanField(default=False)
-    series = models.ManyToManyField("simplestats.Series")
+    series = models.ManyToManyField(
+        "simplestats.Series", blank=True, related_name="widget_set"
+    )
 
     TYPE_CHART = 1
     TYPE_COUNTDOWN = 2
@@ -40,12 +42,16 @@ class Widget(models.Model):
 
     type = models.IntegerField(choices=TYPE_CHOICES, default=TYPE_CHART)
 
+    def get_absolute_url(self):
+        return reverse("stats:widget-detail", args=(self.pk,))
+
 
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     widget = models.ForeignKey("simplestats.Widget", on_delete=models.CASCADE)
     timestamp = models.DateField(default=timezone.now)
+    body = models.TextField(blank=True)
 
 
 class Subscription(models.Model):

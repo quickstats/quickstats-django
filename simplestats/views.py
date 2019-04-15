@@ -68,6 +68,11 @@ class WidgetListView(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
+class WidgetDetailView(LoginRequiredMixin, DetailView):
+
+    model = models.Widget
+
+
 class WidgetUpdate(UpdateView):
     model = models.Widget
     fields = ["name", "description", "public", "type"]

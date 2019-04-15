@@ -1,5 +1,64 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{{object}}
+
+<table class="table table-sm table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Name</th>
+            <th>Public</th>
+            <th>Value</th>
+            <th>Labels</th>
+        </tr>
+    </thead>
+    <tr>
+        <td><a href="{{series.get_absolute_url}}">{{series.name}}</a></td>
+        <td>{{series.public}}</td>
+        <td>{{series.value}}</td>
+        <td>
+            {% for label in series.label_set.all|dictsort:'name' %}
+            <span class="badge badge-secondary">{{label.name}}:{{label.value}}</span>
+            {% empty %}
+            <p>No Labels</p>>
+            {% endfor %}
+        </td>
+    </tr>
+</table>
+
+<table class="table table-sm table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>Description</th>
+            <th>Public</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    {% for widget in series.widget_set.all %}
+    <tr>
+        <td><a href="{{widget.get_absolute_url}}">{{widget.name}}</a></td>
+        <td>{{widget.owner.username}}</td>
+        <td>{{widget.description}}</td>
+        <td>{{widget.public}}</td>
+        <td>{{widget.get_type_display}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<table class="table table-sm table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Timestamp</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    {% for sample in series.sample_set.all %}
+    <tr>
+        <td>{{sample.timestamp}}</td>
+        <td>{{sample.value}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
 {% endblock %}
