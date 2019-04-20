@@ -2,13 +2,14 @@ import json
 import logging
 
 from dateutil.parser import parse
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 from . import models
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.urls import path
-from django.views import View
 from django.views.generic.base import TemplateView
 
 logger = logging.getLogger(__name__)
@@ -19,10 +20,23 @@ class Home(TemplateView):
     template_name = "simplestats/grafana/home.html"
 
 
-class Search(LoginRequiredMixin, View):
+class Search(APIView):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request, **kwargs):
         query = json.loads(request.body.decode("utf8"))
         logger.debug("search %s", query)
+        return JsonResponse(
+            [
+                subscription.widget.name
+                for subscription in models.Subscription.objects.filter(
+                    owner=request.user
+                ).prefetch_related("widget")
+            ],
+            safe=False,
+        )
+
         return JsonResponse(
             [
                 {"text": subscription.widget.name, "value": subscription.id}
@@ -34,10 +48,27 @@ class Search(LoginRequiredMixin, View):
         )
 
 
-class Query(LoginRequiredMixin, View):
+def to_ts(dt):
+    return dt.timestamp() * 1000
+
+
+class Query(APIView):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
     def datapoints(self, targets, start, end):
-        for target in targets:
-            yield {"target": target, "datapoints": []}
+        for t in targets:
+            for widget in models.Widget.objects.filter(name=t["target"]):
+                for series in widget.series.all():
+                    yield {
+                        "target": series.name,
+                        "datapoints": [
+                            [s.value, to_ts(s.timestamp)]
+                            for s in series.sample_set.filter(
+                                timestamp__gte=start, timestamp__lte=end
+                            )
+                        ],
+                    }
 
     def post(self, request, **kwargs):
         query = json.loads(request.body.decode("utf8"))
@@ -51,7 +82,10 @@ class Query(LoginRequiredMixin, View):
         )
 
 
-class Annotations(LoginRequiredMixin, View):
+class Annotations(APIView):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request, **kwargs):
         query = json.loads(request.body.decode("utf8"))
         logger.debug("annotations %s", query)
@@ -59,8 +93,9 @@ class Annotations(LoginRequiredMixin, View):
 
 
 urlpatterns = [
+    # Need to have a / for grafana-json-plugin
     path("", Home.as_view(), name="home"),
-    path("query", Query.as_view(), name="query"),
-    path("search", Search.as_view(), name="search"),
-    path("annotations", Annotations.as_view(), name="annotations"),
+    path("query", (Query.as_view()), name="query"),
+    path("search", (Search.as_view()), name="search"),
+    path("annotations", (Annotations.as_view()), name="annotations"),
 ]
