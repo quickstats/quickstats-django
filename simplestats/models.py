@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,12 @@ class Widget(models.Model):
     )
 
     type = models.IntegerField(choices=TYPE_CHOICES, default=TYPE_CHART)
+
+    @property
+    def formatted(self):
+        if self.type == self.TYPE_COUNTDOWN:
+            return datetime.fromtimestamp(self.value)
+        return self.value
 
     def get_absolute_url(self):
         return reverse("stats:widget-detail", args=(self.pk,))
