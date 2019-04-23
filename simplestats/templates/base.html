@@ -9,12 +9,22 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/simplestats.css" %}">
 
     <title>{% block title %}Simplestats{% endblock %}</title>
 </head>
 
 <body>
     {% include 'navbar.inc.html' %}
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+    </ul>
+    {% endif %}
+
     <div class="container">
         {% block content %}{% endblock %}
     </div>

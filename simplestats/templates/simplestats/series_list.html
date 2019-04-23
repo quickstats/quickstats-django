@@ -31,6 +31,8 @@
     {% endfor %}
 </table>
 
+{% include 'simplestats/paginator.html' with page_obj=page_obj only %}
+
 <form id="new-widget" action="{% url 'stats:widget-new' %}" method="POST">
     {% csrf_token %}
     <button class="btn btn-success">New widget</button>

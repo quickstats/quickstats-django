@@ -28,10 +28,17 @@ router.register("subscription", rest.SubscriptionViewSet)
 
 
 urlpatterns = [
-    path('accounts/', include('django.contrib.auth.urls')),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
     path("api/", include((router.urls, "api"), namespace="api")),
     path("", include(("simplestats.urls", "stats"), namespace="stats")),
     path("", include(("simplestats.prometheus", "prometheus"), namespace="prometheus")),
     path("grafana/", include(("simplestats.grafana", "grafana"), namespace="grafana")),
 ]
+
+try:
+    import debug_toolbar
+except ImportError:
+    pass
+else:
+    urlpatterns.append(path("__debug__/", include(debug_toolbar.urls)))

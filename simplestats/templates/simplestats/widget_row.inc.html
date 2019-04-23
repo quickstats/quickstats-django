@@ -5,10 +5,17 @@
     <td>{{widget.description}}</td>
     <td>{{widget.public}}</td>
     <td>
+        {% if widget.id in subscriptions %}
+        <form id="new-widget" action="{% url 'stats:widget-unsubscribe' pk=widget.pk %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-xm btn-danger">Unsubscribe</button>
+        </form>
+        {% else %}
         <form id="new-widget" action="{% url 'stats:widget-subscribe' pk=widget.pk %}" method="POST">
             {% csrf_token %}
             <button class="btn btn-xm btn-success">Subscribe</button>
         </form>
+        {% endif %}
     </td>
     <td>
         <a class="btn btn-xm btn-secondary" href="{% url 'api:widget-detail' pk=widget.pk format='json' %}">Embed</a>

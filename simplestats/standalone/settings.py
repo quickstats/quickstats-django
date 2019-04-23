@@ -46,9 +46,11 @@ INSTALLED_APPS = [
     'simplestats.standalone',
     'simplestats',
     'rest_framework',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -71,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'simplestats.context_processors.subscriptions',
             ],
         },
     },
@@ -133,3 +136,13 @@ REST_FRAMEWORK = {
 }
 
 APPEND_SLASH = False
+
+try:
+    import debug_toolbar  # NOQA
+    if DEBUG is False:
+        raise ImportError('No toolbar')
+except ImportError:
+    MIDDLEWARE.remove('debug_toolbar.middleware.DebugToolbarMiddleware')
+    INSTALLED_APPS.remove('debug_toolbar')
+else:
+    INTERNAL_IPS = ['127.0.0.1']

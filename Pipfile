@@ -19,6 +19,7 @@ black = "==19.3b0"
 isort = "*"
 "flake8" = "*"
 nose = "*"
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.6"
