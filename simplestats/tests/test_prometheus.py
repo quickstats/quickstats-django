@@ -22,7 +22,7 @@ class PrometheusTest(TestCase):
                 content_type="text/xml",
             )
         self.assertEqual(response.status_code, 200, "Succeeded Pushing metrics")
-        self.assertEqual(models.Series.objects.count(), 2, "Found two series")
+        self.assertEqual(models.Widget.objects.count(), 2, "Found two widgets")
         self.assertEqual(models.Sample.objects.count(), 2, "Found two samples")
 
         # Slight delay and test posting again
@@ -34,5 +34,5 @@ class PrometheusTest(TestCase):
                 content_type="text/xml",
             )
         self.assertEqual(response.status_code, 200, "Succeeded Pushing metrics")
-        self.assertEqual(models.Series.objects.count(), 2, "Found same two series")
+        self.assertEqual(models.Widget.objects.count(), 2, "Found same two widgets")
         self.assertEqual(models.Sample.objects.count(), 4, "Found two new samples")

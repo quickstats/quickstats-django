@@ -59,12 +59,11 @@ class Query(APIView):
     def datapoints(self, targets, start, end):
         for t in targets:
             for widget in models.Widget.objects.filter(name=t["target"]):
-                for series in widget.series.all():
                     yield {
-                        "target": series.name,
+                        "target": widget.name,
                         "datapoints": [
                             [s.value, to_ts(s.timestamp)]
-                            for s in series.sample_set.filter(
+                            for s in widget.sample_set.filter(
                                 timestamp__gte=start, timestamp__lte=end
                             )
                         ],

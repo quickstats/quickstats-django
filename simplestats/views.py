@@ -11,11 +11,6 @@ from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 
-class SeriesDetailView(LoginRequiredMixin, DetailView):
-
-    model = models.Series
-
-
 class PublicWidgets(LoginRequiredMixin, ListView):
 
     model = models.Widget
@@ -54,23 +49,6 @@ class SubscriptionDelete(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("stats:subscriptions")
 
 
-class WidgetFromSeries(LoginRequiredMixin, View):
-    def post(self, request):
-        widget = models.Widget.objects.create(
-            owner=request.user, name="foo", description="bar"
-        )
-
-        series = [
-            models.Series.objects.get(pk=pk)
-            for pk in request.POST.getlist("series_id[]")
-        ]
-
-        if series:
-            widget.series.add(*series)
-        _ = models.Subscription.objects.create(owner=request.user, widget=widget)
-        return redirect("stats:widget-detail", pk=widget.pk)
-
-
 class WidgetSubscription(LoginRequiredMixin, View):
     def post(self, request, pk):
         sub, created = models.Subscription.objects.get_or_create(
@@ -107,19 +85,10 @@ class WidgetDetailView(LoginRequiredMixin, DetailView):
 
 class WidgetUpdate(UpdateView):
     model = models.Widget
-    fields = ["name", "description", "public", "type"]
+    fields = ["name", "description", "public", "type", "formatter"]
     template_name_suffix = "_update_form"
 
 
 class WidgetDelete(LoginRequiredMixin, DeleteView):
     model = models.Widget
     success_url = reverse_lazy("stats:widget-list")
-
-
-class SeriesListView(LoginRequiredMixin, ListView):
-
-    model = models.Series
-    paginate_by = 20
-
-    def get_queryset(self):
-        return self.model.objects.filter(owner=self.request.user)

@@ -21,12 +21,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class SeriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Series
-        fields = "__all__"
-
-
 class SampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Sample

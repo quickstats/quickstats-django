@@ -40,19 +40,19 @@ class PushGateway(LoginRequiredMixin, View):
         for family in text_string_to_metric_families(request.body.decode("utf8")):
             for s in family.samples:
                 labels = labels_from_sample(s)
-                series, created = models.Series.objects.filter_labels(
+                widget, created = models.Widget.objects.filter_labels(
                     **labels
                 ).get_or_create(owner=request.user, defaults={"name": s.name})
                 if created:
-                    logger.debug("Created series %s", series)
-                    series.label_set.bulk_create(
+                    logger.debug("Created widget %s", widget)
+                    widget.label_set.bulk_create(
                         [
-                            models.Label(series=series, name=k, value=v)
+                            models.Label(widget=widget, name=k, value=v)
                             for k, v in labels.items()
                         ]
                     )
 
-                sample = series.sample_set.create(timestamp=push_time, value=s.value)
+                sample = widget.sample_set.create(timestamp=push_time, value=s.value)
 
                 logger.debug("%s", sample)
 

@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Widget</h1>
+
+<div>
+    {% include 'simplestats/widget_embed.html' with widget=widget %}
+</div>
+<hr>
 
 <table class="table table-sm table-bordered">
     <thead class="thead-dark">
@@ -17,38 +21,40 @@
     {% include 'simplestats/widget_row.inc.html' with widget=widget %}
 </table>
 
-<div>
-    {% include 'simplestats/widget_embed.html' with widget=widget %}
-</div>
+<table class="table table-sm table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Label</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    {% for label in widget.label_set.all %}
+    <tr>
+        <td>{{label.name}}</td>
+        <td>{{label.value}}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan=2>No labels found</td>
+    </tr>
+    {% endfor %}
+</table>
 
 <table class="table table-sm table-bordered">
     <thead class="thead-dark">
         <tr>
-            <th>Name</th>
-            <th>Owner</th>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Public</th>
-            <th colspan="3">Actions</th>
+            <th>Timestamp</th>
+            <th>Value</th>
         </tr>
     </thead>
-    {% for series in widget.series.all %}
+    {% for sample in widget.sample_set.all %}
     <tr>
-        <td><input form="new-widget" name="series_id[]" value="{{series.pk}}" type="checkbox" /></td>
-        <td><a href="{{series.get_absolute_url}}">{{series.name}}</a></td>
-        <td>{{series.public}}</td>
-        <td>{{series.value}}</td>
-        <td>
-            {% for label in series.label_set.all|dictsort:'name' %}
-            <span class="badge badge-secondary">{{label.name}}:{{label.value}}</span>
-            {% empty %}
-            <p>No Labels</p>>
-            {% endfor %}
-        </td>
+        <td>{{sample.timestamp}}</td>
+        <td>{{sample.value}}</td>
     </tr>
     {% empty %}
     <tr>
-        <td colspan=6>No Series found</td>
+        <td colspan=2>No samples found</td>
     </tr>
     {% endfor %}
 </table>

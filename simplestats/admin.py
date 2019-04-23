@@ -16,12 +16,4 @@ class SubscriptionAdmin(admin.ModelAdmin):
 class WidgetAdmin(admin.ModelAdmin):
     list_display = ("name", "public", "owner")
     list_filter = ("public", ("owner", admin.RelatedOnlyFieldListFilter))
-
-    exclude = ('series',)
-
-
-@admin.register(models.Series)
-class SeriesAdmin(admin.ModelAdmin):
-    list_display = ("name", "public", "owner")
-    list_filter = ("public", ("owner", admin.RelatedOnlyFieldListFilter))
     inlines = [LabelInline]

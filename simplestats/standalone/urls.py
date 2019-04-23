@@ -22,7 +22,6 @@ from django.urls import include, path
 
 router = routers.DefaultRouter()
 router.register("widget", rest.WidgetViewSet)
-router.register("series", rest.SeriesViewSet)
 router.register("comment", rest.CommentViewSet)
 router.register("subscription", rest.SubscriptionViewSet)
 
