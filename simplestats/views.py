@@ -1,4 +1,4 @@
-from . import models
+from . import forms, models
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic.detail import DetailView
+from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
@@ -69,6 +69,18 @@ class WidgetUnsubscribe(LoginRequiredMixin, View):
         return redirect("stats:widget-list")
 
 
+class WidgetComment(LoginRequiredMixin, SingleObjectMixin, View):
+    model = models.Widget
+
+    def post(self, request, pk):
+        self.object = self.get_object()
+        comment = self.object.comment_set.create(
+            body=request.POST["body"], owner=self.request.user
+        )
+        messages.success(request, "Added new comment")
+        return redirect(self.object.get_absolute_url())
+
+
 class WidgetListView(LoginRequiredMixin, ListView):
 
     model = models.Widget
@@ -81,6 +93,11 @@ class WidgetListView(LoginRequiredMixin, ListView):
 class WidgetDetailView(LoginRequiredMixin, DetailView):
 
     model = models.Widget
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["comment_form"] = forms.CommentForm()
+        return context
 
 
 class WidgetUpdate(UpdateView):

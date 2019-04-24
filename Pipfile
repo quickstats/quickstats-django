@@ -12,6 +12,7 @@ pytz = "*"
 django-simplestats = {editable = true, path = "."}
 prometheus-client = "*"
 django-environ = "*"
+pillow = "*"
 
 [dev-packages]
 "psycopg2-binary" = "*"

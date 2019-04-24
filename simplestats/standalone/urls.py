@@ -17,6 +17,8 @@ from rest_framework import routers
 
 from simplestats import rest
 
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
@@ -25,7 +27,6 @@ router.register("widget", rest.WidgetViewSet)
 router.register("comment", rest.CommentViewSet)
 router.register("subscription", rest.SubscriptionViewSet)
 
-
 urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
@@ -33,7 +34,7 @@ urlpatterns = [
     path("", include(("simplestats.urls", "stats"), namespace="stats")),
     path("", include(("simplestats.prometheus", "prometheus"), namespace="prometheus")),
     path("grafana/", include(("simplestats.grafana", "grafana"), namespace="grafana")),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 try:
     import debug_toolbar

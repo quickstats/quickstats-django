@@ -17,3 +17,8 @@ class WidgetAdmin(admin.ModelAdmin):
     list_display = ("name", "public", "owner")
     list_filter = ("public", ("owner", admin.RelatedOnlyFieldListFilter))
     inlines = [LabelInline]
+
+
+@admin.register(models.Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("timestamp", "owner")

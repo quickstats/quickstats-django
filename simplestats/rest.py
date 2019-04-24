@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from . import models, serializers
+from django.shortcuts import render
 
 
 class WidgetViewSet(viewsets.ModelViewSet):
@@ -18,6 +19,11 @@ class WidgetViewSet(viewsets.ModelViewSet):
     @samples.mapping.put
     def samples_put(self, request, pk=None):
         pass
+
+    @action(detail=True, methods=["get"])
+    def embed(self, request, pk=None):
+        self.object = self.get_object()
+        return render(request, "simplestats/widget.embed.html", {"widget": self.object})
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):

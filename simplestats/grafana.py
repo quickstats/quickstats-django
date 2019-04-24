@@ -59,15 +59,15 @@ class Query(APIView):
     def datapoints(self, targets, start, end):
         for t in targets:
             for widget in models.Widget.objects.filter(name=t["target"]):
-                    yield {
-                        "target": widget.name,
-                        "datapoints": [
-                            [s.value, to_ts(s.timestamp)]
-                            for s in widget.sample_set.filter(
-                                timestamp__gte=start, timestamp__lte=end
-                            )
-                        ],
-                    }
+                yield {
+                    "target": widget.name,
+                    "datapoints": [
+                        [s.value, to_ts(s.timestamp)]
+                        for s in widget.sample_set.filter(
+                            timestamp__gte=start, timestamp__lte=end
+                        )
+                    ],
+                }
 
     def post(self, request, **kwargs):
         query = json.loads(request.body.decode("utf8"))
@@ -85,10 +85,27 @@ class Annotations(APIView):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated,)
 
+    def annotations(self, targets, start, end, annotation):
+        for t in targets:
+            for widget in models.Widget.objects.all():
+                for comment in widget.comment_set.all():
+                    yield {
+                        "annotation": annotation,
+                        "time": to_ts(comment.timestamp),
+                        "title": "Comment",
+                        "tags": [comment.owner.username],
+                        "text": comment.body,
+                    }
+
     def post(self, request, **kwargs):
         query = json.loads(request.body.decode("utf8"))
+        from_ = parse(query["range"]["from"])
+        to_ = parse(query["range"]["to"])
+
         logger.debug("annotations %s", query)
-        return JsonResponse({})
+        return JsonResponse(
+            list(self.annotations(query, from_, to_, query["annotation"])), safe=False
+        )
 
 
 urlpatterns = [

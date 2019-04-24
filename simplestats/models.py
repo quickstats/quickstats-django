@@ -1,4 +1,6 @@
+import datetime
 import logging
+import os
 import uuid
 
 from django.conf import settings
@@ -7,7 +9,6 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +21,13 @@ class WidgetQuerySet(models.QuerySet):
         return qs
 
 
+def _upload_to_path(instance, filename):
+    root, ext = os.path.splitext(filename)
+    return "simplestats/{}/{}{}".format(
+        instance.__class__.__name__, instance.pk, ext
+    ).lower()
+
+
 class Widget(models.Model):
     objects = WidgetQuerySet.as_manager()
 
@@ -28,6 +36,7 @@ class Widget(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField(blank=True)
     public = models.BooleanField(default=False)
+    icon = models.ImageField(upload_to=_upload_to_path, blank=True)
 
     value = models.FloatField(default=0)
     formatter = models.CharField(max_length=128)
@@ -59,7 +68,7 @@ class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     widget = models.ForeignKey("simplestats.Widget", on_delete=models.CASCADE)
-    timestamp = models.DateField(default=timezone.now)
+    timestamp = models.DateTimeField(default=timezone.now)
     body = models.TextField()
 
 

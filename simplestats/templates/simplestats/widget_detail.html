@@ -14,6 +14,7 @@
             <th>Owner</th>
             <th>Type</th>
             <th>Description</th>
+            <th>Formatted</th>
             <th>Public</th>
             <th colspan="4">Actions</th>
         </tr>
@@ -59,6 +60,13 @@
     {% endfor %}
 </table>
 
+
+<form method="post" action="{% url 'stats:widget-comment' widget.pk %}">
+    {% csrf_token %}
+    <input name="widget_id" value="{{widget.id}}" type="hidden">
+    <textarea name="body" class="form-control"></textarea>
+    <button class="btn btn-warning" type="submit">Submit</button>
+</form>
 
 <table class="table table-sm table-bordered">
     {% for comment in widget.comment_set.all %}
