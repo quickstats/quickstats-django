@@ -141,8 +141,6 @@ REST_FRAMEWORK = {
     )
 }
 
-APPEND_SLASH = False
-
 try:
     import debug_toolbar  # NOQA
     if DEBUG is False:
