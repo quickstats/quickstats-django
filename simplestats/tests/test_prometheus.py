@@ -1,6 +1,6 @@
 import time
 from pathlib import Path
-
+from rest_framework.authtoken.models import Token
 from simplestats import models
 
 from django.contrib.auth import get_user_model
@@ -13,11 +13,12 @@ METRICS = Path(__file__).parent / "metrics.prom"
 class PrometheusTest(TestCase):
     def test_push(self):
         user, _ = get_user_model().objects.get_or_create(username="promtest")
+        token, _ = Token.objects.get_or_create(user=user)
         self.client.force_login(user)
 
         with METRICS.open("r") as fp:
             response = self.client.post(
-                reverse("prometheus:push", args=("job_name",)),
+                reverse("prometheus:push", args=(token.key,)),
                 data=fp.read(),
                 content_type="text/xml",
             )
@@ -29,7 +30,7 @@ class PrometheusTest(TestCase):
         time.sleep(2)
         with METRICS.open("r") as fp:
             response = self.client.post(
-                reverse("prometheus:push", args=("job_name",)),
+                reverse("prometheus:push", args=(token.key,)),
                 data=fp.read(),
                 content_type="text/xml",
             )

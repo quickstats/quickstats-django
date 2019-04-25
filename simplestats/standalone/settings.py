@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'simplestats.standalone',
     'simplestats',
     'rest_framework',
+    'rest_framework.authtoken',
     'debug_toolbar',
 ]
 
