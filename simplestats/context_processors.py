@@ -2,7 +2,7 @@ from . import models
 
 
 def subscriptions(request):
-    if request.user:
+    if request.user.is_authenticated:
         return {
             "subscriptions": models.Subscription.objects.filter(
                 owner=request.user
