@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 
@@ -51,9 +51,7 @@ class SubscriptionDelete(LoginRequiredMixin, DeleteView):
 
 class WidgetSubscription(LoginRequiredMixin, View):
     def post(self, request, pk):
-        sub, created = models.Subscription.objects.get_or_create(
-            owner=request.user, widget_id=pk
-        )
+        sub, created = models.Subscription.objects.get_or_create(owner=request.user, widget_id=pk)
         messages.success(request, "Subscribed")
         if "next" in self.request.POST:
             return redirect(self.request.POST["next"])
@@ -74,9 +72,7 @@ class WidgetComment(LoginRequiredMixin, SingleObjectMixin, View):
 
     def post(self, request, pk):
         self.object = self.get_object()
-        comment = self.object.comment_set.create(
-            body=request.POST["body"], owner=self.request.user
-        )
+        comment = self.object.comment_set.create(body=request.POST["body"], owner=self.request.user)
         messages.success(request, "Added new comment")
         return redirect(self.object.get_absolute_url())
 
@@ -100,7 +96,7 @@ class WidgetDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class WidgetUpdate(UpdateView):
+class WidgetUpdate(LoginRequiredMixin, UpdateView):
     model = models.Widget
     fields = ["name", "description", "public", "type", "formatter"]
     template_name_suffix = "_update_form"
@@ -109,3 +105,12 @@ class WidgetUpdate(UpdateView):
 class WidgetDelete(LoginRequiredMixin, DeleteView):
     model = models.Widget
     success_url = reverse_lazy("stats:widget-list")
+
+
+class WidgetCreate(CreateView):
+    model = models.Widget
+    fields = ["name", "description", "public", "type", "formatter"]
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)

@@ -13,5 +13,6 @@ urlpatterns = [
     path("widget/<pk>/update", views.WidgetUpdate.as_view(), name="widget-update"),
     path("widget/<pk>/delete", views.WidgetDelete.as_view(), name="widget-delete"),
     path("widget/<pk>", views.WidgetDetailView.as_view(), name="widget-detail"),
+    path("widgets/create", views.WidgetCreate.as_view(), name="widget-create"),
     path("widgets", views.WidgetListView.as_view(), name="widget-list"),
 ]

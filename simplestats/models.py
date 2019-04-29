@@ -57,7 +57,7 @@ class Widget(models.Model):
     @property
     def formatted(self):
         if self.type == self.TYPE_COUNTDOWN:
-            return datetime.fromtimestamp(self.value)
+            return datetime.datetime.fromtimestamp(self.value)
         return self.value
 
     def get_absolute_url(self):

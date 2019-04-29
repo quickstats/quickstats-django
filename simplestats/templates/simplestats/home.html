@@ -3,7 +3,7 @@
 {% block content %}
 <div class="card-deck">
     {% for widget in object_list %}
-    {% include 'simplestats/widget_embed.html' with widget=widget %}
+    {% include 'simplestats/widget_card.html' with widget=widget %}
     {% endfor %}
 </div>
 

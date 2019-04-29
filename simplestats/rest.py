@@ -36,7 +36,7 @@ class WidgetViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def embed(self, request, pk=None):
         self.object = self.get_object()
-        return render(request, "simplestats/widget.embed.html", {"widget": self.object})
+        return render(request, "simplestats/widget_embed.html", {"widget": self.object})
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
