@@ -12,10 +12,10 @@ class WidgetSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "public",
+            "icon",
             "value",
+            "timestamp",
             "type",
-            "formatter",
-            "formatted",
         )
 
     owner = serializers.ReadOnlyField(source="owner.username")

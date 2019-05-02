@@ -14,8 +14,8 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Widget)
 class WidgetAdmin(admin.ModelAdmin):
-    list_display = ("name", "public", "owner")
-    list_filter = ("public", ("owner", admin.RelatedOnlyFieldListFilter))
+    list_display = ("name", "type", "public", "owner")
+    list_filter = ("type", "public", ("owner", admin.RelatedOnlyFieldListFilter))
     inlines = [LabelInline]
 
 

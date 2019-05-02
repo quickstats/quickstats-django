@@ -39,7 +39,7 @@ class Widget(models.Model):
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
 
     value = models.FloatField(default=0)
-    formatter = models.CharField(max_length=128)
+    timestamp = models.DateTimeField(default=timezone.now)
 
     TYPE_CHART = 1
     TYPE_COUNTDOWN = 2
@@ -53,12 +53,6 @@ class Widget(models.Model):
     )
 
     type = models.IntegerField(choices=TYPE_CHOICES, default=TYPE_CHART)
-
-    @property
-    def formatted(self):
-        if self.type == self.TYPE_COUNTDOWN:
-            return datetime.datetime.fromtimestamp(self.value)
-        return self.value
 
     def get_absolute_url(self):
         return reverse("stats:widget-detail", args=(self.pk,))

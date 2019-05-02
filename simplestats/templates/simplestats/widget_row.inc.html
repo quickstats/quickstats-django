@@ -1,9 +1,10 @@
+{% load simplestats %}
 <tr>
     <td><a href="{{widget.get_absolute_url}}">{{widget.name}}</a></td>
     <td>{{widget.owner}}</td>
     <td>{{widget.get_type_display}}</td>
     <td>{{widget.description}}</td>
-    <td>{{widget.formatted}}</td>
+    <td>{{widget|formatted}}</td>
     <td>{{widget.public}}</td>
     <td>
         {% if widget.id in subscriptions %}
