@@ -24,6 +24,7 @@ setup(
     install_requires=[
         "Django>=2.0",
         "djangorestframework",
+        "djangorestframework-csv",
         "python-dateutil",
         "pytz",
         "requests",
