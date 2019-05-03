@@ -50,7 +50,7 @@ class PushGateway(UserPassesTestMixin, View):
             for s in family.samples:
                 labels = labels_from_sample(s)
                 widget, created = models.Widget.objects.filter_labels(**labels).get_or_create(
-                    owner=self.token.user, defaults={"name": s.name}
+                    owner=self.token.user, defaults={"title": s.name}
                 )
                 if created:
                     logger.debug("Created widget %s", widget)

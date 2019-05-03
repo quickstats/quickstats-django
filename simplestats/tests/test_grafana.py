@@ -25,8 +25,8 @@ class GrafanaTest(TestCase):
 
     def test_search(self):
         user, _ = get_user_model().objects.get_or_create(username="grafanatest")
-        one = models.Widget.objects.create(owner=user, name="foo1")
-        two = models.Widget.objects.create(owner=user, name="foo2")
+        one = models.Widget.objects.create(owner=user, title="foo1")
+        two = models.Widget.objects.create(owner=user, title="foo2")
         models.Subscription.objects.create(owner=user, widget=one)
         models.Subscription.objects.create(owner=user, widget=two)
 

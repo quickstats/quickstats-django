@@ -1,10 +1,16 @@
 {% extends 'base.html' %}
+{% load simplestats %}
 
 {% block content %}
 
 <div>
-    {% include 'simplestats/widget_embed.html' with widget=widget %}
+    {% include 'simplestats/widget_card.html' with widget=widget %}
 </div>
+
+<hr>
+
+<input class="form-control" value="{{widget|embedcode:request}}" />
+
 <hr>
 
 <table class="table table-sm table-bordered">

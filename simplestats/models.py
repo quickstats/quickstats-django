@@ -33,26 +33,25 @@ class Widget(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128)
+    title = models.CharField(max_length=128)
     description = models.TextField(blank=True)
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
+    more = models.URLField(blank=True)
 
     value = models.FloatField(default=0)
     timestamp = models.DateTimeField(default=timezone.now)
 
-    TYPE_CHART = 1
-    TYPE_COUNTDOWN = 2
-    TYPE_LOCATION = 3
-    TYPE_STREAK = 4
-    TYPE_CHOICES = (
-        (TYPE_CHART, _("Chart")),
-        (TYPE_COUNTDOWN, _("Countdown")),
-        (TYPE_LOCATION, _("Location")),
-        (TYPE_STREAK, _("Streak")),
+    type = models.CharField(
+        max_length=16,
+        default="chart",
+        choices=[
+            ("chart", _("Chart")),
+            ("countdown", _("Countdown")),
+            ("location", _("Location")),
+            ("streak", _("Streak")),
+        ],
     )
-
-    type = models.IntegerField(choices=TYPE_CHOICES, default=TYPE_CHART)
 
     def get_absolute_url(self):
         return reverse("stats:widget-detail", args=(self.pk,))

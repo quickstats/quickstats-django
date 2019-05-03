@@ -6,7 +6,7 @@
     {% endif %}
     <div class="card-img-overlay">
         <p class="card-title">
-            <a href="{{widget.get_absolute_url}}">{{widget.name}}</a>
+            <a href="{{widget.get_absolute_url}}">{{widget.title}}</a>
         </p>
 
         <a href="{% url 'stats:widget-user' widget.owner.username %}"

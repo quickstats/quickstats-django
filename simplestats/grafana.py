@@ -29,7 +29,7 @@ class Search(APIView):
         logger.debug("search %s", query)
         return JsonResponse(
             [
-                subscription.widget.name
+                subscription.widget.title
                 for subscription in models.Subscription.objects.filter(
                     owner=request.user
                 ).prefetch_related("widget")
@@ -39,7 +39,7 @@ class Search(APIView):
 
         return JsonResponse(
             [
-                {"text": subscription.widget.name, "value": subscription.id}
+                {"text": subscription.widget.title, "value": subscription.id}
                 for subscription in models.Subscription.objects.filter(
                     owner=request.user
                 ).prefetch_related("widget")
@@ -58,9 +58,9 @@ class Query(APIView):
 
     def datapoints(self, targets, start, end):
         for t in targets:
-            for widget in models.Widget.objects.filter(name=t["target"]):
+            for widget in models.Widget.objects.filter(title=t["target"]):
                 yield {
-                    "target": widget.name,
+                    "target": widget.title,
                     "datapoints": [
                         [s.value, to_ts(s.timestamp)]
                         for s in widget.sample_set.filter(
