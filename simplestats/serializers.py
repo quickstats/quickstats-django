@@ -9,7 +9,7 @@ class WidgetSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "owner",
-            "name",
+            "title",
             "description",
             "public",
             "icon",
