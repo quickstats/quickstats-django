@@ -1,13 +1,16 @@
-from rest_framework import viewsets
+from rest_framework import generics, mixins, viewsets
 from rest_framework.decorators import action
-from . import models, serializers
-from django.shortcuts import render
 from rest_framework.response import Response
+
+from . import models, permissions, serializers
+
+from django.shortcuts import render
 
 
 class WidgetViewSet(viewsets.ModelViewSet):
     queryset = models.Widget.objects
     serializer_class = serializers.WidgetSerializer
+    permission_classes = (permissions.IsOwnerOrPublic,)
 
     @action(detail=True, methods=["get"])
     def samples(self, request, pk=None):
@@ -39,11 +42,19 @@ class WidgetViewSet(viewsets.ModelViewSet):
         return render(request, "simplestats/widget_embed.html", {"widget": self.object})
 
 
-class SubscriptionViewSet(viewsets.ModelViewSet):
+class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.Subscription.objects
     serializer_class = serializers.SubscriptionSerializer
+    permission_classes = (permissions.IsOwner,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
 
 
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.Comment.objects
     serializer_class = serializers.CommmentSerializer
+    permission_classes = (permissions.IsOwner,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
