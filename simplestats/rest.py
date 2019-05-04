@@ -1,7 +1,8 @@
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework_csv import renderers
+from rest_framework_csv.renderers import CSVRenderer
+from rest_framework.renderers import JSONRenderer
 
 from . import models, permissions, serializers
 
@@ -13,7 +14,7 @@ class WidgetViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.WidgetSerializer
     permission_classes = (permissions.IsOwnerOrPublic,)
 
-    @action(detail=True, methods=["get"], renderer_classes=(renderers.CSVRenderer,))
+    @action(detail=True, methods=["get"], renderer_classes=(CSVRenderer, JSONRenderer))
     def samples(self, request, pk=None, **kwargs):
         queryset = models.Sample.objects.filter(widget_id=pk)
         serializer = serializers.SampleSerializer(queryset, many=True)

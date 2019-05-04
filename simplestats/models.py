@@ -20,6 +20,13 @@ class WidgetQuerySet(models.QuerySet):
             qs = qs.filter(Q(label__name=k, label__value=v))
         return qs
 
+    def filter_get(self, params):
+        qs = self
+        filters = {key: params[key] for key in ["type"] if key in params}
+        if filters:
+            return qs.filter(**filters)
+        return qs
+
 
 def _upload_to_path(instance, filename):
     root, ext = os.path.splitext(filename)

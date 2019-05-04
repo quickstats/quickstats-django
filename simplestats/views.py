@@ -18,7 +18,11 @@ class PublicWidgets(ListView):
     template_name = "simplestats/public.html"
 
     def get_queryset(self):
-        return self.model.objects.filter(public=True).prefetch_related("owner")
+        return (
+            self.model.objects.filter(public=True)
+            .prefetch_related("owner")
+            .filter_get(self.request.GET)
+        )
 
 
 class UserWidgets(ListView):
@@ -28,9 +32,12 @@ class UserWidgets(ListView):
     template_name = "simplestats/user.html"
 
     def get_queryset(self):
-        qs = self.model.objects.filter(owner__username=self.kwargs["username"]).prefetch_related(
-            "owner"
+        qs = (
+            self.model.objects.filter(owner__username=self.kwargs["username"])
+            .prefetch_related("owner")
+            .filter_get(self.request.GET)
         )
+
         if self.kwargs["username"] == self.request.user.username:
             return qs
         return qs.filter(public=True)
@@ -83,7 +90,10 @@ class WidgetListView(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return self.model.objects.filter(owner=self.request.user)
+        qs = self.model.objects.filter(owner=self.request.user).filter_get(self.request.GET)
+        if "type" in self.request.kwargs:
+            qs = qs.filter(type=self.request.kwargs["type"])
+        return qs
 
 
 class WidgetDetailView(LoginRequiredMixin, DetailView):
