@@ -16,10 +16,15 @@ class WidgetSerializer(serializers.ModelSerializer):
             "value",
             "timestamp",
             "type",
+            "meta",
         )
 
     owner = serializers.ReadOnlyField(source="owner.username")
     type = serializers.ReadOnlyField(source="get_type_display")
+    meta = serializers.SerializerMethodField()
+
+    def get_meta(self, obj):
+        return {s.name: s.value for s in obj.setting_set.all()}
 
 
 class CommmentSerializer(serializers.ModelSerializer):

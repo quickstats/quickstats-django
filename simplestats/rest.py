@@ -9,7 +9,7 @@ from django.shortcuts import render
 
 
 class WidgetViewSet(viewsets.ModelViewSet):
-    queryset = models.Widget.objects.prefetch_related("owner")
+    queryset = models.Widget.objects.prefetch_related("owner", "setting_set")
     serializer_class = serializers.WidgetSerializer
     permission_classes = (permissions.IsOwnerOrPublic,)
 
@@ -53,7 +53,7 @@ class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             pk__in=models.Subscription.objects.filter(owner=self.request.user).values_list(
                 "widget_id"
             )
-        ).prefetch_related("owner")
+        ).prefetch_related("owner", "setting_set")
 
 
 class CommentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

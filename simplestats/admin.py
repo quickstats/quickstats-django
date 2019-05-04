@@ -6,6 +6,10 @@ class LabelInline(admin.TabularInline):
     model = models.Label
 
 
+class SettingInline(admin.TabularInline):
+    model = models.Setting
+
+
 @admin.register(models.Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ("widget", "owner")
@@ -16,7 +20,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
 class WidgetAdmin(admin.ModelAdmin):
     list_display = ("title", "type", "public", "owner")
     list_filter = ("type", "public", ("owner", admin.RelatedOnlyFieldListFilter))
-    inlines = [LabelInline]
+    inlines = [LabelInline, SettingInline]
 
 
 @admin.register(models.Comment)

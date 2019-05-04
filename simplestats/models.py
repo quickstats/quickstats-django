@@ -37,7 +37,7 @@ class Widget(models.Model):
     description = models.TextField(blank=True)
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
-    more = models.URLField('External link', blank=True)
+    more = models.URLField("External link", blank=True)
 
     value = models.FloatField(default=0)
     timestamp = models.DateTimeField(default=timezone.now)
@@ -55,6 +55,12 @@ class Widget(models.Model):
 
     def get_absolute_url(self):
         return reverse("stats:widget-detail", args=(self.pk,))
+
+
+class Setting(models.Model):
+    widget = models.ForeignKey("simplestats.Widget", on_delete=models.CASCADE)
+    name = models.CharField(max_length=128)
+    value = models.CharField(max_length=128, blank=True)
 
 
 class Comment(models.Model):
