@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<h1>Public Widgets</h1>
+
 <div class="card-deck">
     {% for widget in object_list %}
     {% include 'simplestats/widget_card.html' with widget=widget %}

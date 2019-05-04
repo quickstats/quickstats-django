@@ -4,7 +4,7 @@ from django.urls import path
 
 urlpatterns = [
     path("", views.PublicWidgets.as_view(), name="home"),
-    path("user/<username>", views.UserWidgets.as_view(), name="widget-user"),
+    path("subscriptions/<username>", views.SubscriptionListView.as_view(), name="subscriptions"),
     path("subscriptions", views.SubscriptionListView.as_view(), name="subscriptions"),
     path("subscription/<pk>/delete", views.SubscriptionDelete.as_view(), name="subscription-delete"),
     path("widget/<pk>/comment", views.WidgetComment.as_view(), name="widget-comment"),
@@ -14,5 +14,6 @@ urlpatterns = [
     path("widget/<pk>/delete", views.WidgetDelete.as_view(), name="widget-delete"),
     path("widget/<pk>", views.WidgetDetailView.as_view(), name="widget-detail"),
     path("widgets/create", views.WidgetCreate.as_view(), name="widget-create"),
+    path("widgets/<username>", views.UserWidgets.as_view(), name="widget-user"),
     path("widgets", views.WidgetListView.as_view(), name="widget-list"),
 ]

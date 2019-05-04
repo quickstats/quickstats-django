@@ -1,91 +1,42 @@
 {% extends 'base.html' %}
 {% load simplestats %}
 
+{% block title %}
+Widget / {{widget.title}}
+{% endblock %}
+
 {% block content %}
 
-<div>
-    {% include 'simplestats/widget_card.html' with widget=widget %}
+<div class="row">
+    <div class="col-3">
+
+        {% include 'simplestats/widget_card.html' with widget=widget %}
+    </div>
+    <div class="col-9">
+        <h2>Embed</h2>
+        <input class="form-control" value="{{widget|embedcode:request}}" />
+        <h2>Comments</h2>
+        <form method="post" action="{% url 'stats:widget-comment' widget.pk %}">
+            {% csrf_token %}
+            <input name="widget_id" value="{{widget.id}}" type="hidden">
+            <textarea name="body" class="form-control"></textarea>
+            <button class="btn btn-warning" type="submit">Submit</button>
+        </form>
+        <hr>
+
+        {% for comment in widget.comment_set.all %}
+        <section>
+
+            <header>
+                {{comment.owner.username}}
+                <small>{{comment.timestamp}}</small>
+            </header>
+            {{comment.body}}
+        </section>
+        {% empty %}
+        <p>No Comments</p>
+        {% endfor %}
+    </div>
 </div>
-
-<hr>
-
-<input class="form-control" value="{{widget|embedcode:request}}" />
-
-<hr>
-
-<table class="table table-sm table-bordered">
-    <thead class="thead-dark">
-        <tr>
-            <th>Name</th>
-            <th>Owner</th>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Formatted</th>
-            <th>Public</th>
-            <th colspan="5">Actions</th>
-        </tr>
-    </thead>
-    {% include 'simplestats/widget_row.inc.html' with widget=widget %}
-</table>
-
-<table class="table table-sm table-bordered">
-    <thead class="thead-dark">
-        <tr>
-            <th>Label</th>
-            <th>Value</th>
-        </tr>
-    </thead>
-    {% for label in widget.label_set.all %}
-    <tr>
-        <td>{{label.name}}</td>
-        <td>{{label.value}}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan=2>No labels found</td>
-    </tr>
-    {% endfor %}
-</table>
-
-<table class="table table-sm table-bordered">
-    <thead class="thead-dark">
-        <tr>
-            <th>Timestamp</th>
-            <th>Value</th>
-        </tr>
-    </thead>
-    {% for sample in widget.sample_set.all %}
-    <tr>
-        <td>{{sample.timestamp}}</td>
-        <td>{{sample.value}}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan=2>No samples found</td>
-    </tr>
-    {% endfor %}
-</table>
-
-
-<form method="post" action="{% url 'stats:widget-comment' widget.pk %}">
-    {% csrf_token %}
-    <input name="widget_id" value="{{widget.id}}" type="hidden">
-    <textarea name="body" class="form-control"></textarea>
-    <button class="btn btn-warning" type="submit">Submit</button>
-</form>
-
-<table class="table table-sm table-bordered">
-    {% for comment in widget.comment_set.all %}
-    <tr>
-        <td>{{comment.timestamp}}</td>
-        <td>{{comment.owner.username}}</td>
-        <td>{{comment.body}}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td>No Comments</td>
-    </tr>
-    {% endfor %}
-</table>
 
 {% endblock %}

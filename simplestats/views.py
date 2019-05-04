@@ -15,7 +15,7 @@ class PublicWidgets(LoginRequiredMixin, ListView):
 
     model = models.Widget
     paginate_by = 20
-    template_name = "simplestats/home.html"
+    template_name = "simplestats/public.html"
 
     def get_queryset(self):
         return self.model.objects.filter(public=True)
@@ -25,7 +25,7 @@ class UserWidgets(LoginRequiredMixin, ListView):
 
     model = models.Widget
     paginate_by = 20
-    template_name = "simplestats/home.html"
+    template_name = "simplestats/user.html"
 
     def get_queryset(self):
         user = User.objects.get(username=self.kwargs["username"])
@@ -98,7 +98,7 @@ class WidgetDetailView(LoginRequiredMixin, DetailView):
 
 class WidgetUpdate(LoginRequiredMixin, UpdateView):
     model = models.Widget
-    fields = ["name", "description", "public", "type", "formatter"]
+    fields = ["title", "description", "public", "type"]
     template_name_suffix = "_update_form"
 
 
@@ -109,7 +109,7 @@ class WidgetDelete(LoginRequiredMixin, DeleteView):
 
 class WidgetCreate(CreateView):
     model = models.Widget
-    fields = ["name", "description", "public", "type", "formatter"]
+    fields = ["title", "description", "public", "type"]
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
