@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>
+    Push Instructions
+</h1>
+<ol>
+    <li>Reference <a href="https://github.com/prometheus/pushgateway">push gateway</a> instructions</li>
+    <li>Push metrics to <code>{{request.build_absolute_uri}}/{{token.key}}</code></li>
+</ol>
+
+<pre>
+cat &lt;&lt;EOF | curl --data-binary @- {{request.build_absolute_uri}}/{{token.key}}
+# TYPE some_metric counter
+some_metric{label="val1"} 42
+# TYPE another_metric gauge
+# HELP another_metric Just an example.
+another_metric 2398.283
+EOF
+</pre>
+
+{% endblock %}

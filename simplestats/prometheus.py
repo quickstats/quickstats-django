@@ -9,15 +9,16 @@ from prometheus_client import (
 )
 from prometheus_client.parser import text_string_to_metric_families
 from rest_framework.authtoken.models import Token
-
+from django.contrib import messages
 from . import models, version
 
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse
 from django.urls import path
 from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views.generic.base import TemplateView
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,7 @@ class PushGateway(UserPassesTestMixin, View):
 
     def post(self, request, token, **kwargs):
         push_time = timezone.now()
+        response = []
 
         for family in text_string_to_metric_families(request.body.decode("utf8")):
             for s in family.samples:
@@ -54,15 +56,17 @@ class PushGateway(UserPassesTestMixin, View):
                 )
                 if created:
                     logger.debug("Created widget %s", widget)
+                    response.append("Created widget %s" % widget)
                     widget.label_set.bulk_create(
                         [models.Label(widget=widget, name=k, value=v) for k, v in labels.items()]
                     )
 
                 sample = widget.sample_set.create(timestamp=push_time, value=s.value)
+                response.append("Appended sample to %s" % widget)
 
                 logger.debug("%s", sample)
 
-        return HttpResponse("Hello, World!")
+        return HttpResponse("\n".join(response))
 
 
 class Metrics(View):
@@ -70,7 +74,20 @@ class Metrics(View):
         return HttpResponse(generate_latest(registry=registry), content_type=CONTENT_TYPE_LATEST)
 
 
+class Help(LoginRequiredMixin, TemplateView):
+
+    template_name = "simplestats/prometheus/help.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["token"], created = Token.objects.get_or_create(user=self.request.user)
+        if created:
+            messages.success(self.request, "Created api key")
+        return context
+
+
 urlpatterns = [
     path("metrics/job/<token>", csrf_exempt(PushGateway.as_view()), name="push"),
+    path("metrics/job", Help.as_view(), name="help"),
     path("metrics", Metrics.as_view(), name="metrics"),
 ]

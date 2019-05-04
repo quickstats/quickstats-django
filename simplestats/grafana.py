@@ -15,9 +15,9 @@ from django.views.generic.base import TemplateView
 logger = logging.getLogger(__name__)
 
 
-class Home(TemplateView):
+class Help(TemplateView):
 
-    template_name = "simplestats/grafana/home.html"
+    template_name = "simplestats/grafana/help.html"
 
 
 class Search(APIView):
@@ -110,7 +110,7 @@ class Annotations(APIView):
 
 urlpatterns = [
     # Need to have a / for grafana-json-plugin
-    path("", Home.as_view(), name="home"),
+    path("", Help.as_view(), name="help"),
     path("query", (Query.as_view()), name="query"),
     path("search", (Search.as_view()), name="search"),
     path("annotations", (Annotations.as_view()), name="annotations"),

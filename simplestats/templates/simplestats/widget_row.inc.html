@@ -23,6 +23,9 @@
         <a class="btn btn-xm btn-secondary" href="{% url 'api:widget-embed' pk=widget.pk %}">Embed</a>
     </td>
     <td>
+        <a class="btn btn-xm btn-secondary" href="{% url 'api:widget-samples' pk=widget.pk %}">Export</a>
+    </td>
+    <td>
         <a class="btn btn-xm btn-warning" href="{% url 'stats:widget-update' pk=widget.pk %}">Update</a>
     </td>
     <td>
