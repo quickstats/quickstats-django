@@ -44,12 +44,16 @@ class WidgetViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = models.Subscription.objects
-    serializer_class = serializers.SubscriptionSerializer
+    queryset = models.Widget.objects
+    serializer_class = serializers.WidgetSerializer
     permission_classes = (permissions.IsOwner,)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
+        return self.queryset.filter(
+            pk__in=models.Subscription.objects.filter(owner=self.request.user).values_list(
+                "widget_id"
+            )
+        ).prefetch_related("owner")
 
 
 class CommentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

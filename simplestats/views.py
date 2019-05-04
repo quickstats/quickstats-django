@@ -11,26 +11,27 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 
-class PublicWidgets(LoginRequiredMixin, ListView):
+class PublicWidgets(ListView):
 
     model = models.Widget
     paginate_by = 20
     template_name = "simplestats/public.html"
 
     def get_queryset(self):
-        return self.model.objects.filter(public=True)
+        return self.model.objects.filter(public=True).prefetch_related("owner")
 
 
-class UserWidgets(LoginRequiredMixin, ListView):
+class UserWidgets(ListView):
 
     model = models.Widget
     paginate_by = 20
     template_name = "simplestats/user.html"
 
     def get_queryset(self):
-        user = User.objects.get(username=self.kwargs["username"])
-        qs = self.model.objects.filter(owner=user)
-        if user == self.request.user:
+        qs = self.model.objects.filter(owner__username=self.kwargs["username"]).prefetch_related(
+            "owner"
+        )
+        if self.kwargs["username"] == self.request.user.username:
             return qs
         return qs.filter(public=True)
 
