@@ -9,7 +9,7 @@ from django.shortcuts import render
 
 
 class WidgetViewSet(viewsets.ModelViewSet):
-    queryset = models.Widget.objects
+    queryset = models.Widget.objects.prefetch_related("owner")
     serializer_class = serializers.WidgetSerializer
     permission_classes = (permissions.IsOwnerOrPublic,)
 
