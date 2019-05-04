@@ -98,7 +98,7 @@ class WidgetDetailView(LoginRequiredMixin, DetailView):
 
 class WidgetUpdate(LoginRequiredMixin, UpdateView):
     model = models.Widget
-    fields = ["title", "description", "public", "type", 'more']
+    fields = ["title", "description", "public", "type", "more"]
     template_name_suffix = "_update_form"
 
 
@@ -109,7 +109,7 @@ class WidgetDelete(LoginRequiredMixin, DeleteView):
 
 class WidgetCreate(CreateView):
     model = models.Widget
-    fields = ["title", "description", "public", "type", 'more']
+    fields = ["title", "description", "public", "type", "more"]
 
     def form_valid(self, form):
         form.instance.owner = self.request.user

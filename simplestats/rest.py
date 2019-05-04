@@ -44,12 +44,13 @@ class WidgetViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = models.Widget.objects
+    queryset = models.Subscription.objects
     serializer_class = serializers.WidgetSerializer
     permission_classes = (permissions.IsOwner,)
 
     def get_queryset(self):
-        return self.queryset.filter(
+        # TODO Fix seralizing as Widget but allowing deleting the subscription
+        return models.Widget.objects.filter(
             pk__in=models.Subscription.objects.filter(owner=self.request.user).values_list(
                 "widget_id"
             )
