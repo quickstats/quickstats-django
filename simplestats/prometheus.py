@@ -36,6 +36,29 @@ def labels_from_sample(sample):
     return {k: labels[k] for k in sorted(labels)}
 
 
+def scrape_to_samples(scrape, user, push_time=None):
+    if push_time is None:
+        push_time = timezone.now()
+
+    for family in text_string_to_metric_families(scrape):
+        for s in family.samples:
+            labels = labels_from_sample(s)
+            widget, created = models.Widget.objects.filter_labels(**labels).get_or_create(
+                owner=user, defaults={"title": s.name, "timestamp": push_time}
+            )
+            if created:
+                logger.debug("Created widget %s", widget)
+                yield "Created widget %s" % widget
+                widget.label_set.bulk_create(
+                    [models.Label(widget=widget, name=k, value=v) for k, v in labels.items()]
+                )
+
+            sample = widget.sample_set.create(timestamp=push_time, value=s.value)
+            yield "Appended sample to %s" % widget
+
+            logger.debug("%s", sample)
+
+
 class PushGateway(UserPassesTestMixin, View):
     def test_func(self):
         try:
@@ -45,28 +68,8 @@ class PushGateway(UserPassesTestMixin, View):
             return False
 
     def post(self, request, token, **kwargs):
-        push_time = timezone.now()
-        response = []
-
-        for family in text_string_to_metric_families(request.body.decode("utf8")):
-            for s in family.samples:
-                labels = labels_from_sample(s)
-                widget, created = models.Widget.objects.filter_labels(**labels).get_or_create(
-                    owner=self.token.user, defaults={"title": s.name}
-                )
-                if created:
-                    logger.debug("Created widget %s", widget)
-                    response.append("Created widget %s" % widget)
-                    widget.label_set.bulk_create(
-                        [models.Label(widget=widget, name=k, value=v) for k, v in labels.items()]
-                    )
-
-                sample = widget.sample_set.create(timestamp=push_time, value=s.value)
-                response.append("Appended sample to %s" % widget)
-
-                logger.debug("%s", sample)
-
-        return HttpResponse("\n".join(response))
+        results = scrape_to_samples(request.body.decode("utf8"), self.token.user)
+        return HttpResponse("\n".join(results))
 
 
 class Metrics(View):
