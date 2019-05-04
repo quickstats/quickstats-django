@@ -2,7 +2,7 @@ from . import forms, models
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
+
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -37,7 +37,6 @@ class UserWidgets(ListView):
 
 
 class SubscriptionListView(LoginRequiredMixin, ListView):
-
     model = models.Subscription
     paginate_by = 20
 
@@ -99,7 +98,7 @@ class WidgetDetailView(LoginRequiredMixin, DetailView):
 
 class WidgetUpdate(LoginRequiredMixin, UpdateView):
     model = models.Widget
-    fields = ["title", "description", "public", "type"]
+    fields = ["title", "description", "public", "type", 'more']
     template_name_suffix = "_update_form"
 
 
@@ -110,7 +109,7 @@ class WidgetDelete(LoginRequiredMixin, DeleteView):
 
 class WidgetCreate(CreateView):
     model = models.Widget
-    fields = ["title", "description", "public", "type"]
+    fields = ["title", "description", "public", "type", 'more']
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
