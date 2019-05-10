@@ -101,4 +101,5 @@ class Sample(models.Model):
     value = models.FloatField()
 
     class Meta:
+        ordering = ("-timestamp",)
         unique_together = ("widget", "timestamp")
