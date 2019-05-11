@@ -29,7 +29,7 @@ setup(
         'djangorestframework',
         'icalendar',
         'Pillow',
-        'psycopg2',
+        'psycopg2-binary',
         'python-dateutil',
         'pytz',
         'requests',
