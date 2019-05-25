@@ -1,5 +1,5 @@
 
-from simplestats.models import Chart
+from simplestats.models import Widget
 
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
@@ -13,8 +13,8 @@ class Command(BaseCommand):
         parser.add_argument('--force', action='store_true')
 
     def handle(self, src, dst, force, **kwargs):
-        src = Chart.objects.get(pk=src)
-        dst = Chart.objects.get(pk=dst)
+        src = Widget.objects.get(pk=src)
+        dst = Widget.objects.get(pk=dst)
 
         print('Source:', src)
         print('Destination:', dst)
