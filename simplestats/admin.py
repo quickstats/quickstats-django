@@ -26,3 +26,8 @@ class WidgetAdmin(admin.ModelAdmin):
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("timestamp", "owner")
+
+
+@admin.register(models.Waypoint)
+class WaypointAdmin(admin.ModelAdmin):
+    list_display = ("timestamp", "body", "lat", "lon", "state")

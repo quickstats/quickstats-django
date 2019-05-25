@@ -20,6 +20,8 @@
                     Advanced
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'stats:waypoint-list' %}">Waypoints</a>
+                    <a class="dropdown-item" href="{% url 'stats:comment-list' %}">Comments</a>
                     <a class="dropdown-item" href="{% url 'grafana:help' %}">Grafana</a>
                     <a class="dropdown-item" href="{% url 'prometheus:help' %}">Push Gateway</a>
                     <div class="dropdown-divider"></div>

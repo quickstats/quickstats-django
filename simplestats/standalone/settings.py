@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 import environ
+
+from django.urls import reverse_lazy
+
 root = environ.Path(__file__) - 3
 env = environ.Env()
 environ.Env.read_env(root.file('.env'))
@@ -133,6 +136,7 @@ STATIC_ROOT = os.path.expanduser(env("STATIC_URL", default="~/.cache/simplestats
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.expanduser(env("MEDIA_ROOT", default="~/.local/simplestats/media"))
 
+LOGIN_REDIRECT_URL = reverse_lazy('stats:home')
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',

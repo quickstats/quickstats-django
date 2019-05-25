@@ -77,6 +77,9 @@ class Comment(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
     body = models.TextField()
 
+    class Meta:
+        ordering = ("-timestamp",)
+
 
 class Subscription(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -99,6 +102,29 @@ class Sample(models.Model):
     widget = models.ForeignKey("simplestats.Widget", on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now)
     value = models.FloatField()
+
+    class Meta:
+        ordering = ("-timestamp",)
+        unique_together = ("widget", "timestamp")
+
+
+class Waypoint(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    widget = models.ForeignKey("simplestats.Widget", on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(default=timezone.now)
+    body = models.TextField()
+
+    lat = models.FloatField()
+    lon = models.FloatField()
+    state = models.CharField(
+        max_length=16,
+        choices=(
+            ("", _("Unselected")),
+            ("enter", _("Entered an Area")),
+            ("exit", _("Exited an Area")),
+            ("waypoint", _("Waypoint")),
+        ),
+    )
 
     class Meta:
         ordering = ("-timestamp",)

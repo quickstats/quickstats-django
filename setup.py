@@ -22,9 +22,10 @@ setup(
         "Topic :: Internet :: WWW/HTTP",
     ],
     install_requires=[
+        "django-environ",
         "Django>=2.0",
-        "djangorestframework",
         "djangorestframework-csv",
+        "djangorestframework",
         "python-dateutil",
         "pytz",
         "requests",
