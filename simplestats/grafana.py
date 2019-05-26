@@ -25,24 +25,16 @@ class Search(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, **kwargs):
+        # Get all widgets that the user is subscribed to and has a
+        # metric __name__ associated with
         query = json.loads(request.body.decode("utf8"))
         logger.debug("search %s", query)
         return JsonResponse(
             [
-                subscription.widget.title
-                for subscription in models.Subscription.objects.filter(
-                    owner=request.user
-                ).prefetch_related("widget")
-            ],
-            safe=False,
-        )
-
-        return JsonResponse(
-            [
-                {"text": subscription.widget.title, "value": subscription.id}
-                for subscription in models.Subscription.objects.filter(
-                    owner=request.user
-                ).prefetch_related("widget")
+                subscription.widget.label_set.get(name="__name__").value
+                for subscription in models.Subscription.objects.filter(owner=request.user)
+                .filter(widget__label__name="__name__")
+                .prefetch_related("widget", "widget__label_set")
             ],
             safe=False,
         )
@@ -58,7 +50,7 @@ class Query(APIView):
 
     def datapoints(self, targets, start, end):
         for t in targets:
-            for widget in models.Widget.objects.filter(title=t["target"]):
+            for widget in models.Widget.objects.filter_labels(**{"__name__": t["target"]}):
                 yield {
                     "target": widget.title,
                     "datapoints": [
