@@ -55,48 +55,44 @@ class Query(APIView):
                     "target": widget.title,
                     "datapoints": [
                         [s.value, to_ts(s.timestamp)]
-                        for s in widget.sample_set.filter(
-                            timestamp__gte=start, timestamp__lte=end
-                        )
+                        for s in widget.sample_set.filter(timestamp__gte=start, timestamp__lte=end)
                     ],
                 }
 
     def post(self, request, **kwargs):
         query = json.loads(request.body.decode("utf8"))
-        from_ = parse(query["range"]["from"])
-        to_ = parse(query["range"]["to"])
+        start = parse(query["range"]["from"])
+        end = parse(query["range"]["to"])
 
-        logger.debug("%s %s %s", query, from_, to_)
+        logger.debug("%s %s %s", query, start, end)
 
-        return JsonResponse(
-            list(self.datapoints(query["targets"], from_, to_)), safe=False
-        )
+        return JsonResponse(list(self.datapoints(query["targets"], start, end)), safe=False)
 
 
 class Annotations(APIView):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated,)
 
-    def annotations(self, targets, start, end, annotation):
-        for t in targets:
-            for widget in models.Widget.objects.all():
-                for comment in widget.comment_set.all():
-                    yield {
-                        "annotation": annotation,
-                        "time": to_ts(comment.timestamp),
-                        "title": "Comment",
-                        "tags": [comment.owner.username],
-                        "text": comment.body,
-                    }
+    def annotations(self, labels, start, end, annotation):
+        for widget in models.Widget.objects.filter_labels(**labels):
+            for comment in widget.comment_set.filter(timestamp__gte=start, timestamp__lte=end):
+                yield {
+                    "annotation": annotation,
+                    "time": to_ts(comment.timestamp),
+                    "title": "Comment",
+                    "tags": [comment.owner.username],
+                    "text": comment.body,
+                }
 
     def post(self, request, **kwargs):
-        query = json.loads(request.body.decode("utf8"))
-        from_ = parse(query["range"]["from"])
-        to_ = parse(query["range"]["to"])
+        body = json.loads(request.body.decode("utf8"))
+        start = parse(body["range"]["from"])
+        end = parse(body["range"]["to"])
+        labels = json.loads(body["annotation"]["query"])
 
-        logger.debug("annotations %s", query)
+        logger.debug("annotations %s %s %s", start, end, labels)
         return JsonResponse(
-            list(self.annotations(query, from_, to_, query["annotation"])), safe=False
+            list(self.annotations(labels, start, end, body["annotation"])), safe=False
         )
 
 
