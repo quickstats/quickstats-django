@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load quickstats %}
+
+{% block title %}
+Widget / {{widget.title}}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-3">
+
+        {% include 'quickstats/widget_card.html' with widget=widget %}
+    </div>
+    <div class="col-9">
+        <h2>Embed</h2>
+        <input class="form-control" value="{{widget|embedcode:request}}" />
+        <h2>Comments</h2>
+        <form method="post" action="{% url 'stats:widget-comment' widget.pk %}">
+            {% csrf_token %}
+            <input name="widget_id" value="{{widget.id}}" type="hidden">
+            <textarea name="body" class="form-control"></textarea>
+            <button class="btn btn-warning" type="submit">Submit</button>
+        </form>
+        <hr>
+
+        {% for comment in widget.comment_set.all %}
+        <section>
+
+            <header>
+                {{comment.owner.username}}
+                <small>{{comment.timestamp}}</small>
+            </header>
+            {{comment.body}}
+        </section>
+        {% empty %}
+        <p>No Comments</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

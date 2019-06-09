@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{view.kwargs.username}}</h1>
+
+{% if view.kwargs.username == request.user.username %}
+<a class="btn btn-success btn-sm" href="{% url 'stats:widget-create' %}">Create Widget</a>
+<hr>
+{% endif %}
+
+<div class="card-deck">
+    {% for widget in object_list %}
+    {% include 'quickstats/widget_card.html' with widget=widget %}
+    {% endfor %}
+</div>
+
+{% include 'quickstats/paginator.html' with page_obj=page_obj only %}
+
+{% endblock %}

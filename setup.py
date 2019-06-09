@@ -1,13 +1,13 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="django-simplestats",
+    name="quickstats-django",
     version="0.0.1",
     packages=find_packages(exclude=["test"]),
     include_package_data=True,
     license="MIT License",
     description="A simple stats package",
-    url="https://github.com/kfdm/django-simplestats",
+    url="https://github.com/quickstats/quickstats-django",
     author="Paul Traylor",
     classifiers=[
         "Environment :: Web Environment",
@@ -31,8 +31,6 @@ setup(
         "requests",
     ],
     entry_points={
-        "console_scripts": [
-            "simplestats = simplestats.standalone.manage:main"
-        ]
+        "console_scripts": ["quickstats = quickstats.standalone.manage:main"]
     },
 )

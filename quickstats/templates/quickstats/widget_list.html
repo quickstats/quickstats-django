@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Widget</h1>
+<a class="btn btn-success" href="{% url 'stats:widget-create' %}">Create Widget</a>
+<hr>
+<div class="card-deck">
+    {% for widget in object_list %}
+    {% include 'quickstats/widget_card.html' with widget=widget %}
+    {% endfor %}
+</div>
+
+{% include 'quickstats/paginator.html' with page_obj=page_obj only %}
+
+{% endblock %}

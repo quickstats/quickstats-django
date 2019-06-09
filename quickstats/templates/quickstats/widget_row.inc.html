@@ -1,0 +1,34 @@
+{% load quickstats %}
+<tr>
+    <td><a href="{{widget.get_absolute_url}}">{{widget.title}}</a></td>
+    <td>{{widget.owner}}</td>
+    <td>{{widget.get_type_display}}</td>
+    <td>{{widget.description}}</td>
+    <td>{{widget|formatted}}</td>
+    <td>{{widget.public}}</td>
+    <td>
+        {% if widget.id in subscriptions %}
+        <form id="new-widget" action="{% url 'stats:widget-unsubscribe' pk=widget.pk %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-xm btn-danger">Unsubscribe</button>
+        </form>
+        {% else %}
+        <form id="new-widget" action="{% url 'stats:widget-subscribe' pk=widget.pk %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-xm btn-success">Subscribe</button>
+        </form>
+        {% endif %}
+    </td>
+    <td>
+        <a class="btn btn-xm btn-secondary" href="{% url 'api:widget-embed' pk=widget.pk %}">Embed</a>
+    </td>
+    <td>
+        <a class="btn btn-xm btn-secondary" href="{% url 'api:widget-samples' pk=widget.pk %}">Export</a>
+    </td>
+    <td>
+        <a class="btn btn-xm btn-warning" href="{% url 'stats:widget-update' pk=widget.pk %}">Update</a>
+    </td>
+    <td>
+        <a class="btn btn-xm btn-danger" href="{% url 'stats:widget-delete' pk=widget.pk %}">Delete</a>
+    </td>
+</tr>

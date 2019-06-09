@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Waypoints</h1>
+
+<table class="table">
+    <tr>
+        <th>Widget</th>
+        <th>Timestamp</th>
+        <th>State</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Body</th>
+    </tr>
+    {% for waypoint in object_list %}
+    <tr>
+        <td><a href="{{waypoint.widget.get_absolute_url}}">{{waypoint.widget.title}}</a></td>
+        <td>{{waypoint.timestamp}}</td>
+        <td>{{waypoint.get_state_display}}</td>
+        <td>{{waypoint.lat}}</td>
+        <td>{{waypoint.lon}}</td>
+        <td>{{waypoint.body}}</td>
+    </tr>
+
+    {% endfor %}
+</table>
+
+{% include 'quickstats/paginator.html' with page_obj=page_obj only %}
+
+{% endblock %}

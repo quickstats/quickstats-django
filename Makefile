@@ -1,15 +1,15 @@
 test:
-	pipenv run simplestats test -v 2
+	pipenv run quickstats test -v 2
 migrate:
-	pipenv run simplestats migrate
+	pipenv run quickstats migrate
 run: migrate
-	pipenv run simplestats runserver
+	pipenv run quickstats runserver
 
 shell: migrate
-	pipenv run simplestats shell
+	pipenv run quickstats shell
 
 reset:
-	pipenv run simplestats migrate simplestats zero
-	git clean -f simplestats/migrations
-	pipenv run simplestats makemigrations
-	pipenv run simplestats migrate
+	pipenv run quickstats migrate quickstats zero
+	git clean -f quickstats/migrations
+	pipenv run quickstats makemigrations
+	pipenv run quickstats migrate

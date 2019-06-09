@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Comments</h1>
+
+<table class="table">
+    <tr>
+        <th>Owner</th>
+        <th>Widget</th>
+        <th>Timestamp</th>
+        <th>Message</th>
+    </tr>
+    {% for comment in object_list %}
+    <tr>
+        <td>{{comment.owner.username}}</td>
+        <td><a href="{{comment.widget.get_absolute_url}}">{{comment.widget.title}}</a></td>
+        <td>{{comment.timestamp}}</td>
+        <td>{{comment.body}}</td>
+    </tr>
+
+    {% endfor %}
+</table>
+
+{% include 'quickstats/paginator.html' with page_obj=page_obj only %}
+
+{% endblock %}

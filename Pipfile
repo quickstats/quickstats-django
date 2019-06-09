@@ -9,10 +9,10 @@ djangorestframework = "*"
 requests = "*"
 python-dateutil = "*"
 pytz = "*"
-django-simplestats = {editable = true, path = "."}
 prometheus-client = "*"
 django-environ = "*"
 pillow = "*"
+quickstats-django = {editable = true, path = "."}
 
 [dev-packages]
 "psycopg2-binary" = "*"

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Public Widgets</h1>
+
+<div class="card-deck">
+    {% for widget in object_list %}
+    {% include 'quickstats/widget_card.html' with widget=widget %}
+    {% endfor %}
+</div>
+
+{% include 'quickstats/paginator.html' with page_obj=page_obj only %}
+
+{% endblock %}
