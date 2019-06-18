@@ -22,7 +22,7 @@ class Widget(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
     title = models.CharField(max_length=64)
     description = models.TextField(blank=True)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('owner'), on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('owner'), on_delete=models.CASCADE, related_name="+")
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
     value = models.FloatField(default=0)
