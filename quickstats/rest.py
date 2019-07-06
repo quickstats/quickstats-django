@@ -43,6 +43,16 @@ class WidgetViewSet(viewsets.ModelViewSet):
         self.object = self.get_object()
         return render(request, "quickstats/widget_embed.html", {"widget": self.object})
 
+    @action(
+        detail=True, methods=["post"], permission_classes=[permissions.CanSubscribe]
+    )
+    def subscribe(self, request, pk=None):
+        subscription, created = models.Subscription.objects.get_or_create(
+            owner=self.request.user, widget=self.get_object()
+        )
+        serializer = serializers.SubscriptionSerializer(subscription)
+        return Response(serializer.data)
+
 
 class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.Subscription.objects
