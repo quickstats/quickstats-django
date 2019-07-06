@@ -14,6 +14,9 @@ class WidgetViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.WidgetSerializer
     permission_classes = (permissions.IsOwnerOrPublic,)
 
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
+
     @action(detail=True, methods=["get"], renderer_classes=(CSVRenderer, JSONRenderer))
     def samples(self, request, pk=None, **kwargs):
         queryset = models.Sample.objects.filter(widget_id=pk)
