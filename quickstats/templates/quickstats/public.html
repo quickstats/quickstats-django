@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Public Widgets</h1>
 
-<div class="card-deck">
+<div class="card-columns">
     {% for widget in object_list %}
     {% include 'quickstats/widget_card.html' with widget=widget %}
     {% endfor %}
