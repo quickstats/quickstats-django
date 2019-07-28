@@ -55,7 +55,7 @@ class Query(APIView):
                     "target": widget.title,
                     "datapoints": [
                         [s.value, to_ts(s.timestamp)]
-                        for s in widget.sample_set.filter(timestamp__gte=start, timestamp__lte=end)
+                        for s in widget.sample_set.filter(timestamp__gte=start, timestamp__lte=end).order_by('timestamp')
                     ],
                 }
 
@@ -75,7 +75,7 @@ class Annotations(APIView):
 
     def annotations(self, labels, start, end, annotation):
         for widget in models.Widget.objects.filter_labels(**labels):
-            for comment in widget.comment_set.filter(timestamp__gte=start, timestamp__lte=end):
+            for comment in widget.comment_set.filter(timestamp__gte=start, timestamp__lte=end).order_by('timestamp'):
                 yield {
                     "annotation": annotation,
                     "time": to_ts(comment.timestamp),
