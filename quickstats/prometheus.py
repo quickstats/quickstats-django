@@ -9,9 +9,10 @@ from prometheus_client import (
 )
 from prometheus_client.parser import text_string_to_metric_families
 from rest_framework.authtoken.models import Token
-from django.contrib import messages
-from . import models, version
 
+from . import models, tasks, version
+
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse
 from django.urls import path
@@ -55,6 +56,9 @@ def scrape_to_samples(scrape, user, push_time=None):
 
             sample = widget.sample_set.create(timestamp=push_time, value=s.value)
             yield "Appended sample to %s" % widget
+
+            # Manually call here since bulk_create does not call our signals
+            tasks.update_chart(widget.pk)
 
             logger.debug("%s", sample)
 
