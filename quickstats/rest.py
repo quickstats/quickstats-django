@@ -19,7 +19,7 @@ class WidgetViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"], renderer_classes=(CSVRenderer, JSONRenderer))
     def samples(self, request, pk=None, **kwargs):
-        queryset = models.Sample.objects.filter(widget_id=pk)
+        queryset = models.Sample.objects.filter(widget_id=pk).order_by("-timestamp")
         serializer = serializers.SampleSerializer(queryset, many=True)
         return Response(serializer.data)
 
