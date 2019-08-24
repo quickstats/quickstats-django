@@ -22,6 +22,7 @@ setup(
         "Topic :: Internet :: WWW/HTTP",
     ],
     install_requires=[
+        'celery',
         "django-environ",
         "Django>=2.0",
         "djangorestframework-csv",

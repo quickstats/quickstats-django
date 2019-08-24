@@ -128,3 +128,16 @@ class Waypoint(models.Model):
     class Meta:
         ordering = ("-timestamp",)
         unique_together = ("widget", "timestamp")
+
+
+class Scrape(models.Model):
+    widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
+    driver = models.CharField(max_length=32, choices=(
+        ('icalendar', 'Calendar'),
+        ('atom', 'Feed'),
+    ))
+    url = models.URLField()
+
+    class Meta:
+        unique_together = ("widget", "driver")
+
