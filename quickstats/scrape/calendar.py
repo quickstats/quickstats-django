@@ -3,8 +3,9 @@ import logging
 
 import icalendar
 import requests
-from quickstats.models import Scrape, Widget
 from dateutil.rrule import rrulestr
+
+from quickstats.models import Scrape
 
 from django.utils import timezone
 
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class CalendarScraper:
     def scrape(self, config: Scrape):
-        countdown: Widget = config.widget
+        countdown = config.widget
         settings = {m.name: m.value for m in config.widget.setting_set.all()}
 
         countdown.timestamp = datetime.datetime.min
