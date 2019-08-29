@@ -24,6 +24,7 @@ class CalendarScraper:
         next_time = None
 
         response = requests.get(config.url)
+        response.raise_for_status()
         calendar = icalendar.Calendar.from_ical(response.text)
         if "X-WR-CALNAME" in calendar:
             logger.info("Reading calendar: %s", calendar["X-WR-CALNAME"])

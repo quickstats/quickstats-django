@@ -1,6 +1,7 @@
 import datetime
 import logging
 
+import requests
 from celery import shared_task
 from celery.task.base import periodic_task
 
@@ -27,10 +28,14 @@ def scrape(pk):
         if config.driver == entry.name:
             try:
                 driver = entry.load()()
+                driver.scrape(config)
             except ImportError:
                 logger.exception("Error loading driver")
-            else:
-                driver.scrape(config)
+            except requests.HTTPError:
+                logger.exception("Error scraping target")
+            except Exception:
+                logger.exception("Unhandled Exception")
+            finally:
                 return
     else:
         logger.error("Unknown driver %s", config.driver)
