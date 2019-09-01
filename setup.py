@@ -22,6 +22,9 @@ setup(
         "Topic :: Internet :: WWW/HTTP",
     ],
     install_requires=[
+        "icalendar",
+        "python-dateutil",
+        "celery",
         "django-environ",
         "Django>=2.0",
         "djangorestframework-csv",
@@ -31,6 +34,10 @@ setup(
         "requests",
     ],
     entry_points={
-        "console_scripts": ["quickstats = quickstats.standalone.manage:main"]
+        "console_scripts": ["quickstats = quickstats.standalone.manage:main"],
+        "quickstats.scrape": [
+            "calendar = quickstats.scrape.calendar:CalendarScraper",
+            "atom = quickstats.scrape.atom:AtomScraper",
+        ],
     },
 )

@@ -1,9 +1,11 @@
+import datetime
 import logging
 
+import requests
 from celery import shared_task
+from celery.task.base import periodic_task
 
 from . import models
-
 
 logger = logging.getLogger(__name__)
 
@@ -17,3 +19,29 @@ def update_chart(pk):
     widget.value = latest.value
     widget.timestamp = latest.timestamp
     widget.save(update_fields=["value", "timestamp"])
+
+
+@shared_task()
+def scrape(pk):
+    config = models.Scrape.objects.get(pk=pk)
+    for entry in models.Scrape.drivers():
+        if config.driver == entry.name:
+            try:
+                driver = entry.load()()
+                driver.scrape(config)
+            except ImportError:
+                logger.exception("Error loading driver")
+            except requests.HTTPError:
+                logger.exception("Error scraping target")
+            except Exception:
+                logger.exception("Unhandled Exception")
+            finally:
+                return
+    else:
+        logger.error("Unknown driver %s", config.driver)
+
+
+@periodic_task(run_every=datetime.timedelta(minutes=30))
+def schedule_scrape():
+    for config in models.Scrape.objects.all():
+        scrape.delay(config.pk)

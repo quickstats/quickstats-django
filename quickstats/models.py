@@ -2,6 +2,8 @@ import logging
 import os
 import uuid
 
+from pkg_resources import working_set
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -128,3 +130,18 @@ class Waypoint(models.Model):
     class Meta:
         ordering = ("-timestamp",)
         unique_together = ("widget", "timestamp")
+
+
+class Scrape(models.Model):
+    def drivers():
+        yield from working_set.iter_entry_points("quickstats.scrape")
+
+    TYPE_CHOICES = [(entity.name, entity.name) for entity in drivers()]
+
+    widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
+    driver = models.CharField(max_length=32, choices=TYPE_CHOICES)
+    url = models.URLField()
+
+    class Meta:
+        unique_together = ("widget", "driver")
+
