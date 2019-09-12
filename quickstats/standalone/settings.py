@@ -18,7 +18,10 @@ from django.urls import reverse_lazy
 
 root = environ.Path(__file__) - 3
 env = environ.Env()
-environ.Env.read_env(root.file('.env'))
+try:
+    environ.Env.read_env(env("DJANGO_ENV_FILE"))
+except FileNotFoundError:
+    pass
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,14 +57,15 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = 'quickstats.standalone.urls'
@@ -93,6 +97,11 @@ DATABASES = {
     'default': env.db(default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'))
 }
 
+CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://127.0.0.1:6379/0")
+CELERY_TIMEZONE = "Asia/Tokyo"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -131,7 +140,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.expanduser(env("STATIC_URL", default="~/.cache/quickstats"))
+STATIC_ROOT = os.path.expanduser(env("STATIC_ROOT", default="~/.cache/quickstats"))
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.expanduser(env("MEDIA_ROOT", default="~/.local/quickstats/media"))
@@ -149,10 +158,18 @@ REST_FRAMEWORK = {
 
 try:
     import debug_toolbar  # NOQA
+
     if DEBUG is False:
-        raise ImportError('No toolbar')
+        raise ImportError("No toolbar")
 except ImportError:
-    MIDDLEWARE.remove('debug_toolbar.middleware.DebugToolbarMiddleware')
-    INSTALLED_APPS.remove('debug_toolbar')
+    MIDDLEWARE.remove("debug_toolbar.middleware.DebugToolbarMiddleware")
+    INSTALLED_APPS.remove("debug_toolbar")
 else:
-    INTERNAL_IPS = ['127.0.0.1']
+    INTERNAL_IPS = ["127.0.0.1"]
+
+try:
+    import whitenoise  # NOQA
+except ImportError:
+    MIDDLEWARE.remove("whitenoise.middleware.WhiteNoiseMiddleware")
+else:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

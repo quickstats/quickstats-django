@@ -18,3 +18,5 @@ unicodecsv==0.14.1
 urllib3==1.25.3
 gunicorn
 celery
+whitenoise
+redis

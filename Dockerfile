@@ -1,9 +1,12 @@
 FROM python:3.6-alpine
 LABEL maintainer=kungfudiscomonkey@gmail.com
 
-ENV APP_DIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+
+ENV APP_DIR /usr/src/app
+ENV STATIC_ROOT /var/cache/app
+ENV MEDIA_ROOT /var/lib/app
 
 # Upgrade Pip
 RUN pip install --no-cache-dir -U pip
@@ -28,7 +31,9 @@ ADD quickstats ${APP_DIR}/quickstats
 ADD docker ${APP_DIR}/docker
 ADD setup.py ${APP_DIR}/setup.py
 RUN set -ex && pip install --no-cache-dir -r ${APP_DIR}/docker/requirements.txt
+RUN SECRET_KEY=1 quickstats collectstatic --noinput
 USER nobody
+EXPOSE 8000
 
-ENTRYPOINT ["docker", "docker-entrypoint.sh"]
+ENTRYPOINT ["docker/docker-entrypoint.sh"]
 CMD ["web"]
