@@ -1,5 +1,7 @@
 test:
 	pipenv run quickstats test -v 2
+build:
+	docker-compose build
 migrate:
 	pipenv run quickstats migrate
 run: migrate

@@ -2,3 +2,4 @@
 *.pyc
 *.sqlite3
 .env
+dist

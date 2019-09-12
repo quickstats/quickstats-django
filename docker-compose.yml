@@ -1,0 +1,29 @@
+version: "3"
+services:
+  web:
+    build: .
+    image: quickstats/django
+    command: web
+    ports:
+      - "8000:8000"
+    env_file:
+      - docker/docker.env
+    depends_on:
+      - postgres
+      - redis
+  worker:
+    image: quickstats/django
+    command: worker
+    env_file:
+      - docker/docker.env
+    depends_on:
+      - postgres
+      - redis
+  redis:
+    image: "redis:alpine"
+  postgres:
+    image: postgres:10-alpine
+    env_file:
+      - docker/docker.env
+    volumes:
+      - ./dist/postgresql:/var/lib/postgresql
