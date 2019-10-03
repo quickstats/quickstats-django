@@ -19,6 +19,13 @@ services:
     depends_on:
       - postgres
       - redis
+  beat:
+    image: quickstats/django
+    command: beat
+    env_file:
+      - docker/docker.env
+    depends_on:
+      - redis
   redis:
     image: "redis:alpine"
   postgres:

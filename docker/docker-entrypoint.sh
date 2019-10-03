@@ -6,22 +6,17 @@ if [ "${1:0:1}" = '-' ]; then
 	set -- quickstats "$@"
 fi
 
-# wait() 
-# {
-#     until quickstats check 2>/dev/null
-#     do
-#         echo "Waiting for database to startup"
-#         sleep 3
-#     done
-# }
-
 case "$1" in
 worker)
-  # Shortcut to start a celery worker for Promgen
+  # Shortcut to start a celery worker
+  set -- celery "-A" quickstats.standalone "$@"
+  ;;
+beat)
+  # Shortcut to start a celery beat
   set -- celery "-A" quickstats.standalone "$@"
   ;;
 web)
-  # Shortcut for launching a Promgen web worker under gunicorn
+  # Shortcut for launching a gunicorn worker
   shift
   set -- gunicorn "quickstats.standalone.wsgi:application" -b 0.0.0.0 "$@"
   ;;
