@@ -78,7 +78,11 @@ def owntracks_mqtt_waypoints(topic, data):
             setting__name="owntracks.tst",
             setting__value=waypoint["tst"],
             owner=user,
-            defaults={"title": waypoint["desc"], "type": "location"},
+            defaults={
+                "title": waypoint["desc"],
+                "type": "location",
+                "description": "Owntracks Location",
+            },
         )
         if created:
             widget.setting_set.create(name="owntracks.tst", value=waypoint["tst"])
@@ -97,7 +101,7 @@ def owntracks_mqtt_location(topic, data):
         setting__value=device,
         owner=user,
         defaults={
-            "title": "Owntracks " + data["tid"],
+            "title": "OT " + data["tid"],
             "type": "location",
             "description": "Owntracks Device",
         },
