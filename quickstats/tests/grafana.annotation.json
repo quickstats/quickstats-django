@@ -8,6 +8,6 @@
         "datasource": "Simple JSON Datasource",
         "iconColor": "rgba(255, 96, 96, 1)",
         "enable": true,
-        "query": "#deploy"
+        "query": "{}"
     }
 }

@@ -7,6 +7,8 @@ from celery.task.base import periodic_task
 
 from . import models
 
+from django.contrib.auth.models import User
+
 logger = logging.getLogger(__name__)
 
 
@@ -55,3 +57,30 @@ def scrape(pk):
 def schedule_scrape():
     for config in models.Scrape.objects.all():
         scrape.delay(config.pk)
+
+
+@shared_task
+def owntracks_mqtt_event(topic, data):
+    # https://owntracks.org/booklet/tech/json/#_typetransition
+    topic = topic.split("/")
+    user = User.objects.get(username=topic[1])
+
+    raise NotImplementedError()
+
+
+@shared_task
+def owntracks_mqtt_waypoint(topic, data):
+    # https://owntracks.org/booklet/tech/json/#_typewaypoint
+    topic = topic.split("/")
+    user = User.objects.get(username=topic[1])
+
+    raise NotImplementedError()
+
+
+@shared_task
+def owntracks_mqtt_location(topic, data):
+    # https://owntracks.org/booklet/tech/json/#_typelocation
+    topic = topic.split("/")
+    user = User.objects.get(username=topic[1])
+
+    raise NotImplementedError()
