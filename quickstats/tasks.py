@@ -81,6 +81,7 @@ def owntracks_mqtt_waypoints(topic, data):
             defaults={"title": waypoint["desc"], "type": "location"},
         )
         if created:
+            widget.setting_set.create(name="owntracks.tst", value=waypoint["tst"])
             logger.info("Created widget %s", widget)
 
 
@@ -91,7 +92,7 @@ def owntracks_mqtt_location(topic, data):
     user = User.objects.get(username=topic[1])
     device = topic[2]
 
-    location, created = models.Widget.objects.get_or_create(
+    widget, created = models.Widget.objects.get_or_create(
         setting__name="owntracks.device",
         setting__value=device,
         owner=user,
@@ -101,8 +102,10 @@ def owntracks_mqtt_location(topic, data):
             "description": "Owntracks Device",
         },
     )
+    if created:
+        widget.setting_set.create(name="owntracks.device", value=device)
 
-    location.waypoint_set.create(
+    widget.waypoint_set.create(
         lat=data["lat"],
         lon=data["lon"],
         timestamp=datetime.datetime.fromtimestamp(data["tst"], datetime.timezone.utc),
