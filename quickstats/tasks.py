@@ -82,5 +82,20 @@ def owntracks_mqtt_location(topic, data):
     # https://owntracks.org/booklet/tech/json/#_typelocation
     topic = topic.split("/")
     user = User.objects.get(username=topic[1])
+    device = topic[2]
 
-    raise NotImplementedError()
+    try:
+        location = models.Widget.objects.get(
+            type="location", setting__name="owntracks.device", setting__value=device
+        )
+    except models.Widget.DoesNotExist:
+        location = models.Widget.objects.create(
+            type="location", owner=user, title=device, description="Owntracks Device"
+        )
+        location.setting_set.create(name="owntracks.device", value=device)
+
+    location.waypoint_set.create(
+        lat=data["lat"],
+        lon=data["lon"],
+        timestamp=datetime.datetime.fromtimestamp(data["tst"], datetime.timezone.utc),
+    )

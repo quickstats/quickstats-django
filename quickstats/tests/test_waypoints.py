@@ -26,7 +26,7 @@ class WaypointTest(TestCase):
                 ],
             },
         )
-        self.assertEqual(models.Waypoint.objects.count(), 1)
+        self.assertEqual(models.Widget.objects.count(), 0)
 
     @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
     def test_owntracks_location(self):
@@ -49,4 +49,6 @@ class WaypointTest(TestCase):
                 "tid": "PR",
             },
         )
+        self.assertEqual(models.Widget.objects.count(), 1)
         self.assertEqual(models.Waypoint.objects.count(), 1)
+        self.assertEqual(models.Setting.objects.count(), 1)
