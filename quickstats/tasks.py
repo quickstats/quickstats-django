@@ -91,15 +91,16 @@ def owntracks_mqtt_location(topic, data):
     user = User.objects.get(username=topic[1])
     device = topic[2]
 
-    try:
-        location = models.Widget.objects.get(
-            type="location", setting__name="owntracks.device", setting__value=device
-        )
-    except models.Widget.DoesNotExist:
-        location = models.Widget.objects.create(
-            type="location", owner=user, title=device, description="Owntracks Device"
-        )
-        location.setting_set.create(name="owntracks.device", value=device)
+    location, created = models.Widget.objects.get_or_create(
+        setting__name="owntracks.device",
+        setting__value=device,
+        owner=user,
+        defaults={
+            "title": "Owntracks " + data["tid"],
+            "type": "location",
+            "description": "Owntracks Device",
+        },
+    )
 
     location.waypoint_set.create(
         lat=data["lat"],
