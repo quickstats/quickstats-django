@@ -47,5 +47,5 @@ class SampleSerializer(serializers.ModelSerializer):
 
 class WaypointSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Sample
+        model = models.Waypoint
         exclude = ("id", "widget")
