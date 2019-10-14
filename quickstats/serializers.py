@@ -42,4 +42,10 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class SampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Sample
-        fields = ("timestamp", "value")
+        exclude = ("id", "widget")
+
+
+class WaypointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Sample
+        exclude = ("id", "widget")

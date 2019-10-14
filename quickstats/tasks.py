@@ -21,6 +21,16 @@ def update_chart(pk):
     widget.save(update_fields=["value", "timestamp"])
 
 
+@shared_task
+def update_location(pk):
+    widget = models.Widget.objects.get(pk=pk)
+    if widget.type not in ["location"]:
+        return
+    latest = models.Waypoint.objects.filter(widget_id=pk).latest("timestamp")
+    widget.timestamp = latest.timestamp
+    widget.save(update_fields=["timestamp"])
+
+
 @shared_task()
 def scrape(pk):
     config = models.Scrape.objects.get(pk=pk)

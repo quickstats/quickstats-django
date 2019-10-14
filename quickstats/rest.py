@@ -28,6 +28,16 @@ class WidgetViewSet(viewsets.ModelViewSet):
         pass
 
     @action(detail=True, methods=["get"])
+    def waypoints(self, request, pk=None, **kwargs):
+        queryset = models.Waypoint.objects.filter(widget_id=pk).order_by("-timestamp")
+        serializer = serializers.WaypointSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @waypoints.mapping.post
+    def waypoints_post(self, request, pk=None):
+        pass
+
+    @action(detail=True, methods=["get"])
     def comments(self, request, pk=None):
         queryset = models.Comment.objects.filter(widget_id=pk)
         serializer = serializers.CommmentSerializer(queryset, many=True)
