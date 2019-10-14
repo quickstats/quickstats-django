@@ -69,12 +69,19 @@ def owntracks_mqtt_event(topic, data):
 
 
 @shared_task
-def owntracks_mqtt_waypoint(topic, data):
+def owntracks_mqtt_waypoints(topic, data):
     # https://owntracks.org/booklet/tech/json/#_typewaypoint
     topic = topic.split("/")
     user = User.objects.get(username=topic[1])
-
-    raise NotImplementedError()
+    for waypoint in data["waypoints"]:
+        widget, created = models.Widget.objects.get_or_create(
+            setting__name="owntracks.tst",
+            setting__value=waypoint["tst"],
+            owner=user,
+            defaults={"title": waypoint["desc"], "type": "location"},
+        )
+        if created:
+            logger.info("Created widget %s", widget)
 
 
 @shared_task

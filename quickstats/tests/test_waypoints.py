@@ -9,8 +9,8 @@ class WaypointTest(TestCase):
         self.user = User.objects.create(username="WaypointTest")
 
     @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
-    def test_owntracks_event(self):
-        tasks.owntracks_mqtt_event(
+    def test_owntracks_waypoints(self):
+        tasks.owntracks_mqtt_waypoints(
             "owntracks/WaypointTest/device/waypoints",
             {
                 "_type": "waypoints",
@@ -26,7 +26,7 @@ class WaypointTest(TestCase):
                 ],
             },
         )
-        self.assertEqual(models.Widget.objects.count(), 0)
+        self.assertEqual(models.Widget.objects.count(), 1)
 
     @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
     def test_owntracks_location(self):
