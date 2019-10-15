@@ -82,7 +82,7 @@ def owntracks_mqtt_event(topic, data):
         widget.setting_set.create(name="owntracks.tst", value=data["wtst"])
         logger.info("Created widget %s", widget)
 
-    widget.waypoint_set.create(
+    widget.waypoint_set.get_or_create(
         state=data["event"],
         lat=data["lat"],
         lon=data["lon"],
@@ -134,7 +134,8 @@ def owntracks_mqtt_location(topic, data):
     if created:
         widget.setting_set.create(name="owntracks.device", value=device)
 
-    widget.waypoint_set.create(
+    widget.waypoint_set.get_or_create(
+        state="waypoint",
         lat=data["lat"],
         lon=data["lon"],
         timestamp=datetime.datetime.fromtimestamp(data["tst"], datetime.timezone.utc),
