@@ -62,10 +62,32 @@ def schedule_scrape():
 @shared_task
 def owntracks_mqtt_event(topic, data):
     # https://owntracks.org/booklet/tech/json/#_typetransition
+    if data.get("_type") != "transition":
+        logger.warning("Not trsnition event")
+        return
     topic = topic.split("/")
     user = User.objects.get(username=topic[1])
 
-    raise NotImplementedError()
+    widget, created = models.Widget.objects.get_or_create(
+        setting__name="owntracks.tst",
+        setting__value=data["wtst"],
+        owner=user,
+        defaults={
+            "title": "OT " + data["desc"],
+            "type": "location",
+            "description": "Owntracks Location",
+        },
+    )
+    if created:
+        widget.setting_set.create(name="owntracks.tst", value=data["wtst"])
+        logger.info("Created widget %s", widget)
+
+    widget.waypoint_set.create(
+        state=data["event"],
+        lat=data["lat"],
+        lon=data["lon"],
+        timestamp=datetime.datetime.fromtimestamp(data["tst"], datetime.timezone.utc),
+    )
 
 
 @shared_task
