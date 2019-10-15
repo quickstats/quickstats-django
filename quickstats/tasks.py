@@ -114,6 +114,9 @@ def owntracks_mqtt_waypoints(topic, data):
 @shared_task
 def owntracks_mqtt_location(topic, data):
     # https://owntracks.org/booklet/tech/json/#_typelocation
+    if data.get("_type") != "location":
+        logger.warning("Not location event")
+        return
     topic = topic.split("/")
     user = User.objects.get(username=topic[1])
     device = topic[2]
