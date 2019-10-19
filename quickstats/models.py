@@ -28,6 +28,21 @@ class WidgetQuerySet(models.QuerySet):
             return qs.filter(**filters)
         return qs
 
+    def lookup_or_create(self, labels, **kwargs):
+        # Label aware version of get_or_create
+        # We often want to filter on labels when using get_or_create, but on
+        # creation, we need to make sure our new object is created with the
+        # correct labels
+        widget, created = self.filter_labels(**labels).get_or_create(**kwargs)
+        if created:
+            widget.label_set.bulk_create(
+                [
+                    Label(widget=widget, name=k, value=v)
+                    for k, v in labels.items()
+                ]
+            )
+        return widget, created
+
 
 def _upload_to_path(instance, filename):
     root, ext = os.path.splitext(filename)

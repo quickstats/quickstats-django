@@ -44,15 +44,12 @@ def scrape_to_samples(scrape, user, push_time=None):
     for family in text_string_to_metric_families(scrape):
         for s in family.samples:
             labels = labels_from_sample(s)
-            widget, created = models.Widget.objects.filter_labels(**labels).get_or_create(
-                owner=user, defaults={"title": s.name, "timestamp": push_time}
+            widget, created = models.Widget.objects.lookup_labels(
+                labels, owner=user, defaults={"title": s.name, "timestamp": push_time}
             )
             if created:
                 logger.debug("Created widget %s", widget)
                 yield "Created widget %s" % widget
-                widget.label_set.bulk_create(
-                    [models.Label(widget=widget, name=k, value=v) for k, v in labels.items()]
-                )
 
             sample = widget.sample_set.create(timestamp=push_time, value=s.value)
             yield "Appended sample to %s" % widget
