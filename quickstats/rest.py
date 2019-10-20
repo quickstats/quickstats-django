@@ -1,8 +1,8 @@
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
-from rest_framework.renderers import JSONRenderer
 
 from . import models, permissions, serializers
 
@@ -44,7 +44,7 @@ class WaypointViewSet(viewsets.ModelViewSet):
 class SampleViewSet(viewsets.ModelViewSet):
     queryset = models.Sample.objects.prefetch_related("owner", "setting_set")
     serializer_class = serializers.SampleSerializer
-    renderer_classes = (CSVRenderer, JSONRenderer)
+    renderer_classes = (JSONRenderer, CSVRenderer)
 
     def get_queryset(self):
         return self.queryset.filter(widget=self.kwargs["widget_pk"])
