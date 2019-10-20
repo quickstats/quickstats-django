@@ -128,7 +128,7 @@ class Waypoint(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now)
-    body = models.TextField()
+    body = models.TextField(blank=True)
 
     lat = models.FloatField()
     lon = models.FloatField()

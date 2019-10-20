@@ -37,6 +37,7 @@ class WaypointViewSet(viewsets.ModelViewSet):
     queryset = models.Waypoint.objects
     serializer_class = serializers.WaypointSerializer
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, CSVRenderer)
+    permission_classes = (permissions.IsWidgetOwnerOrPublic,)
 
     def get_queryset(self):
         return self.queryset.filter(
@@ -48,19 +49,12 @@ class SampleViewSet(viewsets.ModelViewSet):
     queryset = models.Sample.objects
     serializer_class = serializers.SampleSerializer
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, CSVRenderer)
+    permission_classes = (permissions.IsWidgetOwnerOrPublic,)
 
     def get_queryset(self):
         return self.queryset.filter(
             widget=self.kwargs["widget_pk"], widget__owner=self.request.user
         )
-
-
-class CommentViewSet(viewsets.ModelViewSet):
-    queryset = models.Comment.objects.prefetch_related("owner", "setting_set")
-    serializer_class = serializers.CommmentSerializer
-
-    def get_queryset(self):
-        return self.queryset.filter(widget=self.kwargs["widget_pk"])
 
 
 class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
