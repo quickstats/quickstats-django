@@ -29,6 +29,7 @@ setup(
         "Django>=2.0",
         "djangorestframework-csv",
         "djangorestframework",
+        "drf-nested-routers",
         "python-dateutil",
         "pytz",
         "requests",

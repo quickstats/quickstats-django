@@ -17,40 +17,6 @@ class WidgetViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user)
 
-    @action(detail=True, methods=["get"], renderer_classes=(CSVRenderer, JSONRenderer))
-    def samples(self, request, pk=None, **kwargs):
-        queryset = models.Sample.objects.filter(widget_id=pk).order_by("-timestamp")
-        serializer = serializers.SampleSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @samples.mapping.post
-    def samples_post(self, request, pk=None):
-        pass
-
-    @action(detail=True, methods=["get"])
-    def waypoints(self, request, pk=None, **kwargs):
-        queryset = models.Waypoint.objects.filter(widget_id=pk).order_by("-timestamp")
-        serializer = serializers.WaypointSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @waypoints.mapping.post
-    def waypoints_post(self, request, pk=None):
-        pass
-
-    @action(detail=True, methods=["get"])
-    def comments(self, request, pk=None):
-        queryset = models.Comment.objects.filter(widget_id=pk)
-        serializer = serializers.CommmentSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @comments.mapping.post
-    def comments_post(self, request, pk=None):
-        pass
-
-    @samples.mapping.put
-    def samples_put(self, request, pk=None):
-        pass
-
     @action(detail=True, methods=["get"])
     def embed(self, request, pk=None):
         self.object = self.get_object()
@@ -65,6 +31,31 @@ class WidgetViewSet(viewsets.ModelViewSet):
         )
         serializer = serializers.SubscriptionSerializer(subscription)
         return Response(serializer.data)
+
+
+class WaypointViewSet(viewsets.ModelViewSet):
+    queryset = models.Waypoint.objects.prefetch_related("owner", "setting_set")
+    serializer_class = serializers.WaypointSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(widget=self.kwargs["widget_pk"])
+
+
+class SampleViewSet(viewsets.ModelViewSet):
+    queryset = models.Sample.objects.prefetch_related("owner", "setting_set")
+    serializer_class = serializers.SampleSerializer
+    renderer_classes = (CSVRenderer, JSONRenderer)
+
+    def get_queryset(self):
+        return self.queryset.filter(widget=self.kwargs["widget_pk"])
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = models.Comment.objects.prefetch_related("owner", "setting_set")
+    serializer_class = serializers.CommmentSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(widget=self.kwargs["widget_pk"])
 
 
 class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

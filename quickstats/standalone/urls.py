@@ -13,7 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from rest_framework import routers
+
+from rest_framework_nested import routers
 
 from quickstats import rest
 
@@ -27,10 +28,15 @@ router.register("widget", rest.WidgetViewSet)
 router.register("comment", rest.CommentViewSet)
 router.register("subscription", rest.SubscriptionViewSet)
 
+widget_router = routers.NestedSimpleRouter(router, "widget", lookup="widget")
+widget_router.register("waypoints", rest.WaypointViewSet)
+widget_router.register("samples", rest.SampleViewSet)
+
 urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
     path("api/", include((router.urls, "api"), namespace="api")),
+    path("api/", include((widget_router.urls, "api"), namespace="api-widget")),
     path("", include(("quickstats.urls", "stats"), namespace="stats")),
     path("", include(("quickstats.prometheus", "prometheus"), namespace="prometheus")),
     path("grafana/", include(("quickstats.grafana", "grafana"), namespace="grafana")),
