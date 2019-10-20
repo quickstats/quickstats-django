@@ -34,21 +34,25 @@ class WidgetViewSet(viewsets.ModelViewSet):
 
 
 class WaypointViewSet(viewsets.ModelViewSet):
-    queryset = models.Waypoint.objects.prefetch_related("owner", "setting_set")
+    queryset = models.Waypoint.objects
     serializer_class = serializers.WaypointSerializer
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, CSVRenderer)
 
     def get_queryset(self):
-        return self.queryset.filter(widget=self.kwargs["widget_pk"])
+        return self.queryset.filter(
+            widget=self.kwargs["widget_pk"], widget__owner=self.request.user
+        )
 
 
 class SampleViewSet(viewsets.ModelViewSet):
-    queryset = models.Sample.objects.prefetch_related("owner", "setting_set")
+    queryset = models.Sample.objects
     serializer_class = serializers.SampleSerializer
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, CSVRenderer)
 
     def get_queryset(self):
-        return self.queryset.filter(widget=self.kwargs["widget_pk"])
+        return self.queryset.filter(
+            widget=self.kwargs["widget_pk"], widget__owner=self.request.user
+        )
 
 
 class CommentViewSet(viewsets.ModelViewSet):
