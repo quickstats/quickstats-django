@@ -1,6 +1,6 @@
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
-from rest_framework.renderers import JSONRenderer
+from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
 
@@ -36,6 +36,7 @@ class WidgetViewSet(viewsets.ModelViewSet):
 class WaypointViewSet(viewsets.ModelViewSet):
     queryset = models.Waypoint.objects.prefetch_related("owner", "setting_set")
     serializer_class = serializers.WaypointSerializer
+    renderer_classes = (JSONRenderer, BrowsableAPIRenderer, CSVRenderer)
 
     def get_queryset(self):
         return self.queryset.filter(widget=self.kwargs["widget_pk"])
@@ -44,7 +45,7 @@ class WaypointViewSet(viewsets.ModelViewSet):
 class SampleViewSet(viewsets.ModelViewSet):
     queryset = models.Sample.objects.prefetch_related("owner", "setting_set")
     serializer_class = serializers.SampleSerializer
-    renderer_classes = (JSONRenderer, CSVRenderer)
+    renderer_classes = (JSONRenderer, BrowsableAPIRenderer, CSVRenderer)
 
     def get_queryset(self):
         return self.queryset.filter(widget=self.kwargs["widget_pk"])
