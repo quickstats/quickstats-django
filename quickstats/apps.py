@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-class quickstatsConfig(AppConfig):
+class QuickstatsConfig(AppConfig):
     name = "quickstats"
 
     def ready(self):
