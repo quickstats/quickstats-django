@@ -8,6 +8,7 @@ class WaypointTest(TestCase):
     def setUp(self):
         self.user = User.objects.create(username="WaypointTest")
 
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
     def test_api(self):
         widget = models.Widget.objects.create(owner=self.user)
         # Create a single waypoint for testing
