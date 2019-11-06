@@ -51,10 +51,12 @@ class SampleViewSet(viewsets.ModelViewSet):
     renderer_classes = (JSONRenderer, BrowsableAPIRenderer, CSVRenderer)
     permission_classes = (permissions.IsWidgetOwnerOrPublic,)
 
+    def perform_create(self, serializer):
+        serializer.validated_data["widget_id"] = self.kwargs["widget_pk"]
+        serializer.save()
+
     def get_queryset(self):
-        return self.queryset.filter(
-            widget=self.kwargs["widget_pk"], widget__owner=self.request.user
-        )
+        return self.queryset.filter(widget=self.kwargs["widget_pk"])
 
 
 class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

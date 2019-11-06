@@ -25,7 +25,6 @@ class WaypointTest(TestCase):
         )
         self.assertEqual(response.status_code, 200, "can view after logging in")
         data = response.json()
-        print(data)
         self.assertEqual(data["count"], 1, "Found one waypoint")
 
     @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
