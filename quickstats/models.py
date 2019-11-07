@@ -137,7 +137,7 @@ class Waypoint(models.Model):
         choices=(
             ("", _("Unselected")),
             ("enter", _("Entered an Area")),
-            ("exit", _("Exited an Area")),
+            ("leave", _("Exited an Area")),
             ("waypoint", _("Waypoint")),
         ),
     )
