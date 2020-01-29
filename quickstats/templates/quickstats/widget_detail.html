@@ -36,6 +36,21 @@ Widget / {{widget.title}}
         {% empty %}
         <p>No Comments</p>
         {% endfor %}
+
+        {% if widget.sample_set.count %}
+        <table class="table">
+            <tr>
+                <th>Timestamp</th>
+                <th>Value</th>
+            </tr>
+            {% for sample in widget.sample_set.all|slice:":10" %}
+            <tr>
+                <td>{{sample.timestamp}}</td>
+                <td>{{sample.value}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
     </div>
 </div>
 
