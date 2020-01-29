@@ -11,7 +11,18 @@ Widget / {{widget.title}}
     <div class="col-3">
 
         {% include 'quickstats/widget_card.html' with widget=widget %}
+
+        {% if widget.owner == request.user %}
+        {% if widget.type == "streak" %}
+        <hr />
+        <form method="post" action="{% url 'stats:streak-increment' widget.pk %}">
+            <input name="value" value="1" type="number" />
+            <button class="btn btn-warning">Increment</button>
+        </form>
+        {% endif %}
+        {% endif %}
     </div>
+
     <div class="col-9">
         <h2>Embed</h2>
         <input class="form-control" value="{{widget|embedcode:request}}" />

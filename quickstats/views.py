@@ -1,10 +1,10 @@
 from . import forms, models
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -140,3 +140,18 @@ class WaypointList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return super().get_queryset().filter(widget__owner=self.request.user)
+
+
+class StreakIncrement(UserPassesTestMixin, SingleObjectMixin, View):
+    model = models.Widget
+
+    def test_func(self):
+        return self.get_object().owner == self.request.owner
+
+    def post(self, request, pk):
+        self.object = self.get_object()
+        self.object.sample_set.create(
+            value=request.POST["value"], timestamp=timezone.now()
+        )
+        messages.success(request, "Added new comment")
+        return redirect(self.object.get_absolute_url())
