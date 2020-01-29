@@ -16,6 +16,7 @@ Widget / {{widget.title}}
         {% if widget.type == "streak" %}
         <hr />
         <form method="post" action="{% url 'stats:streak-increment' widget.pk %}">
+            {% csrf_token %}
             <input name="value" value="1" type="number" />
             <button class="btn btn-warning">Increment</button>
         </form>
