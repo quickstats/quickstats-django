@@ -146,7 +146,7 @@ class StreakIncrement(UserPassesTestMixin, SingleObjectMixin, View):
     model = models.Widget
 
     def test_func(self):
-        return self.get_object().owner == self.request.owner
+        return self.get_object().owner == self.request.user
 
     def post(self, request, pk):
         self.object = self.get_object()
