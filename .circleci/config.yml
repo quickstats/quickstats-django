@@ -24,6 +24,6 @@ jobs:
       - run: python3 -m venv .venv
       - run: .venv/bin/pip install -r docker/requirements.txt
       - run: .venv/bin/pip install -e .[dev,standalone]
-      - run: .venv/bin/quickstats test --with-xunit --xunit-file test-results/nosetests.xml --noinput -v2
+      - run: .venv/bin/quickstats test -v 2 --with-xunit --xunit-file test-results/nosetests.xml --noinput
       - store_test_results:
           path: test-results
