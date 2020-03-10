@@ -37,6 +37,7 @@ setup(
         "standalone": [
             "celery==4.3.0",
             "django-environ",
+            "prometheus-client",
             "sentry_sdk",
         ],
         "dev": [

@@ -1,11 +1,16 @@
-version: 2
+version: 2.1
+
+general:
+  branches:
+    ignore:
+      - gh-pages
+
 jobs:
   build:
     docker:
       - image: circleci/python:3.6.4
         environment:
           SECRET_KEY: abcd
-          PIPENV_VENV_IN_PROJECT: true
           DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
       - image: circleci/postgres:9.6.2
         environment:
@@ -13,15 +18,10 @@ jobs:
           POSTGRES_DB: circle_test
     steps:
       - checkout
-      - run: sudo chown -R circleci:circleci /usr/local/bin
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
-      - run: sudo chown -R circleci:circleci /usr/local/man
-      - run: sudo pip install -e .[dev,standalone]
-      - run: quickstats test
+      - run: mkdir -p test-results
+      - run: python3 -m venv .venv
+      - run: .venv/bin/pip install -r docker/requirements.txt
+      - run: .venv/bin/pip install -e .[dev,standalone]
+      - run: .venv/bin/quickstats test --with-xunit --xunit-file test-results/nosetests.xml --noinput
       - store_test_results:
           path: test-results
-
-general:
-  branches:
-    ignore:
-      - gh-pages
