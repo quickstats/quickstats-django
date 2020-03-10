@@ -1,7 +1,7 @@
 APP_BIN := .venv/bin/quickstats
 PIP_BIN := .venv/bin/pip
 
-.PHONY:	test build migrate run shell
+.PHONY:	test build migrate run shell clean
 .DEFAULT: test
 
 test: ${APP_BIN}
