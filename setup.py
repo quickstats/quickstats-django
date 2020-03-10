@@ -23,7 +23,6 @@ setup(
     ],
     install_requires=[
         "celery",
-        "django-environ",
         "Django>=2.0",
         "djangorestframework-csv",
         "djangorestframework",
@@ -34,6 +33,19 @@ setup(
         "pytz",
         "requests",
     ],
+    extras_require={
+        "standalone": [
+            "celery==4.3.0",
+            "django-environ",
+            "sentry_sdk",
+        ],
+        "dev": [
+            "black",
+            "django_nose",
+            "psycopg2-binary",
+            "unittest-xml-reporting",
+        ],
+    },
     entry_points={
         "console_scripts": ["quickstats = quickstats.standalone.manage:main"],
         "quickstats.scrape": [

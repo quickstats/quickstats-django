@@ -1,17 +1,26 @@
-test:
-	pipenv run quickstats test -v 2
+APP_BIN := .venv/bin/quickstats
+PIP_BIN := .venv/bin/pip
+
+.PHONY:	test build migrate run shell
+.DEFAULT: test
+
+test: ${APP_BIN}
+	${APP_BIN} test -v 2
+
+$(PIP_BIN):
+	python3 -m venv .venv
+
+${APP_BIN}: $(PIP_BIN)
+	${PIP_BIN} install -r docker/requirements.txt
+	${PIP_BIN} install -e .[dev,standalone]
+
 build:
 	docker-compose build
-migrate:
-	pipenv run quickstats migrate
+migrate: ${APP_BIN}
+	${APP_BIN} migrate
 run: migrate
-	pipenv run quickstats runserver
-
+	${APP_BIN} runserver
 shell: migrate
-	pipenv run quickstats shell
-
-reset:
-	pipenv run quickstats migrate quickstats zero
-	git clean -f quickstats/migrations
-	pipenv run quickstats makemigrations
-	pipenv run quickstats migrate
+	${APP_BIN} shell
+clean:
+	rm -rf .venv
