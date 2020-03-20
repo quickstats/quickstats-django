@@ -18,4 +18,6 @@ urlpatterns = [
     path("widget", views.WidgetListView.as_view(), name="widget-list"),
     path("comments", views.CommentList.as_view(), name="comment-list"),
     path("waypoints", views.WaypointList.as_view(), name="waypoint-list"),
+    # Custom Views
+    path("countdowns", views.CountdownList.as_view(), name="countdown-list"),
 ]

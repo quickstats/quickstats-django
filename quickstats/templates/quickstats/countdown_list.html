@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block javascript %}
+<script>
+    function getTimeRemaining(endtime, current) {
+        t = Math.abs(endtime - current);
+
+        return {
+            'total': t,
+            'days': Math.floor(t / (1000 * 60 * 60 * 24)),
+            'hours': `${Math.floor((t / (1000 * 60 * 60)) % 24)}`.padStart(2, "0"),
+            'minutes': `${Math.floor((t / 1000 / 60) % 60)}`.padStart(2, "0"),
+            'seconds': `${Math.floor((t / 1000) % 60)}`.padStart(2, "0"),
+        };
+    }
+
+    document.querySelectorAll('.widget').forEach(function (row) {
+        const time = row.querySelector('time')
+        const endtime = new Date(time.dateTime)
+
+        function updateClock() {
+            var current = Date.now()
+            var t = getTimeRemaining(endtime, current);
+            time.innerHTML = `${t.days}:${t.hours}:${t.minutes}:${t.seconds}`
+            if (current > endtime) {
+                row.className = 'widget table-warning';
+            } else {
+                row.className = 'widget table-success';
+            }
+        }
+        updateClock(); // run function once at first to avoid delay
+        var timeinterval = setInterval(updateClock, 1000);
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<h1>Countdowns</h1>
+<a class="btn btn-success" href="{% url 'stats:widget-create' %}">Create Widget</a>
+
+
+<table class="table table-sm">
+    <tr>
+        <th>&nbsp;</th>
+        <th>Title</th>
+        <th>Countdown</th>
+        <th>Description</th>
+        <th>More</th>
+    </tr>
+    {% for widget in object_list %}
+    <tr class="widget" data-public="{{widget.public}}">
+        <td><img src="{{widget.icon}}" /></td>
+        <td>
+            <a href="{{widget.get_absolute_link}}">
+                {{widget.title}}
+            </a>
+        </td>
+        <td><time datetime="{{widget.timestamp.isoformat}}">{{widget.timestamp}}</time></td>
+        <td>{{widget.description}}</td>
+        <td>{{widget.more|urlize}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

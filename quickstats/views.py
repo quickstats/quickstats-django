@@ -155,3 +155,13 @@ class StreakIncrement(UserPassesTestMixin, SingleObjectMixin, View):
         )
         messages.success(request, "Added new comment")
         return redirect(self.object.get_absolute_url())
+
+
+class CountdownList(LoginRequiredMixin, ListView):
+    model = models.Widget
+    template_name = "quickstats/countdown_list.html"
+
+    def get_queryset(self):
+        return self.model.objects.filter(
+            owner=self.request.user, type="countdown"
+        ).order_by("-timestamp")
