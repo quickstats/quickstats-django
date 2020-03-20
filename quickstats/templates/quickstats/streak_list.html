@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Streaks</h1>
+<a class="btn btn-success" href="{% url 'stats:widget-create' %}">Create Widget</a>
+
+
+<table class="table table-sm">
+    <tr>
+        <th>&nbsp;</th>
+        <th>Title</th>
+        <th>Updated</th>
+        <th>Value</th>
+        <th>Description</th>
+        <th>More</th>
+    </tr>
+    {% for widget in object_list %}
+    <tr class="widget" data-public="{{widget.public}}">
+        <td>
+            {% if widget.icon %}
+            <img src="{% get_media_prefix %}{{widget.icon}}">
+            {% endif %}
+        </td>
+        <td {% if widget.public%}class="table-primary" {% endif %}>
+            <a href="{{widget.get_absolute_url}}">
+                {{widget.title}}
+            </a>
+        </td>
+        <td >
+            <time datetime="{{widget.timestamp.isoformat}}">{{widget.timestamp}}</time>
+        </td>
+        <td>{{widget.value}}</td>
+        <td>{{widget.description}}</td>
+        <td>{{widget.more|urlize}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

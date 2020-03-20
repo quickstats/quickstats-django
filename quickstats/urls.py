@@ -19,5 +19,8 @@ urlpatterns = [
     path("comments", views.CommentList.as_view(), name="comment-list"),
     path("waypoints", views.WaypointList.as_view(), name="waypoint-list"),
     # Custom Views
+    path("charts", views.ChartList.as_view(), name="chart-list"),
     path("countdowns", views.CountdownList.as_view(), name="countdown-list"),
+    path("locations", views.LocationList.as_view(), name="location-list"),
+    path("streaks", views.StreakList.as_view(), name="streak-list"),
 ]
