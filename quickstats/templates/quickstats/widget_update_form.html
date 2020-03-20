@@ -18,7 +18,7 @@ Edit Widget / {{widget.title}}
     {% endif %}
     <a class="list-group-item list-group-item-action" href="{% url 'api:widget-embed' pk=widget.pk %}">Copy Embed</a>
 
-    <a class="list-group-item list-group-item-action" href="{% url 'api:widget-samples' pk=widget.pk %}">Export</a>
+    <a class="list-group-item list-group-item-action" href="{% url 'api-widget:sample-list' widget_pk=widget.pk %}">Export</a>
 
     <a class="list-group-item list-group-item-action list-group-item-danger"
         href="{% url 'stats:widget-delete' pk=widget.pk %}">Delete</a>
