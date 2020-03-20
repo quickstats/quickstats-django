@@ -9,9 +9,9 @@
         return {
             'total': t,
             'days': Math.floor(t / (1000 * 60 * 60 * 24)),
-            'hours': `${Math.floor((t / (1000 * 60 * 60)) % 24)}`.padStart(2, "0"),
-            'minutes': `${Math.floor((t / 1000 / 60) % 60)}`.padStart(2, "0"),
-            'seconds': `${Math.floor((t / 1000) % 60)}`.padStart(2, "0"),
+            'hours': Math.floor((t / (1000 * 60 * 60)) % 24),
+            'minutes': Math.floor((t / 1000 / 60) % 60),
+            'seconds': Math.floor((t / 1000) % 60),
         };
     }
 
@@ -22,7 +22,7 @@
         function updateClock() {
             var current = Date.now()
             var t = getTimeRemaining(endtime, current);
-            time.innerHTML = `${t.days}:${t.hours}:${t.minutes}:${t.seconds}`
+            time.innerHTML = [t.days, t.hours, t.minutes, t.seconds].map(v => String(v).padStart(2, "0")).join(':')
             if (current > endtime) {
                 time.parentNode.className = 'table-warning';
             } else {
