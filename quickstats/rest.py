@@ -15,7 +15,10 @@ class WidgetViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsOwnerOrPublic,)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
+        qs = self.queryset.filter(owner=self.request.user)
+        if "type" in self.request.GET:
+            qs = qs.filter(type=self.request.GET["type"])
+        return qs
 
     @action(detail=True, methods=["get"])
     def embed(self, request, pk=None):
