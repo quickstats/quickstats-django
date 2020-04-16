@@ -1,24 +1,24 @@
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
-from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework_csv.renderers import CSVRenderer
 
 from . import models, permissions, serializers
 
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class WidgetViewSet(viewsets.ModelViewSet):
     queryset = models.Widget.objects.prefetch_related("owner", "setting_set")
     serializer_class = serializers.WidgetSerializer
     permission_classes = (permissions.IsOwnerOrPublic,)
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["type", "public"]
 
     def get_queryset(self):
-        qs = self.queryset.filter(owner=self.request.user)
-        if "type" in self.request.GET:
-            qs = qs.filter(type=self.request.GET["type"])
-        return qs
+        return self.queryset.filter(owner=self.request.user)
 
     @action(detail=True, methods=["get"])
     def embed(self, request, pk=None):
