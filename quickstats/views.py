@@ -154,6 +154,8 @@ class StreakIncrement(UserPassesTestMixin, SingleObjectMixin, View):
             value=request.POST["value"], timestamp=timezone.now()
         )
         messages.success(request, "Added new comment")
+        if "next" in request.POST:
+            return redirect(request.POST["next"])
         return redirect(self.object.get_absolute_url())
 
 

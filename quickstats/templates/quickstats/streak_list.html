@@ -1,19 +1,22 @@
 {% extends 'base.html' %}
+
 {% load static %}
+{% load i18n %}
 
 {% block content %}
-<h1>Streaks</h1>
-<a class="btn btn-success" href="{% url 'stats:widget-create' %}">Create Widget</a>
+<h1>{% trans "Streak" %}</h1>
+<a class="btn btn-success" href="{% url 'stats:widget-create' %}">{% trans "Create Widget" %}</a>
 
 
 <table class="table table-sm">
     <tr>
         <th>&nbsp;</th>
-        <th>Title</th>
-        <th>Updated</th>
-        <th>Value</th>
-        <th>Description</th>
-        <th>More</th>
+        <th>{% trans "Title" %}</th>
+        <th>{% trans "Updated" %}</th>
+        <th>{% trans "Value" %}</th>
+        <th>{% trans "Description" %}</th>
+        <th>{% trans "Link" %}</th>
+        <th>{% trans "Action" %}</th>
     </tr>
     {% for widget in object_list %}
     <tr class="widget" data-public="{{widget.public}}">
@@ -27,12 +30,21 @@
                 {{widget.title}}
             </a>
         </td>
-        <td >
+        <td>
             <time datetime="{{widget.timestamp.isoformat}}">{{widget.timestamp}}</time>
         </td>
         <td>{{widget.value}}</td>
         <td>{{widget.description}}</td>
         <td>{{widget.more|urlize}}</td>
+        <td>
+            <form method="post" action="{% url 'stats:streak-increment' widget.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button class="btn btn-warning">+</button>
+                by
+                <input type="number" name="value" value="1" style="width:4em;" />
+            </form>
+        </td>
     </tr>
     {% endfor %}
 </table>

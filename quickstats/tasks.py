@@ -4,19 +4,19 @@ import logging
 import requests
 from celery import shared_task
 from celery.task.base import periodic_task
+from timezone.models import Timezone
 
 from . import models
 
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 logger = logging.getLogger(__name__)
 
 
 @shared_task()
 def update_chart(pk):
-    widget = models.Widget.objects.get(pk=pk)
-    if widget.type not in ["chart"]:
-        return
+    widget = models.Widget.objects.get(pk=pk, type="chart")
     latest = models.Sample.objects.filter(widget_id=pk).latest("timestamp")
     widget.value = latest.value
     widget.timestamp = latest.timestamp
@@ -24,10 +24,22 @@ def update_chart(pk):
 
 
 @shared_task
+def update_streak(pk):
+    widget = models.Widget.objects.get(pk=pk, type="streak")
+
+    # Update our timestamps
+    widget.timestamp = Timezone.for_user(owner=widget.owner).now()
+    midnight = widget.timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # Update our sample
+    samples = models.Sample.objects.filter(widget_id=pk, timestamp__gte=midnight)
+    widget.value = samples.aggregate(Sum("value"))["value__sum"]
+    widget.save(update_fields=["value", "timestamp"])
+
+
+@shared_task
 def update_location(pk):
-    widget = models.Widget.objects.get(pk=pk)
-    if widget.type not in ["location"]:
-        return
+    widget = models.Widget.objects.get(pk=pk, type="location")
     latest = models.Waypoint.objects.filter(widget_id=pk).latest("timestamp")
     widget.timestamp = latest.timestamp
     widget.save(update_fields=["timestamp"])
