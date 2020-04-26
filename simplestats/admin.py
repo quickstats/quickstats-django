@@ -1,5 +1,4 @@
 import simplestats.models
-import simplestats.tasks.chart
 
 from django.contrib import admin
 
