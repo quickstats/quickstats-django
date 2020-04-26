@@ -4,7 +4,7 @@ import time
 
 from dateutil.parser import parse
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
 from simplestats import models
@@ -13,7 +13,8 @@ from django.http import JsonResponse
 
 
 class GrafanaWidgetView(object):
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         authentication_classes=[BasicAuthentication],
         permission_classes=[DjangoModelPermissionsOrAnonReadOnly]
@@ -31,7 +32,8 @@ class GrafanaWidgetView(object):
     def __ts(self, ts):
         return time.mktime(ts.timetuple()) * 1000
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         authentication_classes=[BasicAuthentication],
         permission_classes=[DjangoModelPermissionsOrAnonReadOnly]
@@ -59,7 +61,7 @@ class GrafanaWidgetView(object):
             results.append(response)
         return JsonResponse(results, safe=False)
 
-    @list_route(methods=['post'], authentication_classes=[BasicAuthentication])
+    @action(detail=False, methods=['post'], authentication_classes=[BasicAuthentication])
     def annotations(self, request):
         '''Grafana annotation'''
         body = json.loads(request.body.decode("utf-8"))

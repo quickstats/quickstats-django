@@ -56,10 +56,5 @@ setup(
         'powerplug.rest': [
             'widget = simplestats.rest:WidgetViewSet',
         ],
-        'powerplug.task': [
-            'chart = simplestats.tasks.chart',
-            'countdown = simplestats.tasks.countdown',
-            'owntracks = simplestats.tasks.owntracks',
-        ]
     },
 )
