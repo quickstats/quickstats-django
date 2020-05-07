@@ -17,12 +17,13 @@ def formatted(widget):
     return widget.value
 
 
-@register.filter
-def embedcode(widget, request):
-    return (
-        '<iframe width="250" height="250" src="%s" sandbox="allow-top-navigation" scrolling="no" frameborder="0"></iframe>'
-        % request.build_absolute_uri(reverse("api:widget-embed", args=(widget.pk,)))
-    )
+@register.inclusion_tag("quickstats/embed_code.html", takes_context=True)
+def embed_code(context, widget):
+    return {
+        "src_url": context["request"].build_absolute_uri(
+            reverse("api:widget-embed", args=(widget.pk,))
+        ),
+    }
 
 
 # Taken from here

@@ -26,7 +26,7 @@ Widget / {{widget.title}}
 
     <div class="col-9">
         <h2>Embed</h2>
-        <input class="form-control" value="{{widget|embedcode:request}}" />
+        <textarea class="form-control">{% embed_code widget %}</textarea>
         <h2>Comments</h2>
         <form method="post" action="{% url 'stats:widget-comment' widget.pk %}">
             {% csrf_token %}
