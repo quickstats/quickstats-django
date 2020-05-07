@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load quickstats %}
 {% block content %}
 <h1>Comments</h1>
 
@@ -21,6 +21,6 @@
     {% endfor %}
 </table>
 
-{% include 'quickstats/paginator.html' with page_obj=page_obj only %}
+{% render_paginator 3 %}
 
 {% endblock %}
