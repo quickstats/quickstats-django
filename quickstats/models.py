@@ -148,15 +148,20 @@ class Waypoint(models.Model):
 
 
 class Scrape(models.Model):
-    def drivers():
-        yield from working_set.iter_entry_points("quickstats.scrape")
+    driver_set = {
+        entry.name: entry
+        for entry in working_set.iter_entry_points("quickstats.scrape")
+    }
 
-    TYPE_CHOICES = [(entity.name, entity.name) for entity in drivers()]
+    TYPE_CHOICES = [(entry, entry) for entry in driver_set]
 
     widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
     driver = models.CharField(max_length=32, choices=TYPE_CHOICES)
     url = models.URLField()
 
+    def scrape(self):
+        driver = self.driver_set[self.driver].load()()
+        driver.scrape(self)
+
     class Meta:
         unique_together = ("widget", "driver")
-

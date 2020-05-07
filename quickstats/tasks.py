@@ -47,22 +47,16 @@ def update_location(pk):
 
 @shared_task()
 def scrape(pk):
-    config = models.Scrape.objects.get(pk=pk)
-    for entry in models.Scrape.drivers():
-        if config.driver == entry.name:
-            try:
-                driver = entry.load()()
-                driver.scrape(config)
-            except ImportError:
-                logger.exception("Error loading driver")
-            except requests.HTTPError:
-                logger.exception("Error scraping target")
-            except Exception:
-                logger.exception("Unhandled Exception")
-            finally:
-                return
-    else:
-        logger.error("Unknown driver %s", config.driver)
+    try:
+        models.Scrape.objects.get(pk=pk).scrape()
+    except ImportError:
+        logger.exception("Error loading driver")
+    except requests.HTTPError:
+        logger.exception("Error scraping target")
+    except Exception:
+        logger.exception("Unhandled Exception")
+    finally:
+        return
 
 
 @periodic_task(run_every=datetime.timedelta(minutes=30))
