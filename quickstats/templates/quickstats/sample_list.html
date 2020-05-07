@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Samples</h1>
+
+<table class="table">
+    <tr>
+        <th>Widget</th>
+        <th>Timestamp</th>
+        <th>Value</th>
+    </tr>
+    {% for sample in sample_list %}
+    <tr>
+        <td><a href="{{sample.widget.get_absolute_url}}">{{sample.widget.title}}</a></td>
+        <td>{{sample.timestamp}}</td>
+        <td>{{sample.value}}</td>
+    </tr>
+
+    {% endfor %}
+</table>
+
+{% include 'quickstats/paginator.html' with page_obj=page_obj only %}
+
+{% endblock %}

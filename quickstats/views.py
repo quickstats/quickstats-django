@@ -134,6 +134,14 @@ class CommentList(LoginRequiredMixin, ListView):
         return super().get_queryset().filter(widget__owner=self.request.user)
 
 
+class SampleList(LoginRequiredMixin, ListView):
+    model = models.Sample
+    paginate_by = 20
+
+    def get_queryset(self):
+        return super().get_queryset().filter(widget__owner=self.request.user)
+
+
 class WaypointList(LoginRequiredMixin, ListView):
     model = models.Waypoint
     paginate_by = 20
