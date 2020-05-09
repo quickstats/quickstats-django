@@ -137,7 +137,12 @@ class CommentList(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return super().get_queryset().filter(widget__owner=self.request.user)
+        return (
+            super()
+            .get_queryset()
+            .filter(widget__owner=self.request.user)
+            .select_related("widget")
+        )
 
 
 class ScrapeList(LoginRequiredMixin, ListView):
@@ -145,7 +150,12 @@ class ScrapeList(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return super().get_queryset().filter(widget__owner=self.request.user)
+        return (
+            super()
+            .get_queryset()
+            .filter(widget__owner=self.request.user)
+            .select_related("widget")
+        )
 
 
 class ShareList(LoginRequiredMixin, ListView):
@@ -166,7 +176,12 @@ class SampleList(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return super().get_queryset().filter(widget__owner=self.request.user)
+        return (
+            super()
+            .get_queryset()
+            .filter(widget__owner=self.request.user)
+            .select_related("widget")
+        )
 
 
 class WaypointList(LoginRequiredMixin, ListView):
@@ -174,7 +189,12 @@ class WaypointList(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return super().get_queryset().filter(widget__owner=self.request.user)
+        return (
+            super()
+            .get_queryset()
+            .filter(widget__owner=self.request.user)
+            .select_related("widget")
+        )
 
 
 class StreakIncrement(UserPassesTestMixin, SingleObjectMixin, View):
