@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load quickstats %}
+
+{% block content %}
+<h1>Scrapes</h1>
+
+<table class="table">
+    <tr>
+        <th>Widget</th>
+        <th>Driver</th>
+        <th>URL</th>
+    </tr>
+    {% for scrape in object_list %}
+    <tr>
+        <td><a href="{{scrape.widget.get_absolute_url}}">{{scrape.widget.title}}</a></td>
+        <td>{{scrape.driver}}</td>
+        <td>{{scrape.url}}</td>
+    </tr>
+
+    {% endfor %}
+</table>
+
+{% render_paginator 3 %}
+
+{% endblock %}
