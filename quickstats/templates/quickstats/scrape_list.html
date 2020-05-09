@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load quickstats %}
 
 {% block content %}
@@ -6,15 +7,22 @@
 
 <table class="table table-sm">
     <tr>
-        <th>Widget</th>
+        <th>{% trans "Title" %}</th>
         <th>Driver</th>
         <th>URL</th>
+        <th>&nbsp;</th>
     </tr>
     {% for scrape in object_list %}
     <tr>
         <td><a href="{{scrape.widget.get_absolute_url}}">{{scrape.widget.title}}</a></td>
         <td>{{scrape.driver}}</td>
         <td>{{scrape.url}}</td>
+        <td>
+            <a class="badge badge-warning"
+                href="{% url 'stats:widget-update' scrape.widget_id %}">{% trans "Change" %}</a>
+            <a class="badge badge-danger"
+                href="{% url 'stats:widget-update' scrape.widget_id %}">{% trans "Delete" %}</a>
+        </td>
     </tr>
 
     {% endfor %}

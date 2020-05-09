@@ -1,19 +1,25 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load quickstats %}
+
 {% block content %}
 <h1>Samples</h1>
 
 <table class="table table-sm">
     <tr>
-        <th>Widget</th>
-        <th>Timestamp</th>
-        <th>Value</th>
+        <th>{% trans "Title" %}</th>
+        <th>{% trans "Updated" %}</th>
+        <th colspan="2">{% trans "Value" %}</th>
     </tr>
     {% for sample in sample_list %}
     <tr>
         <td><a href="{{sample.widget.get_absolute_url}}">{{sample.widget.title}}</a></td>
         <td>{{sample.timestamp}}</td>
         <td>{{sample.value}}</td>
+                <td>
+                    <a class="badge badge-warning" href="{% url 'stats:widget-update' sample.widget_id %}">{% trans "Change" %}</a>
+                    <a class="badge badge-danger" href="{% url 'stats:widget-update' sample.widget_id %}">{% trans "Delete" %}</a>
+                </td>
     </tr>
 
     {% endfor %}

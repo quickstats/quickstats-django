@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
 {% block javascript %}
@@ -43,10 +44,9 @@
 <table class="table table-sm">
     <tr>
         <th>&nbsp;</th>
-        <th>Title</th>
-        <th>Countdown</th>
-        <th>Description</th>
-        <th>More</th>
+        <th>{% trans "Title" %}</th>
+        <th>{% trans "Countdown" %}</th>
+        <th colspan="2">{% trans "Description" %}</th>
     </tr>
     {% for widget in object_list %}
     <tr class="widget" data-public="{{widget.public}}">
@@ -55,7 +55,7 @@
             <img src="{% get_media_prefix %}{{widget.icon}}">
             {% endif %}
         </td>
-        <td {% if widget.public%}class="table-primary"{% endif %}>
+        <td {% if widget.public%}class="table-primary" {% endif %}>
             <a href="{{widget.get_absolute_url}}">
                 {{widget.title}}
             </a>
@@ -63,8 +63,17 @@
         <td style="text-align: right;">
             <time datetime="{{widget.timestamp.isoformat}}">{{widget.timestamp}}</time>
         </td>
-        <td>{{widget.description}}</td>
-        <td>{{widget.more|urlize}}</td>
+        <td>
+            {{widget.description}}
+            {% if widget.more %}
+            <hr>
+            {{widget.more|urlize}}
+            {% endif %}
+        </td>
+        <td>
+            <a class="badge badge-warning" href="{% url 'stats:widget-update' widget.id %}">{% trans "Change" %}</a>
+            <a class="badge badge-danger" href="{% url 'stats:widget-delete' widget.id %}">{% trans "Delete" %}</a>
+        </td>
     </tr>
     {% endfor %}
 </table>

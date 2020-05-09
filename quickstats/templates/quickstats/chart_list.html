@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
 {% block content %}
@@ -9,12 +10,12 @@
 <table class="table table-sm">
     <tr>
         <th>&nbsp;</th>
-        <th>Title</th>
-        <th>Value</th>
-        <th>Updated</th>
-        <th>Description</th>
-        <th>More</th>
+        <th>{% trans "Title" %}</th>
+        <th>{% trans "Value" %}</th>
+        <th>{% trans "Updated" %}</th>
+        <th colspan="2">{% trans "Description" %}</th>
     </tr>
+
     {% for widget in object_list %}
     <tr class="widget" data-public="{{widget.public}}">
         <td>
@@ -28,13 +29,23 @@
             </a>
         </td>
         <td>{{widget.value}}</td>
-        <td >
+        <td>
             <time datetime="{{widget.timestamp.isoformat}}">{{widget.timestamp}}</time>
         </td>
-        <td>{{widget.description}}</td>
-        <td>{{widget.more|urlize}}</td>
+        <td>
+            {{widget.description}}
+            {% if widget.more %}
+            <hr>
+            {{widget.more|urlize}}
+            {% endif %}
+        </td>
+        <td>
+            <a class="badge badge-warning" href="{% url 'stats:widget-update' widget.id %}">{% trans "Change" %}</a>
+            <a class="badge badge-danger" href="{% url 'stats:widget-delete' widget.id %}">{% trans "Delete" %}</a>
+        </td>
     </tr>
     {% endfor %}
+
 </table>
 
 {% endblock %}

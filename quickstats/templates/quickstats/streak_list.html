@@ -14,10 +14,10 @@
         <th>{% trans "Title" %}</th>
         <th>{% trans "Updated" %}</th>
         <th>{% trans "Value" %}</th>
-        <th>{% trans "Description" %}</th>
-        <th>{% trans "Link" %}</th>
         <th>{% trans "Action" %}</th>
+        <th colspan="2">{% trans "Description" %}</th>
     </tr>
+
     {% for widget in object_list %}
     <tr class="widget" data-public="{{widget.public}}">
         <td>
@@ -34,16 +34,26 @@
             <time datetime="{{widget.timestamp.isoformat}}">{{widget.timestamp}}</time>
         </td>
         <td>{{widget.value}}</td>
-        <td>{{widget.description}}</td>
-        <td>{{widget.more|urlize}}</td>
+
         <td>
             <form method="post" action="{% url 'stats:streak-increment' widget.pk %}">
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.path }}">
-                <button class="btn btn-warning">+</button>
+                <button class="btn btn-warning btn-sm">+</button>
                 by
                 <input type="number" name="value" value="1" style="width:4em;" />
             </form>
+        </td>
+        <td>
+            {{widget.description}}
+            {% if widget.more %}
+            <hr>
+            {{widget.more|urlize}}
+            {% endif %}
+        </td>
+        <td>
+            <a class="badge badge-warning" href="{% url 'stats:widget-update' widget.id %}">{% trans "Change" %}</a>
+            <a class="badge badge-danger" href="{% url 'stats:widget-delete' widget.id %}">{% trans "Delete" %}</a>
         </td>
     </tr>
     {% endfor %}
