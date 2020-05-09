@@ -58,7 +58,9 @@ class SubscriptionDelete(LoginRequiredMixin, DeleteView):
 
 class WidgetSubscription(LoginRequiredMixin, View):
     def post(self, request, pk):
-        sub, created = models.Subscription.objects.get_or_create(owner=request.user, widget_id=pk)
+        sub, created = models.Subscription.objects.get_or_create(
+            owner=request.user, widget_id=pk
+        )
         messages.success(request, "Subscribed")
         if "next" in self.request.POST:
             return redirect(self.request.POST["next"])
@@ -79,7 +81,9 @@ class WidgetComment(LoginRequiredMixin, SingleObjectMixin, View):
 
     def post(self, request, pk):
         self.object = self.get_object()
-        comment = self.object.comment_set.create(body=request.POST["body"], owner=self.request.user)
+        comment = self.object.comment_set.create(
+            body=request.POST["body"], owner=self.request.user
+        )
         messages.success(request, "Added new comment")
         return redirect(self.object.get_absolute_url())
 
@@ -90,7 +94,9 @@ class WidgetListView(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        qs = self.model.objects.filter(owner=self.request.user).filter_get(self.request.GET)
+        qs = self.model.objects.filter(owner=self.request.user).filter_get(
+            self.request.GET
+        )
         if "type" in self.request.kwargs:
             qs = qs.filter(type=self.request.kwargs["type"])
         return qs
@@ -140,6 +146,19 @@ class ScrapeList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return super().get_queryset().filter(widget__owner=self.request.user)
+
+
+class ShareList(LoginRequiredMixin, ListView):
+    model = models.Share
+    paginate_by = 20
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(widget__owner=self.request.user)
+            .select_related("widget")
+        )
 
 
 class SampleList(LoginRequiredMixin, ListView):

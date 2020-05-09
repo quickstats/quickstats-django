@@ -165,3 +165,13 @@ class Scrape(models.Model):
 
     class Meta:
         unique_together = ("widget", "driver")
+
+
+class Share(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
+    created = models.DateTimeField(default=timezone.now)
+    viewed = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ("owner", "widget")

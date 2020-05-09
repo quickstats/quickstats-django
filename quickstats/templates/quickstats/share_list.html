@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load quickstats %}
+
+{% block content %}
+<h1>Shares</h1>
+
+<table class="table table-sm">
+    <tr>
+        <th>Widget</th>
+        <th>&nbsp;</th>
+        <th>Created</th>
+        <th>Viewed</th>
+    </tr>
+    {% for share in object_list %}
+    <tr>
+        <td><a href="{{share.widget.get_absolute_url}}">{{share.widget.title}}</a></td>
+        <td>
+            <a class="badge badge-warning" href="{% url 'stats:widget-update' share.widget_id %}">{% trans "Change" %}</a>
+            <a class="badge badge-danger" href="{% url 'stats:widget-update' share.widget_id %}">{% trans "Delete" %}</a>
+        </td>
+        <td>{{share.created}}</td>
+        <td>{{share.viewed}}</td>
+    </tr>
+
+    {% endfor %}
+</table>
+
+{% render_paginator 3 %}
+
+{% endblock %}
