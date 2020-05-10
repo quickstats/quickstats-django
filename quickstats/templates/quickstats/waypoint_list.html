@@ -10,8 +10,7 @@
         <th>{% trans "Title" %}</th>
         <th>{% trans "Updated" %}</th>
         <th>{% trans "State" %}</th>
-        <th>{% trans "Latitude" %}</th>
-        <th>{% trans "Longitude" %}</th>
+        <th>{% trans "Location" %}</th>
         <th colspan="2">{% trans "Description" %}</th>
     </tr>
     {% for waypoint in object_list %}
@@ -19,8 +18,10 @@
         <td><a href="{{waypoint.widget.get_absolute_url}}">{{waypoint.widget.title}}</a></td>
         <td>{{waypoint.timestamp}}</td>
         <td>{{waypoint.get_state_display}}</td>
-        <td>{{waypoint.lat}}</td>
-        <td>{{waypoint.lon}}</td>
+        <td>
+            <a class="badge badge-info" rel="nofollow" href="https://www.google.com/maps/?q={{waypoint.lat}},{{waypoint.lon}}">{% trans "Map" %}</a>
+            ({{waypoint.lat|floatformat:3}},{{waypoint.lon|floatformat:3}})
+        </td>
         <td>{{waypoint.body}}</td>
         <td>
             <a class="badge badge-warning" href="{% url 'stats:widget-update' waypoint.widget_id %}">{% trans "Change" %}</a>
