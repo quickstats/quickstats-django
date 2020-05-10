@@ -217,46 +217,25 @@ class StreakIncrement(UserPassesTestMixin, SingleObjectMixin, View):
         return redirect(self.object.get_absolute_url())
 
 
-class ChartList(LoginRequiredMixin, ListView):
+class FilterList(LoginRequiredMixin, ListView):
     model = models.Widget
-    template_name = "quickstats/chart_list.html"
+
+    def get_template_names(self):
+        print(self.kwargs)
+        return "quickstats/{type}_list.html".format(**self.kwargs)
 
     def get_queryset(self):
         return self.model.objects.filter(
-            owner=self.request.user, type="chart"
-        ).order_by("-timestamp")
+            owner=self.request.user, type=self.kwargs["type"]
+        )
 
-
-class CountdownList(LoginRequiredMixin, ListView):
-    model = models.Widget
-    template_name = "quickstats/countdown_list.html"
-
-    def get_queryset(self):
-        return self.model.objects.filter(
-            owner=self.request.user, type="countdown"
-        ).order_by("-timestamp")
-
-
-class LocationList(LoginRequiredMixin, ListView):
-    model = models.Widget
-    template_name = "quickstats/location_list.html"
-
-    def get_queryset(self):
-        return self.model.objects.filter(
-            owner=self.request.user, type="location"
-        ).order_by("title")
-
-
-class StreakList(LoginRequiredMixin, ListView):
-    model = models.Widget
-    template_name = "quickstats/streak_list.html"
-
-    def get_queryset(self):
-        return self.model.objects.filter(
-            owner=self.request.user, type="streak"
-        ).order_by("title")
+    def get_ordering(self):
+        if self.kwargs["type"] in ["location", "streak"]:
+            return ("title",)
+        return ("-timestamp",)
 
     def get_context_data(self):
+        # TODO Only for streaks
         context = super().get_context_data()
         context["midnight"] = timezone.now().replace(
             minute=0, hour=0, second=0, microsecond=0

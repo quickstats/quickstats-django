@@ -17,15 +17,12 @@ urlpatterns = [
     path("widget/<pk>/unsubscribe", views.WidgetUnsubscribe.as_view(), name="widget-unsubscribe"),
     path("widget/<pk>/update", views.WidgetUpdate.as_view(), name="widget-update"),
     path("widget/<pk>/increment", views.StreakIncrement.as_view(), name="streak-increment"),
-    # Misc Views
-    path("comments", views.CommentList.as_view(), name="comment-list"),
-    path("waypoints", views.WaypointList.as_view(), name="waypoint-list"),
-    path("samples", views.SampleList.as_view(), name="sample-list"),
-    path("scrapes", views.ScrapeList.as_view(), name="scrape-list"),
-    path("shares", views.ShareList.as_view(), name="share-list"),
     # Filtered List Views
-    path("charts", views.ChartList.as_view(), name="chart-list"),
-    path("countdowns", views.CountdownList.as_view(), name="countdown-list"),
-    path("locations", views.LocationList.as_view(), name="location-list"),
-    path("streaks", views.StreakList.as_view(), name="streak-list"),
+    path("filter/<type>", views.FilterList.as_view(), name="widget-type"),
+    # Misc Views
+    path("recent/comments", views.CommentList.as_view(), name="comment-list"),
+    path("recent/waypoints", views.WaypointList.as_view(), name="waypoint-list"),
+    path("recent/samples", views.SampleList.as_view(), name="sample-list"),
+    path("recent/scrapes", views.ScrapeList.as_view(), name="scrape-list"),
+    path("recent/shares", views.ShareList.as_view(), name="share-list"),
 ]
