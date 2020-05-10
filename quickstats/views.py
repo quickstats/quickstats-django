@@ -221,18 +221,15 @@ class FilterList(LoginRequiredMixin, ListView):
     model = models.Widget
 
     def get_template_names(self):
-        print(self.kwargs)
         return "quickstats/{type}_list.html".format(**self.kwargs)
 
     def get_queryset(self):
-        return self.model.objects.filter(
+        qs = self.model.objects.filter(
             owner=self.request.user, type=self.kwargs["type"]
         )
-
-    def get_ordering(self):
         if self.kwargs["type"] in ["location", "streak"]:
-            return ("title",)
-        return ("-timestamp",)
+            return qs.order_by("title")
+        return qs.order_by("-timestamp")
 
     def get_context_data(self):
         # TODO Only for streaks
