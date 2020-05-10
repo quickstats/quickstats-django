@@ -34,7 +34,7 @@
                 {{widget.title}}
             </a>
         </td>
-        <td>
+        <td {% if widget.timestamp < midnight %}class="table-secondary"{% endif %}>
             <time datetime="{{widget.timestamp.isoformat}}">{{widget.timestamp}}</time>
         </td>
         <td>{{widget.value}}</td>

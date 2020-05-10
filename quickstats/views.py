@@ -255,3 +255,10 @@ class StreakList(LoginRequiredMixin, ListView):
         return self.model.objects.filter(
             owner=self.request.user, type="streak"
         ).order_by("title")
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["midnight"] = timezone.now().replace(
+            minute=0, hour=0, second=0, microsecond=0
+        )
+        return context
