@@ -2,6 +2,7 @@ from . import forms, models
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q, Sum
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -227,6 +228,15 @@ class FilterList(LoginRequiredMixin, ListView):
         qs = self.model.objects.filter(
             owner=self.request.user, type=self.kwargs["type"]
         )
+        self.midnight = timezone.now().replace(
+            minute=0, hour=0, second=0, microsecond=0
+        )
+        if self.kwargs["type"] == "streak":
+            qs = qs.annotate(
+                count_today=Sum(
+                    "sample__value", filter=Q(sample__timestamp__gte=self.midnight)
+                )
+            )
         if self.kwargs["type"] in ["location", "streak"]:
             return qs.order_by("title")
         return qs.order_by("-timestamp")
@@ -234,7 +244,5 @@ class FilterList(LoginRequiredMixin, ListView):
     def get_context_data(self):
         # TODO Only for streaks
         context = super().get_context_data()
-        context["midnight"] = timezone.now().replace(
-            minute=0, hour=0, second=0, microsecond=0
-        )
+        context["midnight"] = self.midnight
         return context

@@ -37,7 +37,9 @@
         <td {% if widget.timestamp < midnight %}class="table-secondary" {% endif %}>
             <time datetime="{{widget.timestamp.isoformat}}">{{widget.timestamp}}</time>
         </td>
-        <td>{{widget.value}}</td>
+        <td>
+            {{widget.value}} / {{widget.count_today}}
+        </td>
 
         <td>
             <form method="post" action="{% url 'stats:streak-increment' widget.pk %}">
