@@ -4,7 +4,12 @@
 
 {% block content %}
 <h1>Locations</h1>
-<a class="btn btn-success" href="{% url 'stats:widget-create' %}">Create Widget</a>
+
+<form action="{% url 'stats:widget-create' %}">
+    <input type="hidden" name="type" value="location">
+    <input type="hidden" name="next" value="{{request.path}}" />
+    <button class="btn btn-success" href="{% url 'stats:widget-create' %}">{% trans "Create Widget" %}</button>
+</form>
 
 
 <table class="table table-sm">

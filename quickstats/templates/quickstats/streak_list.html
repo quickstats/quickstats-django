@@ -5,8 +5,12 @@
 
 {% block content %}
 <h1>{% trans "Streak" %}</h1>
-<a class="btn btn-success" href="{% url 'stats:widget-create' %}">{% trans "Create Widget" %}</a>
 
+<form action="{% url 'stats:widget-create' %}">
+    <input type="hidden" name="type" value="streak">
+    <input type="hidden" name="next" value="{{request.path}}" />
+    <button class="btn btn-success" href="{% url 'stats:widget-create' %}">{% trans "Create Widget" %}</button>
+</form>
 
 <table class="table table-sm">
     <tr>

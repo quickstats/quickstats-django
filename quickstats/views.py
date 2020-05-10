@@ -127,6 +127,9 @@ class WidgetCreate(CreateView):
     model = models.Widget
     fields = ["title", "description", "public", "type", "more"]
 
+    def get_initial(self):
+        return self.request.GET
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
@@ -241,7 +244,7 @@ class LocationList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return self.model.objects.filter(
             owner=self.request.user, type="location"
-        ).order_by("-timestamp")
+        ).order_by("title")
 
 
 class StreakList(LoginRequiredMixin, ListView):
@@ -251,4 +254,4 @@ class StreakList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return self.model.objects.filter(
             owner=self.request.user, type="streak"
-        ).order_by("-timestamp")
+        ).order_by("title")
