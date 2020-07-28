@@ -155,6 +155,7 @@ class Scrape(models.Model):
 
     TYPE_CHOICES = [(entry, entry) for entry in driver_set]
 
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
     driver = models.CharField(max_length=32, choices=TYPE_CHOICES)
     url = models.URLField()

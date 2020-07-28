@@ -14,24 +14,32 @@ class ScrapeInline(admin.TabularInline):
     model = models.Scrape
 
 
-@admin.register(models.Subscription)
-class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ("widget", "owner")
-    list_filter = (("owner", admin.RelatedOnlyFieldListFilter),)
-
-
 @admin.register(models.Widget)
 class WidgetAdmin(admin.ModelAdmin):
     list_display = ("title", "type", "public", "owner")
-    list_filter = ("type", "public", ("owner", admin.RelatedOnlyFieldListFilter))
+    list_filter = ("type", ("owner", admin.RelatedOnlyFieldListFilter))
     inlines = [LabelInline, SettingInline, ScrapeInline]
-
-
-@admin.register(models.Comment)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ("timestamp", "owner")
 
 
 @admin.register(models.Waypoint)
 class WaypointAdmin(admin.ModelAdmin):
     list_display = ("timestamp", "body", "lat", "lon", "state")
+
+
+@admin.register(models.Scrape)
+class ScrapeAdmin(admin.ModelAdmin):
+    def title(self, obj):
+        return obj.widget.title
+
+    list_display = ("title", "driver", "owner")
+    list_filter = ("driver", ("owner", admin.RelatedOnlyFieldListFilter))
+
+
+@admin.register(models.Share)
+class ShareAdmin(admin.ModelAdmin):
+    def title(self, obj):
+        return obj.widget.title
+
+    list_display = ("title", "owner", "created", "viewed")
+    list_filter = (("owner", admin.RelatedOnlyFieldListFilter),)
+
