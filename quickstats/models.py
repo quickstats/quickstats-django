@@ -60,7 +60,7 @@ class Widget(models.Model):
     description = models.TextField(blank=True)
     public = models.BooleanField(default=False)
     icon = models.ImageField(upload_to=_upload_to_path, blank=True)
-    more = models.URLField("External link", blank=True)
+    more = models.URLField("External link", blank=True, max_length=2000)
 
     value = models.FloatField(default=0)
     timestamp = models.DateTimeField(default=timezone.now)
