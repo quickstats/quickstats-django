@@ -158,7 +158,7 @@ class Scrape(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
     driver = models.CharField(max_length=32, choices=TYPE_CHOICES)
-    url = models.URLField()
+    url = models.URLField(max_length=2000)
 
     def scrape(self):
         driver = self.driver_set[self.driver].load()()
