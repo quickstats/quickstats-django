@@ -16,7 +16,7 @@ class ScrapeInline(admin.TabularInline):
 
 @admin.register(models.Widget)
 class WidgetAdmin(admin.ModelAdmin):
-    list_display = ("title", "type", "public", "owner")
+    list_display = ("title", "type", "public", "owner", "timestamp", "value")
     list_filter = ("type", ("owner", admin.RelatedOnlyFieldListFilter))
     inlines = [LabelInline, SettingInline, ScrapeInline]
 
@@ -42,4 +42,3 @@ class ShareAdmin(admin.ModelAdmin):
 
     list_display = ("title", "owner", "created", "viewed")
     list_filter = (("owner", admin.RelatedOnlyFieldListFilter),)
-

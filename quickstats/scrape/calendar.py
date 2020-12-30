@@ -30,7 +30,7 @@ class CalendarScraper:
             logger.info("Reading calendar: %s", calendar["X-WR-CALNAME"])
             countdown.description = "Next event in %s" % calendar["X-WR-CALNAME"]
 
-        for component in calendar.subcomponents:
+        for component in calendar.walk('vevent'):
             # Filter out non events
             if "DTSTART" not in component:
                 logger.debug("No DTSTART: %s", component.get("SUMMARY", component))
@@ -104,7 +104,7 @@ class CalendarScraper:
                 next_time = component["DTSTART"].dt
         if next_event:
             countdown.timestamp = next_time
-            countdown.title = next_event["SUMMARY"]
+            countdown.title = str(next_event["SUMMARY"])
             countdown.more = next_event["URL"] if "URL" in next_event else ""
             countdown.save()
             logger.info(
