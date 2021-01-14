@@ -27,11 +27,6 @@ class WidgetSerializer(serializers.ModelSerializer):
         return {s.name: s.value for s in obj.setting_set.all()}
 
 
-class CommmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Comment
-        fields = "__all__"
-
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:

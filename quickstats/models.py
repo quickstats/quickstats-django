@@ -36,10 +36,7 @@ class WidgetQuerySet(models.QuerySet):
         widget, created = self.filter_labels(**labels).get_or_create(**kwargs)
         if created:
             widget.label_set.bulk_create(
-                [
-                    Label(widget=widget, name=k, value=v)
-                    for k, v in labels.items()
-                ]
+                [Label(widget=widget, name=k, value=v) for k, v in labels.items()]
             )
         return widget, created
 
@@ -84,17 +81,6 @@ class Setting(models.Model):
     widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     value = models.CharField(max_length=128, blank=True)
-
-
-class Comment(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now)
-    body = models.TextField()
-
-    class Meta:
-        ordering = ("-timestamp",)
 
 
 class Subscription(models.Model):

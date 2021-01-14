@@ -11,7 +11,6 @@ urlpatterns = [
     # Widget Views
     path("widget", views.WidgetListView.as_view(), name="widget-list"),
     path("widget/<pk>", views.WidgetDetailView.as_view(), name="widget-detail"),
-    path("widget/<pk>/comment", views.WidgetComment.as_view(), name="widget-comment"),
     path("widget/<pk>/delete", views.WidgetDelete.as_view(), name="widget-delete"),
     path("widget/<pk>/subscribe", views.WidgetSubscription.as_view(), name="widget-subscribe"),
     path("widget/<pk>/unsubscribe", views.WidgetUnsubscribe.as_view(), name="widget-unsubscribe"),
@@ -20,7 +19,6 @@ urlpatterns = [
     # Filtered List Views
     path("filter/<type>", views.FilterList.as_view(), name="widget-type"),
     # Misc Views
-    path("recent/comments", views.CommentList.as_view(), name="comment-list"),
     path("recent/waypoints", views.WaypointList.as_view(), name="waypoint-list"),
     path("recent/samples", views.SampleList.as_view(), name="sample-list"),
     path("recent/scrapes", views.ScrapeList.as_view(), name="scrape-list"),

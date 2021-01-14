@@ -79,11 +79,3 @@ class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             )
         ).prefetch_related("owner", "setting_set")
 
-
-class CommentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = models.Comment.objects
-    serializer_class = serializers.CommmentSerializer
-    permission_classes = (permissions.IsOwner,)
-
-    def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
