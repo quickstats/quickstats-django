@@ -109,6 +109,9 @@ class Sample(models.Model):
         ordering = ("-timestamp",)
         unique_together = ("widget", "timestamp")
 
+    def __str__(self):
+        return "<{}|{}|{}>".format(self.widget_id, self.timestamp, self.value)
+
 
 class Waypoint(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
