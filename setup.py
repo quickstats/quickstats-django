@@ -22,14 +22,14 @@ setup(
         "Topic :: Internet :: WWW/HTTP",
     ],
     install_requires=[
-        'django-filter',
+        "django-filter",
         "celery",
         "Django>=2.0",
         "djangorestframework-csv",
         "djangorestframework",
         "drf-nested-routers",
         "icalendar",
-        "pillow>=6.2.0",
+        "pillow>=6.2.2",
         "python-dateutil",
         "pytz",
         "requests",
@@ -56,6 +56,12 @@ setup(
         "quickstats.scrape": [
             "calendar = quickstats.scrape.calendar:CalendarScraper",
             "atom = quickstats.scrape.atom:AtomScraper",
+        ],
+        "quickstats.widget": [
+            "chart = quickstats.widget.chart:ChartWidget",
+            "countdown = quickstats.widget.countdown:CountdownWidget",
+            "location = quickstats.widget.location:LocationWidget",
+            "streak = quickstats.widget.streak:StreakWidget",
         ],
     },
 )

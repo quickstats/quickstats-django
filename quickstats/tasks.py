@@ -3,8 +3,7 @@ import logging
 
 import requests
 from celery import shared_task
-from celery.task.base import periodic_task
-from timezone.models import Timezone
+from celery.decorators import periodic_task
 
 from . import models
 
@@ -28,6 +27,7 @@ def update_streak(pk):
     widget = models.Widget.objects.get(pk=pk, type="streak")
 
     # Update our timestamps
+    from timezone.models import Timezone  #TODO fix later
     widget.timestamp = Timezone.for_user(owner=widget.owner).now()
     midnight = widget.timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
 
