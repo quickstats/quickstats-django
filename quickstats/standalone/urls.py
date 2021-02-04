@@ -25,7 +25,6 @@ from django.urls import include, path
 
 router = routers.DefaultRouter()
 router.register("widget", rest.WidgetViewSet)
-router.register("comment", rest.CommentViewSet)
 router.register("subscription", rest.SubscriptionViewSet)
 
 widget_router = routers.NestedSimpleRouter(router, "widget", lookup="widget")

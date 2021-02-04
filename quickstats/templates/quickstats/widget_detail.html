@@ -27,27 +27,6 @@ Widget / {{widget.title}}
     <div class="col-9">
         <h2>Embed</h2>
         <textarea class="form-control">{% embed_code widget %}</textarea>
-        <h2>Comments</h2>
-        <form method="post" action="{% url 'stats:widget-comment' widget.pk %}">
-            {% csrf_token %}
-            <input name="widget_id" value="{{widget.id}}" type="hidden">
-            <textarea name="body" class="form-control"></textarea>
-            <button class="btn btn-warning" type="submit">Submit</button>
-        </form>
-        <hr>
-
-        {% for comment in widget.comment_set.all %}
-        <section>
-
-            <header>
-                {{comment.owner.username}}
-                <small>{{comment.timestamp}}</small>
-            </header>
-            {{comment.body}}
-        </section>
-        {% empty %}
-        <p>No Comments</p>
-        {% endfor %}
 
         {% if widget.sample_set.count %}
         <table class="table">

@@ -38,14 +38,3 @@ class GrafanaTest(TestCase):
                 content_type="application/json",
             )
         self.assertEqual(response.status_code, 200, "Successful grafana search")
-
-    def test_annotations(self):
-        user, _ = get_user_model().objects.get_or_create(username="grafanatest")
-        self.client.force_login(user)
-        with ANNOTATION.open("r") as fp:
-            response = self.client.post(
-                reverse("grafana:annotations"),
-                data=fp.read(),
-                content_type="application/json",
-            )
-        self.assertEqual(response.status_code, 200, "Successful grafana annotations")

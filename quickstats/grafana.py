@@ -69,37 +69,10 @@ class Query(APIView):
         return JsonResponse(list(self.datapoints(query["targets"], start, end)), safe=False)
 
 
-class Annotations(APIView):
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = (IsAuthenticated,)
-
-    def annotations(self, labels, start, end, annotation):
-        for widget in models.Widget.objects.filter_labels(**labels):
-            for comment in widget.comment_set.filter(timestamp__gte=start, timestamp__lte=end).order_by('timestamp'):
-                yield {
-                    "annotation": annotation,
-                    "time": to_ts(comment.timestamp),
-                    "title": "Comment",
-                    "tags": [comment.owner.username],
-                    "text": comment.body,
-                }
-
-    def post(self, request, **kwargs):
-        body = json.loads(request.body.decode("utf8"))
-        start = parse(body["range"]["from"])
-        end = parse(body["range"]["to"])
-        labels = json.loads(body["annotation"]["query"])
-
-        logger.debug("annotations %s %s %s", start, end, labels)
-        return JsonResponse(
-            list(self.annotations(labels, start, end, body["annotation"])), safe=False
-        )
-
 
 urlpatterns = [
     # Need to have a / for grafana-json-plugin
     path("", Help.as_view(), name="help"),
     path("query", (Query.as_view()), name="query"),
     path("search", (Search.as_view()), name="search"),
-    path("annotations", (Annotations.as_view()), name="annotations"),
 ]
