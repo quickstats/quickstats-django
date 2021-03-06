@@ -11,14 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      db:
+      postgres:
         image: postgres:12.3-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
-        options: --mount type=tmpfs,destination=/var/lib/postgresql/data --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        options: >-
+          --mount type=tmpfs,destination=/var/lib/postgresql/data
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     strategy:
       matrix:
@@ -46,3 +59,4 @@ jobs:
         env:
           SECRET_KEY: github-actions
           DATABASE_URL: postgres://postgres:postgres@localhost/${{ matrix.python-version }}
+          CELERY_BROKER_URL: redis://localhost:6379/0
