@@ -173,5 +173,3 @@ except ImportError:
     MIDDLEWARE.remove("whitenoise.middleware.WhiteNoiseMiddleware")
 else:
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
