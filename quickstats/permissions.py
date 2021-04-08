@@ -21,7 +21,6 @@ class IsWidgetOwnerOrPublic(permissions.IsAuthenticatedOrReadOnly):
         return IsOwnerOrPublic.has_object_permission(self, request, view, widget)
 
     def has_object_permission(self, request, view, obj):
-        print("test")
         if request.user == obj.widget.owner:
             return True
         if request.method in permissions.SAFE_METHODS:

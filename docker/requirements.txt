@@ -4,12 +4,12 @@ celery[redis]==4.3.0
 certifi==2019.3.9
 chardet==3.0.4
 django-environ==0.4.5
-django==2.2.11
+django==2.2.18
 djangorestframework-csv==2.1.0
-djangorestframework==3.9.4
+djangorestframework==3.11.2
 gunicorn
 idna==2.8
-pillow==6.2.2
+Pillow==8.1.1
 prometheus-client==0.7.0
 python-dateutil==2.8.0
 pytz==2019.1
