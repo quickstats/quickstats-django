@@ -4,6 +4,7 @@ import logging
 import requests
 from celery import shared_task
 from celery.decorators import periodic_task
+from celery.schedules import crontab
 
 from . import models
 
@@ -59,7 +60,7 @@ def scrape(pk):
         return
 
 
-@periodic_task(run_every=datetime.timedelta(minutes=30))
+@periodic_task(run_every=crontab(minute=0))
 def schedule_scrape():
     for config in models.Scrape.objects.all():
         scrape.delay(config.pk)
