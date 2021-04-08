@@ -24,19 +24,27 @@ class Search(APIView):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated,)
 
+    def fetch(self, request):
+        def format(widget):
+            value = widget.label_set.get(name="__name__").value
+            title = widget.title
+            return {"value": value, "text": title + " (" + value + ")"}
+
+        for subscription in (
+            models.Subscription.objects.filter(owner=request.user)
+            .filter(widget__label__name="__name__")
+            .prefetch_related("widget", "widget__label_set")
+        ):
+            yield format(subscription.widget)
+
     def post(self, request, **kwargs):
         # Get all widgets that the user is subscribed to and has a
         # metric __name__ associated with
         query = json.loads(request.body.decode("utf8"))
         logger.debug("search %s", query)
+
         return JsonResponse(
-            [
-                subscription.widget.label_set.get(name="__name__").value
-                for subscription in models.Subscription.objects.filter(owner=request.user)
-                .filter(widget__label__name="__name__")
-                .prefetch_related("widget", "widget__label_set")
-            ],
-            safe=False,
+            sorted(self.fetch(request), key=lambda k: k["value"]), safe=False
         )
 
 
