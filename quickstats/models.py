@@ -151,10 +151,14 @@ class Scrape(models.Model):
 
     def scrape(self):
         driver = self.driver_set[self.driver].load()()
+        logger.info("Scraping %s ", self)
         driver.scrape(self)
 
     class Meta:
         unique_together = ("widget", "driver")
+
+    def __str__(self):
+        return "{}:{}:{}".format(self.driver, self.id, self.widget_id)
 
 
 class Share(models.Model):
