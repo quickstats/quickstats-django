@@ -151,10 +151,11 @@ class Scrape(models.Model):
     period = models.CharField(
         max_length=16,
         choices=(
-            ("halfhour", _("Every half hour")),
-            ("hourly", _("Hourly")),
-            ("bihourly", _("Every other hour")),
-            ("daily", _("Daily")),
+            ("15m", _("Quarter Hour")),
+            ("30m", _("Half Hour")),
+            ("1h", _("Hourly")),
+            ("2h", _("Every other hour")),
+            ("1d", _("Daily")),
         ),
     )
 

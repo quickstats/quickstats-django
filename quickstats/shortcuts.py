@@ -30,3 +30,4 @@ def quick_record(owner, value, **kwargs):
     widget, _ = Widget.objects.lookup_or_create(owner=owner, labels=labels, **kwargs)
     sample = widget.sample_set.create(timestamp=timestamp, value=value)
     logger.debug("Created sample %r" % sample)
+    return sample
