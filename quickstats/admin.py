@@ -31,8 +31,8 @@ class ScrapeAdmin(admin.ModelAdmin):
     def title(self, obj):
         return obj.widget.title
 
-    list_display = ("title", "driver", "owner")
-    list_filter = ("driver", ("owner", admin.RelatedOnlyFieldListFilter))
+    list_display = ("title", "driver", "period", "owner")
+    list_filter = ("driver", "period", ("owner", admin.RelatedOnlyFieldListFilter))
 
 
 @admin.register(models.Share)
