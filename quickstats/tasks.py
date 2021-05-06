@@ -67,10 +67,17 @@ schedule = {
     "1d": crontab(minute=0, hour=0),
 }
 
-for period in schedule:
+
+def register_scrape(period):
     name = __name__ + ".schedule_" + period
 
-    @periodic_task(run_every=schedule[period], name=name)
-    def scheduled_scrape():
+    def queue_scrapes():
+        logger.info("Checking for jobs: %s", period)
         for config in models.Scrape.objects.filter(period=period):
             scrape.delay(config.pk)
+
+    periodic_task(run_every=schedule[period], name=name)(queue_scrapes)
+
+
+for period in schedule:
+    register_scrape(period)
