@@ -1,7 +1,8 @@
-from quickstats import models, tasks
-from django.urls import reverse
 from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
+from django.urls import reverse
+
+from quickstats import models
 
 
 class WaypointTest(TestCase):
@@ -31,48 +32,3 @@ class WaypointTest(TestCase):
         )
         data = response.json()
         self.assertEqual(data["count"], 1, "Found one waypoint")
-
-    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
-    def test_owntracks_waypoints(self):
-        tasks.owntracks_mqtt_waypoints(
-            "owntracks/WaypointTest/device/waypoints",
-            {
-                "_type": "waypoints",
-                "waypoints": [
-                    {
-                        "_type": "waypoint",
-                        "tst": 1560375712,
-                        "lat": 100.1,
-                        "lon": 100.1,
-                        "rad": 100,
-                        "desc": "test-location",
-                    }
-                ],
-            },
-        )
-        self.assertEqual(models.Widget.objects.count(), 1)
-
-    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
-    def test_owntracks_location(self):
-        tasks.owntracks_mqtt_location(
-            "owntracks/WaypointTest/device",
-            {
-                "batt": 100,
-                "lon": 100.3543190608404,
-                "acc": 65,
-                "p": 102.1,
-                "bs": 3,
-                "vac": 10,
-                "lat": 100.1,
-                "inregions": ["test-location"],
-                "t": "u",
-                "conn": "w",
-                "tst": 1571049037,
-                "alt": 12,
-                "_type": "location",
-                "tid": "PR",
-            },
-        )
-        self.assertEqual(models.Widget.objects.count(), 1)
-        self.assertEqual(models.Waypoint.objects.count(), 1)
-        self.assertEqual(models.Setting.objects.count(), 1)
