@@ -157,6 +157,7 @@ class Scrape(models.Model):
             ("2h", _("Every other hour")),
             ("1d", _("Daily")),
         ),
+        default="2h",
     )
 
     def scrape(self):
