@@ -148,6 +148,17 @@ class Scrape(models.Model):
     widget = models.ForeignKey("quickstats.Widget", on_delete=models.CASCADE)
     driver = models.CharField(max_length=32, choices=TYPE_CHOICES)
     url = models.URLField(max_length=2000)
+    period = models.CharField(
+        max_length=16,
+        choices=(
+            ("15m", _("Quarter Hour")),
+            ("30m", _("Half Hour")),
+            ("1h", _("Hourly")),
+            ("2h", _("Every other hour")),
+            ("1d", _("Daily")),
+        ),
+        default="2h",
+    )
 
     def scrape(self):
         driver = self.driver_set[self.driver].load()()

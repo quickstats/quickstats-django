@@ -60,10 +60,21 @@ def scrape(pk):
         return
 
 
-@periodic_task(run_every=crontab(minute=0))
-def schedule_scrape():
-    for config in models.Scrape.objects.all():
-        scrape.delay(config.pk)
+schedule = {
+    "15m": crontab(minute="5,20,35,50"),
+    "30m": crontab(minute="25,55"),
+    "1h": crontab(minute=0),
+    "2h": crontab(minute=0, hour="*/2"),
+    "1d": crontab(minute=0, hour=0),
+}
+
+for period in schedule:
+    name = __name__ + ".schedule_" + period
+
+    @periodic_task(run_every=schedule[period], name=name)
+    def scheduled_scrape():
+        for config in models.Scrape.objects.filter(period=period):
+            scrape.delay(config.pk)
 
 
 @shared_task
