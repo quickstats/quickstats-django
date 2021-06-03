@@ -13,3 +13,9 @@ def get(url, **kwargs):
     headers = kwargs.setdefault("headers", {})
     headers.setdefault("user-agent", USER_AGENT)
     return requests.get(url, **kwargs)
+
+
+def post(url, **kwargs):
+    headers = kwargs.setdefault("headers", {})
+    headers.setdefault("user-agent", USER_AGENT)
+    return requests.post(url, **kwargs)
