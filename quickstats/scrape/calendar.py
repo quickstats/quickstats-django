@@ -5,14 +5,16 @@ import icalendar
 import requests
 from dateutil.rrule import rrulestr
 
-from quickstats.models import Scrape
+from . import BaseScrape
 
 from django.utils import timezone
+
+from quickstats.models import Scrape
 
 logger = logging.getLogger(__name__)
 
 
-class CalendarScraper:
+class CalendarScraper(BaseScrape):
     def scrape(self, config: Scrape):
         countdown = config.widget
         settings = {m.name: m.value for m in config.widget.setting_set.all()}
