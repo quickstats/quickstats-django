@@ -2,17 +2,18 @@ import datetime
 import logging
 
 import icalendar
-import requests
 from dateutil.rrule import rrulestr
 
-from quickstats.models import Scrape
+from . import BaseScrape
 
 from django.utils import timezone
+
+from quickstats.models import Scrape
 
 logger = logging.getLogger(__name__)
 
 
-class CalendarScraper:
+class CalendarScraper(BaseScrape):
     def scrape(self, config: Scrape):
         countdown = config.widget
         settings = {m.name: m.value for m in config.widget.setting_set.all()}
@@ -23,7 +24,7 @@ class CalendarScraper:
         next_event = None
         next_time = None
 
-        response = requests.get(config.url)
+        response = self.session.get(config.url)
         response.raise_for_status()
         calendar = icalendar.Calendar.from_ical(response.text)
         if "X-WR-CALNAME" in calendar:
