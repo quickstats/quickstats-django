@@ -2,7 +2,6 @@ import datetime
 import logging
 
 import icalendar
-import requests
 from dateutil.rrule import rrulestr
 
 from . import BaseScrape
@@ -25,7 +24,7 @@ class CalendarScraper(BaseScrape):
         next_event = None
         next_time = None
 
-        response = requests.get(config.url)
+        response = self.session.get(config.url)
         response.raise_for_status()
         calendar = icalendar.Calendar.from_ical(response.text)
         if "X-WR-CALNAME" in calendar:
