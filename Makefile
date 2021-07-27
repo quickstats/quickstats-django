@@ -9,11 +9,13 @@ $(PIP_BIN):
 	python3 -m venv .venv
 
 ${APP_BIN}: $(PIP_BIN)
+	$(PIP_BIN) install pip -U
 	${PIP_BIN} install -r docker/requirements.txt
 	${PIP_BIN} install -e .[dev,standalone]
 
 .PHONY:	pip
 pip:	$(PIP_BIN)
+	$(PIP_BIN) install pip -U
 	${PIP_BIN} install -r docker/requirements.txt
 	${PIP_BIN} install -e .[dev,standalone]
 
