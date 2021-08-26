@@ -1,8 +1,10 @@
 import time
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
+
 from quickstats import models, shortcuts
 
 
@@ -32,22 +34,51 @@ class ModelTest(TestCase):
         )
 
     def test_shortcut(self):
+        now = timezone.now()
         self.assertEqual(models.Widget.objects.count(), 0)
         shortcuts.quick_record(
             self.user,
             value=1,
-            metric="test",
+            metric="test_shortcut",
             labels={"A": 1, "B": 2},
-            timestamp=timezone.now(),
+            timestamp=now,
+        )
+        now += timedelta(minutes=1)
+        shortcuts.quick_record(
+            self.user,
+            value=2,
+            metric="test_shortcut",
+            labels={"B": 2, "A": 1},
+            timestamp=now,
+        )
+        self.assertEqual(
+            models.Widget.objects.count(), 1, "Should only be one new widget"
+        )
+        self.assertEqual(
+            models.Widget.objects.count(), 1, "Should only be one two samples"
+        )
+
+    def test_overwrite(self):
+        now = timezone.now()
+        self.assertEqual(models.Widget.objects.count(), 0)
+        shortcuts.quick_record(
+            self.user,
+            value=1,
+            metric="test_overwrite",
+            labels={"A": 1, "B": 2},
+            timestamp=now,
         )
         time.sleep(4)
         shortcuts.quick_record(
             self.user,
             value=2,
-            metric="test",
+            metric="test_overwrite",
             labels={"B": 2, "A": 1},
-            timestamp=timezone.now(),
+            timestamp=now,
         )
         self.assertEqual(
             models.Widget.objects.count(), 1, "Should only be one new widget"
+        )
+        self.assertEqual(
+            models.Sample.objects.count(), 1, "Should only be one new sample"
         )

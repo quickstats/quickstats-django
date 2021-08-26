@@ -28,6 +28,10 @@ def quick_record(owner, value, **kwargs):
         timestamp = defaults.setdefault("timestamp", timezone.now())
 
     widget, _ = Widget.objects.lookup_or_create(owner=owner, labels=labels, **kwargs)
-    sample = widget.sample_set.create(timestamp=timestamp, value=value)
+    # We use update_or_create to handle the case when the user wants
+    # to overwrite an existing timestamp
+    sample, _ = widget.sample_set.update_or_create(
+        timestamp=timestamp, defaults={"value": value}
+    )
     logger.debug("Created sample %r" % sample)
     return sample
