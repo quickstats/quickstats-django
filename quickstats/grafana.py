@@ -77,6 +77,7 @@ class Query(APIView):
         return JsonResponse(list(self.datapoints(query["targets"], start, end)), safe=False)
 
 
+app_name = "grafana-quickstats"
 
 urlpatterns = [
     # Need to have a / for grafana-json-plugin

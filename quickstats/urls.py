@@ -2,6 +2,8 @@ from . import views
 
 from django.urls import path
 
+app_name = "quickstats"
+
 urlpatterns = [
     path("", views.PublicWidgets.as_view(), name="home"),
     path("create/widget", views.WidgetCreate.as_view(), name="widget-create"),
