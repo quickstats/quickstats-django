@@ -2,8 +2,8 @@ import logging
 
 import requests
 from celery import shared_task
-from celery.decorators import periodic_task
 from celery.schedules import crontab
+from zakka.contrib.celery.decorators import periodic_task
 
 from . import models
 

@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM python:3.9-alpine
 LABEL maintainer=kungfudiscomonkey@gmail.com
 
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -22,15 +22,17 @@ RUN set -ex \
 RUN set -ex \
     && apk add --no-cache jpeg-dev zlib-dev \
     && apk add --no-cache --virtual build-deps build-base \
-    && pip install --no-cache-dir Pillow==6.2.2 \
+    && pip install --no-cache-dir Pillow \
     && apk del build-deps
 
 # Finish installing app
 WORKDIR ${APP_DIR}
-ADD quickstats ${APP_DIR}/quickstats
-ADD docker ${APP_DIR}/docker
-ADD setup.py ${APP_DIR}/setup.py
-RUN set -ex && pip install --no-cache-dir -r ${APP_DIR}/docker/requirements.txt
+COPY quickstats ${APP_DIR}/quickstats
+COPY docker ${APP_DIR}/docker
+COPY setup.* ${APP_DIR}/
+RUN pip install --no-cache-dir \
+        -r ${APP_DIR}/docker/requirements.txt \
+        -e .[standalone]
 RUN SECRET_KEY=1 quickstats collectstatic --noinput
 USER nobody
 EXPOSE 8000

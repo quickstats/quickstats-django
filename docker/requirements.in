@@ -1,0 +1,4 @@
+django~=3.2
+gunicorn
+sentry-sdk
+whitenoise
