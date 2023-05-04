@@ -36,8 +36,10 @@ jobs:
           --health-retries 5
 
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8"]
+        # https://endoflife.date/python
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
       - uses: actions/checkout@v2
@@ -56,9 +58,10 @@ jobs:
           path: ~/.cache/pip
           key: ${{ hashFiles('setup.cfg') }}-${{ hashFiles('docker/requirements.txt') }}
 
-      - name: Run tests
+      - name: Run Tests
         run: make test
         env:
+          SYSTEM_PYTHON: python${{ matrix.python-version }}
           SECRET_KEY: github-actions
           DATABASE_URL: postgres://postgres:postgres@localhost/${{ matrix.python-version }}
           CELERY_BROKER_URL: redis://localhost:6379/0
